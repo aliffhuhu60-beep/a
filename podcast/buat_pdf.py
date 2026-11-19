@@ -87,6 +87,9 @@ story = []
 
 # ===== Halaman muka =====
 story += [Spacer(1, 30 * mm)]
+story.append(Paragraph("PODCAST TENGAH JALAN",
+                       ParagraphStyle("pj", fontName="Serif-B", fontSize=22, textColor=TERRA, alignment=TA_CENTER, leading=26)))
+story.append(Spacer(1, 4))
 story.append(Paragraph("AUDIO SIAR AKADEMIK  ·  ISU SEMASA SINTAKSIS",
                        ParagraphStyle("k", fontName="Sans-B", fontSize=9, textColor=TERRA, alignment=TA_CENTER, leading=12)))
 story.append(Spacer(1, 8))
@@ -100,9 +103,11 @@ story.append(Paragraph("Tajuk asal: <b>Kerancuan Bahasa – Bahasa TikTok</b>",
 story.append(Spacer(1, 18 * mm))
 info = [
     [P("<b>Format</b>", "smallb"), P("Audio siar perbualan, 3 orang penutur", "small")],
-    [P("<b>Durasi</b>", "smallb"), P("± 11 minit (julat 10–12 minit; kira-kira 1,550 patah perkataan dialog)", "small")],
+    [P("<b>Durasi</b>", "smallb"), P("± 11 minit (julat 10–12 minit; kira-kira 1,450 patah perkataan dialog termasuk pantun)", "small")],
     [P("<b>Penutur</b>", "smallb"), P("ALIFF (Hos 1 – pengacara utama) · AMMAR (Hos 2 – \"suara warganet\") · "
-                                      "IMAN (Hos 3 – \"detektif sintaksis\"). Nama boleh ditukar kepada nama kumpulan anda.", "small")],
+                                      "IMAN (Hos 3 – \"detektif sintaksis\"). Dialog dibahagikan sama rata: setiap penutur "
+                                      "mempunyai 16 baris dialog (kira-kira 450–470 patah perkataan), dan setiap penutur membedah "
+                                      "dua daripada enam contoh ayat TikTok.", "small")],
     [P("<b>Isi kandungan</b>", "smallb"), P("1. Judul alternatif  ·  2. Struktur & masa  ·  3. Skrip penuh  ·  "
                                             "4. Bukti autentik: contoh TikTok & pautan  ·  5. Semakan ciri audio siar akademik  ·  "
                                             "6. Rujukan  ·  7. Tip rakaman", "small")],
@@ -116,6 +121,8 @@ story.append(PageBreak())
 
 # ===== 1. Judul =====
 story.append(P("1. Judul Audio Siar", "h1"))
+story.append(P("<b>Nama audio siar:</b> Podcast Tengah Jalan. Setiap episod dibuka dengan nama podcast, diikuti "
+               "pantun, dan barulah judul episod diumumkan."))
 story.append(P("Judul utama yang dicadangkan menggunakan gaya bahasa TikTok sebagai \"umpan\", tetapi subjudulnya "
                "kekal membawa maksud asal tajuk, iaitu kerancuan bahasa akibat bahasa TikTok."))
 story.append(box(P("<font name='Serif-B' size='16' color='#5E1F2A'>SLAY ATAU SALAH? Bila Bahasa Kita "
@@ -136,7 +143,7 @@ for j in ["<b>#FYP Bahasa:</b> Bahasa Melayu Ke Mana di Era TikTok?",
 # ===== 2. Struktur =====
 story.append(P("2. Struktur dan Peruntukan Masa", "h1"))
 seg = [["Masa", "Segmen", "Fokus", "Ciri akademik"],
-       ["0:00 – 1:30", "Pembukaan", "Muzik, pantun Aliff & Ammar, pengenalan isu", "–"],
+       ["0:00 – 1:30", "Pembukaan", "Muzik, pengenalan Podcast Tengah Jalan, pantun Aliff & Ammar, topik episod", "–"],
        ["1:30 – 3:15", "Apa itu bahasa TikTok?", "Takrif rancu & slanga, data kajian", "Ketepatan ilmu, etika"],
        ["3:15 – 6:45", "Bedah Ayat TikTok", "6 contoh sebenar + pembetulan sintaksis", "Bukti autentik, ketepatan ilmu"],
        ["6:45 – 8:45", "Salah atau kreatif?", "Punca, kesan, pandangan berbeza, laras", "Pemikiran kritis"],
@@ -158,42 +165,40 @@ story.append(P("3. Skrip Penuh", "h1"))
 
 story += bar("SEGMEN 1 · PEMBUKAAN  (0:00 – 1:30)")
 story.append(cue("Muzik latar bebas hak cipta masuk selama 5 saat, kemudian diperlahankan"))
-story.append(say(H1, "Assalamualaikum dan salam sejahtera kepada semua pendengar! Selamat datang ke audio siar kami, "
-                     "<b>\"Slay atau Salah? Bila Bahasa Kita Terpaling Rancu di TikTok\"</b>. Saya Aliff, dan seperti biasa, "
-                     "sebelum kita mula berbual, izinkan saya membuka bicara dengan serangkap pantun."))
+story.append(say(H1, "Assalamualaikum dan salam sejahtera kepada semua pendengar! Selamat datang ke <b>Podcast Tengah Jalan</b>, "
+                     "tempat kita berhenti sebentar di tengah perjalanan hidup untuk berbual tentang isu yang dekat dengan kita. "
+                     "Saya Aliff, dan seperti biasa, izinkan saya membuka bicara dengan serangkap pantun."))
 story.append(pantun(H1, ["Burung merbah terbang ke hulu,", "Hinggap sebentar di pohon jati;",
                          "Bahasa TikTok viral selalu,", "Bahasa Melayu tetap di hati."]))
-story.append(say(H2, "Wah, pembukaan yang cantik! Tidak mahu kalah, saya pun ada pantun juga. Saya Ammar, wakil warganet yang "
-                     "menghabiskan masa tiga jam sehari menatal TikTok."))
+story.append(say(H2, "Wah, pembukaan yang cantik! Saya Ammar, wakil warganet yang menghabiskan masa tiga jam sehari menatal "
+                     "TikTok. Tidak mahu kalah, saya pun ada pantun juga."))
 story.append(pantun(H2, ["Anak dara menenun kain,", "Kain disulam benang suasa;",
                          "Slanga boleh sekadar bermain,", "Jangan rosakkan martabat bahasa."]))
 story.append(say(H3, "Cantik! Pantun kamu berdua betul-betul... saya hampir sebut \"<i>ate</i>\", tetapi hari ini kita kena jaga "
-                     "bahasa. <i>(ketawa)</i> Saya Iman, dan hari ini saya akan menjadi \"detektif sintaksis\" kita."))
-story.append(say(H1, "Sesuai sangat! Pendengar sekalian, cuba bayangkan. Anda membuka TikTok dan membaca kapsyen "
-                     "\"<i>POV: korang bila cikgu suruh present, terus blank, no cap</i>\". Anda faham, tetapi adakah ayat itu "
-                     "betul dari segi tatabahasa? Itulah isu yang akan kita bongkar hari ini: <b>kerancuan bahasa akibat "
-                     "bahasa TikTok</b>."))
+                     "bahasa. <i>(ketawa)</i> Saya Iman. Jadi, Aliff, apakah topik kita di Podcast Tengah Jalan kali ini?"))
+story.append(say(H1, "Episod kali ini bertajuk <b>\"Slay atau Salah? Bila Bahasa Kita Terpaling Rancu di TikTok\"</b>. Pendengar "
+                     "sekalian, cuba bayangkan anda membaca kapsyen \"<i>POV: korang bila cikgu suruh present, terus blank, no "
+                     "cap</i>\". Anda faham, tetapi adakah ayat itu betul dari segi tatabahasa? Itulah isu yang akan kita bongkar: "
+                     "<b>kerancuan bahasa akibat bahasa TikTok</b>."))
 
 story += bar("SEGMEN 2 · APA ITU BAHASA TIKTOK?  (1:30 – 3:15)")
 story.append(say(H2, "Iman, sebelum kita pergi lebih jauh, apakah sebenarnya maksud \"rancu\"? Bunyinya seperti nama makanan."))
 story.append(say(H3, "<i>(ketawa)</i> Bukan, Ammar. Menurut <b>Kamus Dewan Edisi Keempat</b>, \"rancu\" bermaksud bercampur aduk "
                      "atau kacau, khususnya dalam penggunaan bahasa. Jadi, kerancuan bahasa berlaku apabila unsur bahasa "
-                     "bercampur aduk sehingga melanggar sistem bahasa Melayu, sama ada dari segi ejaan, kosa kata, atau yang "
-                     "paling penting bagi kita hari ini, <b>struktur ayat</b>."))
+                     "bercampur aduk sehingga melanggar sistem bahasa Melayu, terutamanya <b>struktur ayat</b>."))
 story.append(say(H1, "Bahasa TikTok pula ialah gabungan slanga, singkatan, campur kod Melayu-Inggeris dan struktur ayat yang "
                      "dipinjam daripada bahasa Inggeris. <b>Kamus Bahasa Melayu Nusantara (2003)</b> mentakrifkan slanga sebagai "
                      "ragam bahasa yang tidak rasmi, tidak baku dan bersifat tidak tetap atau bermusim."))
 story.append(say(H2, "Bermusim! Betul juga. Tahun lepas semua orang sebut \"mantul\", iaitu \"mantap betul\". Sekarang orang sebut "
-                     "\"<i>delulu</i>\", \"<i>terpaling</i>\", \"<i>ytjt</i>\" atau \"yang tahu, tahu je\"."))
-story.append(say(H3, "Fenomena ini bukan sekadar perasaan kita. Kajian <b>Nor Alia Nadia Husain dan Nora'Azian Nahar (2025)</b> "
-                     "dalam <i>LSP International Journal</i> meneliti 13 sesi siaran langsung jual beli di TikTok. Mereka mendapati "
-                     "slanga seperti \"<i>kautim</i>\" dan \"<i>skoda</i>\" memudahkan komunikasi dengan pembeli tetap, tetapi "
-                     "mengelirukan pembeli baharu kerana tafsirannya berbeza-beza."))
-story.append(say(H2, "Betul! Saya pernah menonton siaran langsung yang penjualnya asyik menyebut \"<i>kautim</i>\". Saya "
-                     "terpaksa membaca ruangan komen untuk memahami maksudnya. Rupa-rupanya, \"kautim\" bermaksud urusan sudah "
-                     "selesai."))
-story.append(say(H3, "Itulah contoh yang baik. Kajian yang sama mencadangkan agar penjual menyediakan glosari ringkas slanga "
-                     "supaya komunikasi lebih inklusif. Ini menunjukkan bahawa pengkaji pun mengakui kewujudan jurang pemahaman."))
+                     "\"<i>delulu</i>\", \"<i>terpaling</i>\" dan \"<i>ytjt</i>\", iaitu \"yang tahu, tahu je\". Fenomena ini "
+                     "juga sudah dikaji. <b>Nor Alia Nadia Husain dan Nora'Azian Nahar (2025)</b> dalam <i>LSP International "
+                     "Journal</i> meneliti 13 sesi siaran langsung jual beli di TikTok."))
+story.append(say(H3, "Apakah dapatan mereka, Ammar?"))
+story.append(say(H2, "Mereka mendapati slanga seperti \"<i>kautim</i>\" dan \"<i>skoda</i>\" memudahkan komunikasi dengan pembeli "
+                     "tetap, tetapi mengelirukan pembeli baharu kerana tafsirannya berbeza-beza. Saya sendiri pernah terpaksa "
+                     "membaca ruangan komen untuk memahami maksud \"kautim\", iaitu urusan sudah selesai."))
+story.append(say(H3, "Kajian yang sama mencadangkan agar penjual menyediakan glosari ringkas slanga supaya komunikasi lebih "
+                     "inklusif. Ini menunjukkan bahawa pengkaji pun mengakui kewujudan jurang pemahaman."))
 story.append(say(H1, "Maknanya, bahasa yang rancu bukan sahaja isu tatabahasa. Bahasa itu juga boleh menyebabkan mesej tidak sampai "
                      "kepada pendengar. Baiklah, mari kita masuk ke segmen kegemaran saya!"))
 
@@ -201,31 +206,31 @@ story += bar("SEGMEN 3 · BEDAH AYAT TIKTOK  (3:15 – 6:45)")
 story.append(cue("Kesan bunyi \"ting!\" setiap kali contoh baharu dibacakan"))
 story.append(say(H2, "Contoh pertama, daripada kapsyen yang sangat biasa: \"<b>POV: kau baru sampai sekolah lepas cuti panjang.</b>\""))
 story.append(say(H3, "Dari segi sintaksis, \"POV\" ialah singkatan Inggeris, <i>point of view</i>, yang diletakkan di hadapan "
-                     "seolah-olah subjek. Selepas itu, binaannya tergantung. Ayat itu tiada predikat yang lengkap untuk "
-                     "\"POV\". Ayat yang gramatis ialah: <b>\"Bayangkan anda baru tiba di sekolah selepas cuti panjang.\"</b>"))
-story.append(say(H1, "Contoh kedua, daripada video tayangan pakaian: \"<b>Outfit dia hari ni, ate and left no crumbs!</b>\""))
-story.append(say(H3, "Ini campur kod pada peringkat klausa. Separuh ayat dalam bahasa Melayu, separuh lagi klausa Inggeris yang lengkap. "
-                     "Ayat ini juga tiada predikat Melayu. Pembetulannya: <b>\"Pakaiannya hari ini sungguh sempurna!\"</b> Pendek, "
-                     "tepat dan tetap bertenaga."))
-story.append(say(H2, "Contoh ketiga, ini kegemaran saya: \"<b>Dia ni terpaling pandai dalam kelas.</b>\""))
-story.append(say(H3, "Inilah perkataan dalam judul kita! Menurut <b>Tatabahasa Dewan</b>, awalan <i>ter-</i> pada kata adjektif "
-                     "sudah membawa makna paling, contohnya \"terpandai\". Apabila digabungkan dengan \"paling\", terjadilah "
-                     "<b>kelewahan</b>, iaitu makna yang sama diulang dua kali. Pilih salah satu: <b>\"Dia paling pandai dalam "
-                     "kelas\"</b> atau <b>\"Dia terpandai dalam kelas.\"</b>"))
-story.append(say(H1, "Contoh keempat, yang selalu kita dengar dalam siaran langsung jual beli: \"<b>Ini live di mana saya jual "
+                     "seolah-olah subjek. Selepas itu, binaannya tergantung kerana tiada predikat yang lengkap. Ayat yang "
+                     "gramatis ialah: <b>\"Bayangkan anda baru tiba di sekolah selepas cuti panjang.\"</b>"))
+story.append(say(H3, "Contoh kedua, daripada video tayangan pakaian: \"<b>Outfit dia hari ni, ate and left no crumbs!</b>\""))
+story.append(say(H1, "Ini campur kod pada peringkat klausa. Separuh ayat dalam bahasa Melayu, separuh lagi klausa Inggeris yang "
+                     "lengkap, jadi ayat ini tiada predikat Melayu. Pembetulannya: <b>\"Pakaiannya hari ini sungguh sempurna!\"</b> "
+                     "Pendek, tepat dan tetap bertenaga."))
+story.append(say(H1, "Contoh ketiga: \"<b>Dia ni terpaling pandai dalam kelas.</b>\" Ammar, cuba kamu pula yang bedah."))
+story.append(say(H2, "Baiklah! Inilah perkataan dalam judul kita. Menurut <b>Tatabahasa Dewan</b>, awalan <i>ter-</i> pada kata "
+                     "adjektif sudah membawa makna paling, contohnya \"terpandai\". Apabila digabungkan dengan \"paling\", "
+                     "terjadilah <b>kelewahan</b>. Pilih salah satu: <b>\"Dia paling pandai dalam kelas\"</b> atau <b>\"Dia "
+                     "terpandai dalam kelas.\"</b>"))
+story.append(say(H2, "Contoh keempat, yang selalu kita dengar dalam siaran langsung jual beli: \"<b>Ini live di mana saya jual "
                      "barang murah.</b>\""))
-story.append(say(H3, "Ini pengaruh struktur bahasa Inggeris, iaitu <i>\"where\"</i> diterjemahkan menjadi \"di mana\" dan "
-                     "digunakan sebagai kata hubung relatif. Dalam bahasa Melayu, \"di mana\" ialah frasa tanya. Kata hubung "
-                     "relatif yang betul ialah \"yang\": <b>\"Ini siaran langsung yang saya gunakan untuk menjual barang murah.\"</b>"))
-story.append(say(H2, "Contoh kelima: \"<b>Video ni saya akan upload esok.</b>\""))
-story.append(say(H3, "Selain \"upload\" yang ada padanannya, iaitu \"muat naik\", ayat ini melanggar peraturan <b>ayat pasif diri "
+story.append(say(H3, "Ini pengaruh struktur bahasa Inggeris. Perkataan <i>\"where\"</i> diterjemahkan menjadi \"di mana\" dan "
+                     "digunakan sebagai kata hubung relatif, sedangkan \"di mana\" ialah frasa tanya. Kata hubung relatif yang "
+                     "betul ialah \"yang\": <b>\"Ini siaran langsung yang saya gunakan untuk menjual barang murah.\"</b>"))
+story.append(say(H3, "Contoh kelima: \"<b>Video ni saya akan upload esok.</b>\""))
+story.append(say(H1, "Selain \"upload\" yang ada padanannya, iaitu \"muat naik\", ayat ini melanggar peraturan <b>ayat pasif diri "
                      "pertama</b>. Kata bantu aspek seperti \"akan\" mesti hadir di hadapan kata ganti nama diri. Jadi, ayat yang "
                      "betul ialah: <b>\"Video ini akan saya muat naik esok.\"</b>"))
 story.append(say(H1, "Contoh terakhir: \"<b>Ini saya punya first video, korang support tau!</b>\""))
-story.append(say(H3, "Frasa \"saya punya video\" meniru struktur <i>\"my video\"</i> dan melanggar <b>Hukum D-M</b>, iaitu "
-                     "unsur yang diterangkan mesti mendahului unsur yang menerangkan. Pembetulannya: <b>\"Ini video pertama saya. "
-                     "Mohon sokongan kalian, ya!\"</b>"))
-story.append(say(H2, "Wah, enam ayat, enam kesalahan. Saya rasa separuh kapsyen saya perlu disunting semula! <i>(ketawa)</i>"))
+story.append(say(H2, "Frasa \"saya punya video\" meniru struktur <i>\"my video\"</i> dan melanggar <b>Hukum D-M</b>, iaitu unsur "
+                     "yang diterangkan mesti mendahului unsur yang menerangkan. Pembetulannya: <b>\"Ini video pertama saya. "
+                     "Mohon sokongan kalian, ya!\"</b> Wah, enam ayat, enam kesalahan. Separuh kapsyen saya perlu disunting "
+                     "semula! <i>(ketawa)</i>"))
 
 story += bar("SEGMEN 4 · SALAH ATAU KREATIF?  (6:45 – 8:45)")
 story.append(say(H1, "Namun, adakah semua ini salah? Ada pendengar yang mungkin berkata, \"Alah, di TikTok sahaja. Bahasa "
@@ -234,42 +239,43 @@ story.append(say(H2, "Jujurnya, saya rasa slanga membuatkan kita rasa rapat. Apa
                      "satu geng. Jadi, ada nilai identiti di situ."))
 story.append(say(H1, "Saya faham, Ammar. Tetapi bagaimana pula dengan generasi ibu bapa kita? Mak saya pernah bertanya "
                      "mengapa saya kata makanannya \"<i>mid</i>\". Beliau ingat saya memuji!"))
-story.append(say(H2, "<i>(ketawa)</i> Itu memang bahaya. Maksud \"mid\" ialah biasa-biasa sahaja."))
-story.append(say(H3, "Pandangan itu ada asasnya. Dalam laporan <b>Malay Mail (Oktober 2025)</b>, <b>Profesor Emeritus Datuk Dr. Nik "
-                     "Safiah Karim</b> berpendapat bahawa slanga bukan bukti bahasa Melayu sedang runtuh, sebaliknya tanda "
-                     "bahasa itu hidup. Akan tetapi, beliau juga menegaskan bahawa slanga bersifat tidak formal dan tidak "
+story.append(say(H3, "<i>(ketawa)</i> Padahal \"mid\" bermaksud biasa-biasa sahaja! Pandangan Ammar tadi sebenarnya ada asasnya. "
+                     "Dalam laporan <b>Malay Mail (Oktober 2025)</b>, <b>Profesor Emeritus Datuk Dr. Nik Safiah Karim</b> "
+                     "berpendapat bahawa slanga ialah tanda bahasa itu hidup. Akan tetapi, beliau menegaskan bahawa slanga tidak "
                      "sesuai digunakan dalam surat permohonan kerja, ucapan rasmi atau penulisan formal."))
 story.append(say(H1, "Jadi, kata kuncinya ialah <b>laras bahasa</b>. Masalahnya bukan slanga itu wujud, tetapi apabila kita tidak "
                      "dapat membezakan konteks."))
-story.append(say(H3, "Tepat sekali. Saya melihat tiga kesan yang membimbangkan. Pertama, struktur ayat Inggeris seperti \"di mana\" "
+story.append(say(H2, "Saya setuju. Saya nampak tiga kesan yang membimbangkan. Pertama, struktur ayat Inggeris seperti \"di mana\" "
                      "dan \"saya punya\" mula meresap ke dalam karangan murid. Kedua, perbendaharaan kata menjadi sempit kerana "
-                     "semua perkara digambarkan dengan satu perkataan, sama ada \"<i>slay</i>\" atau \"<i>mid</i>\". Ketiga, "
-                     "apabila bahasa rancu dianggap biasa, martabat bahasa Melayu sebagai bahasa kebangsaan di bawah "
-                     "<b>Perkara 152 Perlembagaan Persekutuan</b> boleh terhakis secara senyap."))
-story.append(say(H2, "Kalau begitu, punca utamanya apa? Algoritma TikTok?"))
-story.append(say(H3, "Algoritma hanya sebahagian daripadanya. Puncanya termasuk keinginan untuk tular, had masa video yang "
-                     "pendek sehingga orang memilih ayat yang ringkas, pengaruh kandungan luar negara, dan kurangnya "
-                     "teladan bahasa yang baik di media sosial. Jadi, tanggungjawab ini milik kita bersama."))
-story.append(say(H1, "Saya setuju. Malah, pempengaruh yang mempunyai jutaan pengikut sebenarnya memikul tanggungjawab yang "
-                     "besar. Jika mereka menggunakan bahasa Melayu yang baik, pengikut mereka akan meniru."))
-story.append(say(H2, "Dan sebenarnya, ada juga pencipta kandungan yang tular kerana menggunakan bahasa Melayu yang indah. "
-                     "Jadi, bahasa yang betul tidak semestinya membosankan."))
+                     "semua perkara digambarkan dengan satu perkataan. Ketiga, martabat bahasa Melayu sebagai bahasa kebangsaan "
+                     "di bawah <b>Perkara 152 Perlembagaan Persekutuan</b> boleh terhakis secara senyap."))
+story.append(say(H3, "Kalau begitu, punca utamanya apa? Algoritma TikTok?"))
+story.append(say(H1, "Algoritma hanya sebahagian daripadanya. Puncanya termasuk keinginan untuk tular, had masa video yang pendek, "
+                     "pengaruh kandungan luar negara, dan kurangnya teladan bahasa yang baik. Pempengaruh yang mempunyai "
+                     "jutaan pengikut sebenarnya memikul tanggungjawab yang besar."))
+story.append(say(H3, "Sebenarnya, ada juga pencipta kandungan yang tular kerana menggunakan bahasa Melayu yang indah. Jadi, bahasa "
+                     "yang betul tidak semestinya membosankan."))
+story.append(say(H2, "Betul. Kreativiti tidak semestinya memerlukan slanga. Peribahasa, pantun dan kiasan Melayu pun boleh "
+                     "menjadi kandungan yang tular jika disampaikan dengan cara yang lucu dan segar. Pantun kita tadi pun boleh "
+                     "dijadikan video TikTok!"))
 
 story += bar("SEGMEN 5 · BILIK DARJAH  (8:45 – 10:15)")
-story.append(say(H1, "Sebagai bakal guru Bahasa Melayu, bagaimanakah kita boleh memanfaatkan isu ini di dalam bilik darjah?"))
-story.append(say(H3, "Saya mencadangkan aktiviti <b>\"Detektif Kapsyen\"</b>. Guru memaparkan tangkap layar kapsyen TikTok "
-                     "dengan nama pengguna dikaburkan, kemudian murid secara berkumpulan mengenal pasti kesalahan sintaksis "
-                     "dan membina semula ayat yang gramatis. Murid belajar tatabahasa daripada bahan yang dekat dengan "
-                     "kehidupan mereka."))
-story.append(say(H2, "Saya suka! Boleh juga buat cabaran <b>\"Alih Laras\"</b>. Murid diberikan satu ayat slanga, kemudian "
-                     "mereka menukarnya kepada laras formal untuk surat rasmi dan laras santai yang masih gramatis untuk "
-                     "media sosial. Lebih baik lagi kalau mereka menghasilkan video TikTok sendiri dalam bahasa Melayu yang betul."))
-story.append(say(H1, "Pendekatan ini selari dengan pembelajaran abad ke-21. Guru tidak sekadar melarang. Sebaliknya, guru "
-                     "mengajar murid memilih bahasa mengikut konteks, dan itulah kemahiran yang sebenar."))
-story.append(say(H3, "Satu lagi, guru perlu mengajar murid tentang padanan istilah. Dewan Bahasa dan Pustaka telah "
-                     "menyediakan banyak padanan, misalnya \"muat naik\" untuk <i>upload</i>, \"siaran langsung\" untuk "
-                     "<i>live</i> dan \"tular\" untuk <i>viral</i>. Murid boleh menyemaknya melalui laman Pusat Rujukan "
-                     "Persuratan Melayu (PRPM)."))
+story.append(say(H3, "Sebagai bakal guru Bahasa Melayu, bagaimanakah kita boleh memanfaatkan isu ini di dalam bilik darjah?"))
+story.append(say(H1, "Saya mencadangkan aktiviti <b>\"Detektif Kapsyen\"</b>. Guru memaparkan tangkap layar kapsyen TikTok "
+                     "dengan nama pengguna dikaburkan. Kemudian, murid secara berkumpulan mengenal pasti kesalahan sintaksis "
+                     "dan membina semula ayat yang gramatis."))
+story.append(say(H2, "Boleh juga buat cabaran <b>\"Alih Laras\"</b>. Murid diberikan satu ayat slanga, kemudian mereka menukarnya "
+                     "kepada laras formal untuk surat rasmi dan laras santai yang masih gramatis untuk media sosial. Lebih baik "
+                     "lagi kalau mereka menghasilkan video TikTok sendiri dalam bahasa Melayu yang betul."))
+story.append(say(H3, "Guru juga perlu mengajar murid tentang padanan istilah. Dewan Bahasa dan Pustaka telah menyediakan banyak "
+                     "padanan, misalnya \"muat naik\" untuk <i>upload</i>, \"siaran langsung\" untuk <i>live</i> dan \"tular\" "
+                     "untuk <i>viral</i>. Murid boleh menyemaknya melalui laman Pusat Rujukan Persuratan Melayu (PRPM). "
+                     "Pendekatan ini selari dengan pembelajaran abad ke-21 kerana guru tidak sekadar melarang, tetapi mengajar "
+                     "murid memilih bahasa mengikut konteks."))
+story.append(say(H2, "Jangan lupa juga, guru sendiri perlu menjadi teladan. Jika guru menulis hantaran di kumpulan WhatsApp "
+                     "kelas dengan bahasa yang rancu, murid pun akan meniru."))
+story.append(say(H1, "Setuju. Bahasa yang baik bermula daripada contoh yang baik, sama ada di bilik darjah mahupun di media "
+                     "sosial."))
 
 story += bar("SEGMEN 6 · PENUTUP  (10:15 – 11:30)")
 story.append(say(H2, "Jadi, kesimpulannya, kita tidak perlu memadamkan aplikasi TikTok, tetapi kita perlu lebih bijak berbahasa, bukan?"))
@@ -277,18 +283,18 @@ story.append(say(H3, "Betul. Pesanan saya mudah: gunakan TikTok untuk berkongsi,
                      "tatabahasa kita. Sebelum memuat naik kapsyen, tanya diri sendiri: adakah ayat ini lengkap, adakah susunannya "
                      "betul, dan adakah ada padanan bahasa Melayu untuk perkataan Inggeris ini?"))
 story.append(say(H1, "Kepada semua pendengar, mari kita jadikan bahasa Melayu yang betul dan gramatis sebagai \"trend\" yang "
-                     "sebenar. Bahasa jiwa bangsa. Jika bukan kita yang memartabatkannya, siapa lagi? Sebagai penutup, "
-                     "kami bertiga mempersembahkan serangkap pantun."))
+                     "sebenar. Bahasa jiwa bangsa. Jika bukan kita yang memartabatkannya, siapa lagi?"))
+story.append(say(H2, "Sebagai penutup, kami bertiga mempersembahkan serangkap pantun."))
 story.append(KeepTogether([say(H3, "<i>(berpantun, semua menyambung baris)</i>"),
                            box(P("Dari Melaka ke Kuala Kangsar,<br/>Singgah sebentar membeli kopi;<br/>"
                                  "Bahasa yang baik, bahasa yang benar,<br/>Bahasa Melayu kita junjung tinggi.", "pantun"), bg=CREAM),
                            Spacer(1, 4)]))
-story.append(say(H1, "Contoh dalam episod ini dipetik daripada kandungan awam TikTok dan kajian ilmiah untuk tujuan pendidikan "
+story.append(say(H3, "Contoh dalam episod ini dipetik daripada kandungan awam TikTok dan kajian ilmiah untuk tujuan pendidikan "
                      "sahaja. Semua hak cipta kekal milik pencipta asal, dan senarai rujukan kami sertakan bersama. Muzik latar "
                      "episod ini ialah muzik bebas hak cipta."))
 story.append(say(H2, "Kalau episod ini bermanfaat, jangan lupa tekan butang <b>suka</b> dan kongsikan dengan rakan-rakan!"))
-story.append(say(H3, "Jumpa lagi dalam episod akan datang. Jaga diri, jaga bahasa!"))
-story.append(say(H1, "Assalamualaikum dan selamat sejahtera!"))
+story.append(say(H1, "Jumpa lagi dalam episod Podcast Tengah Jalan yang akan datang. Jaga diri, jaga bahasa! Assalamualaikum "
+                     "dan selamat sejahtera!"))
 story.append(cue("Muzik latar dinaikkan semula dan audio dipudarkan"))
 story.append(PageBreak())
 
@@ -412,14 +418,14 @@ def on_page(c, doc):
             c.circle(A4[0] - (10 + i * 6) * mm, (10 + j * 6) * mm, 1.6 * mm, fill=1, stroke=0)
     if doc.page > 1:
         c.setFont("Sans", 7.5); c.setFillColor(GREY)
-        c.drawString(18 * mm, 10 * mm, "Slay atau Salah? Bila Bahasa Kita Terpaling Rancu di TikTok  ·  Audio Siar Akademik")
+        c.drawString(18 * mm, 10 * mm, "Podcast Tengah Jalan  ·  Slay atau Salah? Bila Bahasa Kita Terpaling Rancu di TikTok")
         c.drawRightString(A4[0] - 30 * mm, 10 * mm, f"{doc.page}")
     c.restoreState()
 
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Skrip_Podcast_Slay_atau_Salah.pdf")
 doc = BaseDocTemplate(out, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm, topMargin=18 * mm, bottomMargin=18 * mm,
-                      title="Slay atau Salah? Bila Bahasa Kita Terpaling Rancu di TikTok",
-                      author="Kumpulan Audio Siar", subject="Kerancuan Bahasa - Bahasa TikTok")
+                      title="Podcast Tengah Jalan: Slay atau Salah? Bila Bahasa Kita Terpaling Rancu di TikTok",
+                      author="Aliff, Ammar dan Iman", subject="Kerancuan Bahasa - Bahasa TikTok")
 frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id="f")
 doc.addPageTemplates([PageTemplate(id="p", frames=[frame], onPage=on_page)])
 doc.build(story)
