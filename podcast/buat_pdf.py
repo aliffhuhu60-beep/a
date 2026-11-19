@@ -106,7 +106,7 @@ info = [
     [P("<b>Durasi</b>", "smallb"), P("± 12 minit (kira-kira 1,600 patah perkataan dialog termasuk pantun; banyak soal jawab pendek, jadi bacaan santai mengambil masa sekitar 12 minit)", "small")],
     [P("<b>Penutur</b>", "smallb"), P("ALIFF (Hos 1 – pengacara utama) · AMMAR (Hos 2 – \"suara warganet\") · "
                                       "IMAN (Hos 3 – \"detektif sintaksis\"). Dialog dibahagikan sama rata: setiap penutur "
-                                      "bercakap kira-kira 520–540 patah perkataan dan mengetuai perbincangan "
+                                      "bercakap kira-kira 520–550 patah perkataan dan mengetuai perbincangan "
                                       "analisis satu daripada tiga ayat TikTok (Iman: ayat 1, Aliff: ayat 2, Ammar: ayat 3).", "small")],
     [P("<b>Isi kandungan</b>", "smallb"), P("1. Judul alternatif  ·  2. Struktur & masa  ·  3. Skrip penuh  ·  "
                                             "4. Ringkasan analisis sintaksis tiga ayat  ·  5. Bukti autentik: pautan TikTok  ·  "
@@ -182,135 +182,131 @@ story.append(say(H1, "Episod kali ini bertajuk <b>\"Slay atau Salah? Bila Bahasa
                      "tidak akan membawa senarai slanga yang panjang. Sebaliknya, kita akan membedah <b>tiga ayat</b> yang "
                      "selalu kita jumpa di TikTok, satu demi satu, dari sudut sintaksis."))
 
-story += bar("SEGMEN 2 · BAHASA TIKTOK DAN SINTAKSIS  (1:30 – 3:00)")
+story += bar("SEGMEN 2 · KERANCUAN BAHASA DAN BAHASA TIKTOK  (1:30 – 3:00)")
 story.append(say(H2, "Iman, sebelum kita mula, apa sebenarnya maksud \"rancu\"? Bunyinya seperti nama kuih."))
 story.append(say(H3, "<i>(ketawa)</i> Bukan kuih, Ammar! Menurut <b>Kamus Dewan Edisi Keempat (2005)</b>, \"rancu\" bermaksud "
-                     "bercampur aduk atau kacau dalam penggunaan bahasa. Bayangkan ayat itu seperti bilik yang bersepah. Semua "
-                     "barang ada, tetapi tidak berada di tempatnya."))
-story.append(say(H1, "Analogi yang bagus! Sintaksis pula ialah ilmu tentang cara kita menyusun perkataan menjadi ayat. Senang "
-                     "sahaja. Setiap ayat ada dua bahagian. Satu bahagian ialah <b>subjek</b>, iaitu siapa atau apa yang kita "
-                     "cakapkan. Satu bahagian lagi ialah <b>predikat</b>, iaitu cerita tentang subjek itu. Hal ini dijelaskan "
-                     "dalam <b>Tatabahasa Dewan (2008)</b>."))
-story.append(say(H2, "Boleh beri contoh?"))
-story.append(say(H1, "Contohnya, \"Adik menangis.\" Siapa yang kita cakapkan? Adik, itu subjeknya. Apa cerita tentang adik? "
-                     "Menangis, itu predikatnya."))
-story.append(say(H2, "Oh, senang! Kalau begitu, \"Ammar makan nasi lemak\" pun ada subjek dan predikat. Subjeknya Ammar, "
-                     "predikatnya makan nasi lemak. Jadi, hari ini kita main permainan \"cari subjek, cari predikat\" dengan ayat TikTok?"))
-story.append(say(H3, "Tepat! Kalau salah satu bahagian itu hilang atau tersusun salah, di situlah kerancuan berlaku. Kapsyen "
-                     "TikTok ditulis dengan laju, jadi perkara ini selalu terjadi tanpa kita sedari."))
-story.append(say(H1, "Baiklah, mari kita mulakan! Kita ada tiga ayat, dan setiap orang akan membawa satu."))
+                     "bercampur aduk atau kacau dalam penggunaan bahasa. Jadi, <b>kerancuan bahasa</b> berlaku apabila unsur "
+                     "bahasa lain atau bahasa percakapan bercampur aduk sehingga peraturan bahasa Melayu dilanggar."))
+story.append(say(H1, "Dan bahasa TikTok ialah contoh yang paling dekat dengan kita. Kapsyen dan komen ditulis dengan laju, "
+                     "pendek, dan banyak meniru gaya bahasa Inggeris. Akibatnya, yang rosak bukan sahaja perkataan, malah "
+                     "<b>struktur ayat</b>. Itulah sebabnya isu ini termasuk dalam bidang sintaksis."))
+story.append(say(H2, "Sintaksis itu ilmu tentang susunan ayat, bukan?"))
+story.append(say(H1, "Betul. Menurut <b>Tatabahasa Dewan (2008)</b>, setiap ayat bahasa Melayu terdiri daripada <b>subjek</b>, "
+                     "iaitu unsur yang diterangkan, dan <b>predikat</b>, iaitu unsur yang menerangkan subjek. Predikat pula "
+                     "boleh berupa frasa nama, frasa kerja, frasa adjektif atau frasa sendi nama."))
+story.append(say(H3, "Selain itu, ayat boleh jadi ayat tunggal, iaitu ayat yang ada satu klausa sahaja, atau ayat majmuk, iaitu "
+                     "ayat yang ada lebih daripada satu klausa dan disambung dengan kata hubung. Kedua-dua konsep ini penting "
+                     "dalam analisis kita sebentar lagi."))
+story.append(say(H1, "Jadi, kerancuan bahasa TikTok boleh berlaku dalam bentuk apa?"))
+story.append(say(H2, "Daripada pemerhatian saya di TikTok, antaranya ialah struktur ayat yang meniru bahasa Inggeris, campur kod di tengah ayat, klausa yang disambung "
+                     "tanpa kata hubung, dan kata yang mengulang maksud. Kesemuanya akan kita lihat dalam tiga ayat hari ini."))
 
 story += bar("SEGMEN 3 · AYAT 1: \"POV\"  (3:00 – 5:30)")
 story.append(cue("Kesan bunyi \"ting!\""))
-story.append(say(H3, "Untuk permulaan, saya bawa kapsyen kegemaran warganet: \"<b>POV: kau first time masuk kelas Cikgu Bahasa "
-                     "Melayu.</b>\" Kapsyen begini biasanya muncul pada video yang meminta kita membayangkan diri dalam situasi itu."))
+story.append(say(H3, "Untuk permulaan, saya bawa kapsyen yang sangat popular: \"<b>POV: kau first time masuk kelas Cikgu Bahasa "
+                     "Melayu.</b>\" Format POV meminta penonton membayangkan diri mereka dalam sesuatu situasi."))
 story.append(say(H2, "Saya selalu tulis begitu! Semua orang faham, apa salahnya?"))
-story.append(say(H3, "Faham memang faham. Mari kita main \"cari subjek, cari predikat\". Siapa yang masuk kelas?"))
-story.append(say(H2, "Kau!"))
-story.append(say(H3, "Betul, itu subjeknya. Apa yang kau buat?"))
-story.append(say(H1, "Masuk kelas. Itu predikatnya."))
-story.append(say(H3, "Bagus! Jadi, bahagian \"kau masuk kelas\" sudah lengkap. Masalahnya ialah perkataan \"POV\" di hadapan. Ia "
-                     "bukan subjek dan bukan predikat. Ia seperti tetamu yang berdiri di depan pintu tetapi tidak masuk ke dalam "
-                     "rumah. Dalam tatabahasa, binaan begini dipanggil <b>tergantung</b>."))
-story.append(say(H1, "Tetamu di depan pintu! <i>(ketawa)</i> Ada masalah lain?"))
-story.append(say(H3, "Ada. Selain itu, frasa \"first time\" terselit di tengah ayat. Frasa ini memberitahu bila perkara itu "
-                     "berlaku, tetapi dalam bahasa Inggeris. Itulah <b>campur kod</b>. Satu lagi, \"masuk kelas\" lebih tepat "
-                     "ditulis \"masuk ke kelas\", kerana \"ke\" menunjukkan arah."))
-story.append(say(H2, "Banyaknya masalah dalam satu kapsyen yang pendek! Jadi, bagaimana hendak membetulkannya?"))
-story.append(say(H3, "Mudah sahaja. Tukar \"POV\" kepada perkataan yang benar-benar menjalankan tugasnya, iaitu \"bayangkan\". "
-                     "Jadi, ayatnya: <b>\"Bayangkan anda masuk ke kelas guru Bahasa Melayu buat kali pertama.\"</b>"))
-story.append(say(H1, "Oh, jadi \"bayangkan\" itu memberi arahan kepada penonton. Tetamu tadi sudah masuk ke dalam rumah!"))
-story.append(say(H3, "<i>(ketawa)</i> Betul! Ayat ini ialah ayat perintah, iaitu ayat yang menyuruh. \"Buat kali pertama\" pula "
-                     "menggantikan \"first time\" dan diletakkan di hujung ayat."))
-story.append(say(H2, "Bagaimana pula dengan kapsyen \"POV: mak kau nampak result SPM kau\"? Yang ini lebih memeningkan. Siapa "
-                     "sebenarnya yang sedang melihat?"))
-story.append(say(H3, "Itulah masalahnya, pembaca terpaksa meneka. Ayat yang jelas ialah: <b>\"Bayangkan anda seorang ibu yang "
-                     "sedang melihat keputusan SPM anak anda.\"</b> Panjang sedikit, tetapi semua orang tahu siapa buat apa."))
-story.append(say(H2, "Nampaknya saya perlu menyunting semula separuh kapsyen dalam akaun saya! <i>(ketawa)</i>"))
+story.append(say(H3, "Faham memang faham, tetapi mari kita analisis. Bahagian selepas titik bertindih, \"kau first time masuk kelas "
+                     "Cikgu Bahasa Melayu\", ialah ayat tunggal dengan pola <b>frasa nama + frasa kerja</b>. Subjeknya kata ganti "
+                     "nama \"kau\". Predikatnya frasa kerja \"masuk kelas Cikgu Bahasa Melayu\"."))
+story.append(say(H1, "Kalau begitu, di manakah kerancuannya?"))
+story.append(say(H3, "Mula-mula, \"POV\" di hadapan ayat. Singkatan Inggeris ini tidak berfungsi sebagai subjek atau predikat, "
+                     "jadi ia menjadi <b>unsur tergantung</b>. Binaan \"label, titik bertindih, ayat\" ini sebenarnya meniru "
+                     "format kapsyen bahasa Inggeris."))
+story.append(say(H2, "Ada lagi?"))
+story.append(say(H3, "Selain itu, \"first time\" ialah keterangan masa dalam bahasa Inggeris yang diselitkan antara subjek dan "
+                     "predikat. Itulah <b>campur kod pada peringkat frasa</b>. Di samping itu, kata kerja \"masuk\" lebih "
+                     "tepat diikuti kata sendi nama \"ke\" untuk menunjukkan arah, iaitu \"masuk ke kelas\"."))
+story.append(say(H1, "Tiga kerancuan dalam satu kapsyen pendek! Bagaimana pula ayat yang gramatis?"))
+story.append(say(H3, "<b>\"Bayangkan anda masuk ke kelas guru Bahasa Melayu buat kali pertama.\"</b> Ini ialah <b>ayat "
+                     "perintah</b>. Kata kerja \"bayangkan\" menjadi predikat, manakala \"anda masuk ke kelas guru Bahasa Melayu "
+                     "buat kali pertama\" ialah klausa yang menjadi objeknya. Frasa \"buat kali pertama\" pula menggantikan "
+                     "\"first time\" sebagai keterangan masa di hujung ayat."))
+story.append(say(H2, "Oh, jadi \"bayangkan\" mengambil alih tugas \"POV\", tetapi kali ini ia benar-benar menjadi sebahagian "
+                     "daripada ayat. Nampaknya saya perlu menyunting semula separuh kapsyen dalam akaun saya! <i>(ketawa)</i>"))
 
 story += bar("SEGMEN 4 · AYAT 2: \"SLAY\"  (5:30 – 8:00)")
 story.append(cue("Kesan bunyi \"ting!\""))
-story.append(say(H1, "Seterusnya, giliran saya. Ayat ini selalu muncul dalam ruangan komen video tayangan pakaian: \"<b>Outfit dia "
-                     "hari ni slay gila, confirm ramai yang jealous!</b>\" Tahukah kamu, dalam kamus bahasa Inggeris, \"slay\" "
-                     "sebenarnya bermaksud membunuh?"))
-story.append(say(H3, "<i>(ketawa)</i> Jadi, kita memuji pakaian itu dengan berkata pakaian itu membunuh! Baiklah, mari kita main "
-                     "\"cari subjek, cari predikat\" sekali lagi."))
-story.append(say(H1, "Mula-mula, perhatikan tanda koma di tengah ayat. Sebenarnya ini dua ayat kecil yang dicantumkan begitu sahaja, "
-                     "tanpa kata penyambung. Mari kita lihat bahagian sebelum koma: \"Outfit dia hari ni slay gila.\" Apa yang "
-                     "kita cakapkan?"))
-story.append(say(H2, "Outfit dia. Itu subjeknya."))
-story.append(say(H1, "Betul. Apa ceritanya?"))
-story.append(say(H2, "Slay gila. Eh, apabila saya sebut kuat-kuat, baru saya perasan bunyinya pelik!"))
-story.append(say(H1, "Di sinilah masalahnya. \"Slay\" ialah kata kerja dalam bahasa Inggeris, tetapi di sini ia digunakan sebagai "
-                     "kata sifat untuk menerangkan pakaian. \"Gila\" pula hanya sesuai dalam perbualan tidak rasmi. Di samping "
-                     "itu, \"hari ni\" terselit di dalam subjek, padahal tempatnya di hujung ayat."))
-story.append(say(H3, "Bagaimana dengan bahagian selepas koma, \"confirm ramai yang jealous\"?"))
-story.append(say(H1, "Yang ini lebih kabur. Siapa yang cemburu? Perkataan \"orang\" hilang, jadi subjeknya tidak jelas. "
-                     "\"Confirm\" pula sepatutnya \"pasti\"."))
-story.append(say(H2, "Betul juga. Dalam komen, kita jarang menulis subjek kerana kita anggap orang sudah faham. Jadi, apakah "
-                     "ayat yang betul?"))
-story.append(say(H1, "<b>\"Pakaiannya sungguh hebat hari ini, dan pasti ramai orang berasa cemburu.\"</b> Sekarang kedua-dua ayat "
-                     "kecil itu lengkap. Sebelum koma, subjeknya \"pakaiannya\" dan predikatnya \"sungguh hebat\". Selepas koma, "
-                     "subjeknya \"ramai orang\" dan predikatnya \"berasa cemburu\". Kedua-duanya disambung dengan \"dan\"."))
-story.append(say(H2, "Tetapi \"slay\" pendek dan bertenaga. \"Sungguh hebat\" terasa panjang untuk ruangan komen."))
-story.append(say(H3, "Kalau mahu pendek, tulis sahaja \"Hebat!\" atau \"Menawan!\". Satu perkataan pun boleh menjadi ayat seruan "
-                     "yang betul. Pendek, bertenaga dan tetap gramatis."))
-story.append(say(H1, "Setuju. Jadi, masalahnya bukan bahasa Melayu tidak mempunyai perkataan yang pendek, tetapi kita "
-                     "yang sudah terbiasa dengan perkataan Inggeris."))
+story.append(say(H1, "Seterusnya, giliran saya, dan inilah ayat yang menjadi asal judul episod kita. Komen ini selalu muncul di "
+                     "video tayangan pakaian: \"<b>Outfit dia hari ni slay gila, confirm ramai yang jealous!</b>\" Tahukah kamu, "
+                     "dalam kamus bahasa Inggeris, \"slay\" sebenarnya bermaksud membunuh?"))
+story.append(say(H3, "<i>(ketawa)</i> Jadi, kita memuji pakaian itu dengan berkata pakaian itu membunuh! Baiklah, bagaimana "
+                     "analisis sintaksisnya, Aliff?"))
+story.append(say(H1, "Mula-mula, ayat ini sebenarnya <b>ayat majmuk</b> kerana ada dua klausa, tetapi kedua-duanya dicantumkan "
+                     "dengan tanda koma sahaja, tanpa kata hubung. Itu sudah satu kerancuan dari segi struktur. Klausa sebelum koma, "
+                     "\"outfit dia hari ni slay gila\", berpola <b>frasa nama + frasa adjektif</b>. Subjeknya frasa nama "
+                     "\"outfit dia\", dengan inti \"outfit\" dalam bahasa Inggeris."))
+story.append(say(H2, "Predikatnya pula \"slay gila\"?"))
+story.append(say(H1, "Ya, dan di sinilah kerancuan yang paling ketara. \"Slay\" ialah kata kerja transitif dalam bahasa Inggeris, "
+                     "iaitu kata kerja yang memerlukan objek. Di sini, ia dipaksa berfungsi sebagai kata adjektif untuk "
+                     "menerangkan pakaian. Kemudian, \"gila\" digunakan sebagai kata penguat di belakangnya, dan penggunaan ini "
+                     "hanya sesuai dalam bahasa percakapan. \"Hari ni\" pula bentuk percakapan bagi \"hari ini\"."))
+story.append(say(H3, "Bagaimana dengan klausa selepas koma, \"confirm ramai yang jealous\"?"))
+story.append(say(H1, "Klausa ini lebih kabur. \"Confirm\" ialah kata Inggeris yang berfungsi sebagai kata penegas. Kata hubung "
+                     "\"yang\" pula sepatutnya menerangkan kata nama, tetapi kata nama \"orang\" telah digugurkan. Akibatnya, "
+                     "subjek klausa ini tidak lengkap. Akhir sekali, \"jealous\" juga kata Inggeris."))
+story.append(say(H2, "Jadi, apakah ayat yang gramatis?"))
+story.append(say(H1, "<b>\"Pakaiannya sungguh hebat hari ini, dan pasti ramai orang berasa cemburu.\"</b> Kini ayat ini ialah "
+                     "<b>ayat majmuk gabungan</b> dengan kata hubung \"dan\". Klausa sebelum kata hubung berpola frasa nama + frasa adjektif: "
+                     "\"pakaiannya\" + \"sungguh hebat\". Klausa selepasnya berpola frasa nama + frasa kerja: \"ramai orang\" + "
+                     "\"berasa cemburu\", dengan kata penegas \"pasti\"."))
+story.append(say(H3, "Sekarang barulah pendengar faham mengapa episod ini bertajuk <b>\"Slay atau Salah?\"</b>. Satu perkataan "
+                     "\"slay\" sahaja sudah membawa campur kod, perubahan golongan kata dan struktur ayat majmuk yang rancu."))
+story.append(say(H2, "Dan inilah contoh paling jelas bagi tajuk asal tugasan kita, iaitu <b>kerancuan bahasa akibat bahasa "
+                     "TikTok</b>. Satu komen pendek, tetapi hampir setiap bahagiannya meminjam bahasa Inggeris."))
+story.append(say(H1, "Jadi, jawapan kepada soalan dalam judul kita: di TikTok, mungkin \"slay\". Tetapi dari segi tatabahasa, "
+                     "jawapannya jelas, iaitu <b>salah</b>! <i>(ketawa)</i>"))
 
 story += bar("SEGMEN 5 · AYAT 3: \"TERPALING\"  (8:00 – 10:15)")
 story.append(cue("Kesan bunyi \"ting!\""))
-story.append(say(H2, "Akhir sekali, giliran saya! Ayat ini ada perkataan dalam judul kita: \"<b>Dia ni terpaling alim, semua "
-                     "orang dia tegur.</b>\" Saya rasa semua orang pernah berjumpa ayat ini di ruangan komen. Ayat ini biasanya menyindir orang yang berlagak alim dan suka menegur semua orang."))
-story.append(say(H1, "Saya mengaku, saya pernah menulis ayat seperti ini. <i>(ketawa)</i> Apa masalahnya, Ammar?"))
-story.append(say(H2, "Sama seperti ayat Aliff tadi, ini pun dua ayat kecil yang dicantumkan dengan koma. Bahagian sebelum koma "
-                     "ialah \"Dia ni terpaling alim\". Subjeknya \"dia\", predikatnya \"terpaling alim\". Masalahnya, \"ter-\" dan "
-                     "\"paling\" membawa maksud yang sama. Bayangkan kita berkata \"naik ke atas\". Naik memang ke atas! Jadi, "
-                     "cukup sebut \"paling alim\"."))
-story.append(say(H3, "Contoh \"naik ke atas\" itu memang mudah difahami! Inilah yang dipanggil <b>kelewahan</b>, iaitu maksud yang "
-                     "diulang dua kali. Bagaimana pula dengan \"semua orang dia tegur\"?"))
-story.append(say(H2, "Yang ini lebih licik. Susunan begini hanya betul jika pelakunya \"saya\" atau \"kamu\". Contohnya, "
-                     "\"Semua orang saya tegur\" betul. Tetapi jika pelakunya \"dia\", kata kerjanya mesti ada \"di-\", jadi "
-                     "\"semua orang ditegurnya\". Cuba bandingkan. \"Buku itu saya baca\" betul. \"Buku itu kamu baca\" pun "
-                     "betul. Tetapi \"Buku itu dia baca\" salah. Yang betul ialah \"Buku itu dibacanya\"."))
-story.append(say(H1, "Wah, saya tidak pernah perasan! Jadi, \"saya tegur\" boleh, tetapi \"dia tegur\" tidak boleh dalam ayat begini?"))
-story.append(say(H2, "Tepat. Ramai orang pun keliru tentang perkara ini, bukan di TikTok sahaja."))
-story.append(say(H3, "Satu lagi, apakah hubungan antara dua bahagian itu? Dia berlagak alim, akibatnya dia menegur semua orang. "
-                     "Jadi, kita perlukan kata penyambung yang menunjukkan akibat."))
-story.append(say(H2, "Betul. Penyambung yang sesuai ialah \"sehingga\". Ayat penuhnya: <b>\"Dia berlagak paling alim sehingga "
-                     "semua orang ditegurnya.\"</b> Perkataan \"berlagak\" pula mengekalkan nada sindiran."))
-story.append(say(H1, "Menarik. Sindirannya masih ada, tetapi ayatnya gramatis. Kita tidak kehilangan apa-apa pun."))
-story.append(say(H3, "Kalau tidak suka bentuk \"ditegurnya\", boleh juga tulis \"sehingga dia menegur semua orang\". "
-                     "Kedua-duanya betul."))
+story.append(say(H2, "Akhir sekali, giliran saya. Ayat ini ada perkataan dalam judul kita: \"<b>Dia ni terpaling alim, semua "
+                     "orang dia tegur.</b>\" Ayat ini biasanya menyindir orang yang berlagak alim dan suka menegur semua orang."))
+story.append(say(H1, "Saya mengaku, saya pernah menulis ayat seperti ini. <i>(ketawa)</i> Apakah masalahnya, Ammar?"))
+story.append(say(H2, "Sama seperti ayat Aliff tadi, ini juga ayat majmuk yang dua klausanya dicantumkan dengan koma tanpa kata "
+                     "hubung. Klausa sebelum koma, \"dia ni terpaling alim\", berpola frasa nama + frasa adjektif. Subjeknya "
+                     "\"dia ni\". Perkataan \"ni\" ialah bentuk percakapan bagi \"ini\". Predikatnya frasa adjektif \"terpaling alim\"."))
+story.append(say(H3, "Dan \"terpaling\" itu sendiri bermasalah, bukan?"))
+story.append(say(H2, "Betul. Awalan <i>ter-</i> pada kata adjektif sudah membawa makna paling, contohnya \"terpandai\". Apabila "
+                     "digabungkan dengan \"paling\", maksud yang sama diulang dua kali. Inilah <b>kelewahan</b>, sama seperti "
+                     "kita berkata \"naik ke atas\". Cukup sebut \"paling alim\"."))
+story.append(say(H1, "Bagaimana pula dengan klausa selepas koma, \"semua orang dia tegur\"?"))
+story.append(say(H2, "Ini <b>ayat pasif</b>, kerana objek \"semua orang\" dibawa ke hadapan. Masalahnya, susunan \"objek + pelaku + "
+                     "kata kerja tanpa imbuhan\" hanya betul untuk kata ganti nama diri pertama dan kedua, contohnya \"Semua "
+                     "orang saya tegur.\" Bagi diri ketiga seperti \"dia\", kata kerja mesti menerima imbuhan <i>di-</i>, iaitu "
+                     "\"ditegurnya\" atau \"ditegur olehnya\"."))
+story.append(say(H3, "Satu lagi, hubungan antara dua klausa itu ialah sebab dan akibat. Dia berlagak alim, akibatnya semua orang "
+                     "ditegurnya. Jadi, ayat ini memerlukan kata hubung yang menunjukkan akibat."))
+story.append(say(H2, "Tepat. Ayat gramatisnya: <b>\"Dia berlagak paling alim sehingga semua orang ditegurnya.\"</b> Ini ialah "
+                     "<b>ayat majmuk pancangan keterangan</b>. Klausa utamanya \"dia berlagak paling alim\", manakala klausa "
+                     "\"semua orang ditegurnya\" menerangkan akibat, disambung dengan kata hubung \"sehingga\"."))
+story.append(say(H1, "Menarik. Kata \"berlagak\" pula mengekalkan nada sindiran. Jadi, sindirannya masih ada, tetapi ayatnya gramatis."))
+story.append(say(H3, "Kalau mahu bentuk aktif pun boleh: \"Dia berlagak paling alim sehingga dia menegur semua orang.\" "
+                     "Kedua-duanya betul, cuma fokusnya berbeza."))
 
 story += bar("SEGMEN 6 · SALAH ATAU KREATIF?  (10:15 – 11:15)")
-story.append(say(H2, "Tetapi, jujurnya, gaya bahasa begini membuatkan kita rasa rapat. Adakah semuanya salah?"))
+story.append(say(H2, "Tetapi, jujurnya, gaya bahasa TikTok ini membuatkan kita rasa rapat. Adakah semuanya salah?"))
 story.append(say(H3, "Bahasa santai ada tempatnya, Ammar. Yang penting, kita tahu membezakan <b>laras bahasa</b>. Masalahnya "
-                     "bermula apabila ayat tergantung seperti format POV dibawa ke dalam karangan atau surat rasmi."))
-story.append(say(H1, "Betul. Bayangkan adik-adik kita menulis \"semua orang dia tegur\" dalam karangan peperiksaan. Pemeriksa "
-                     "tentu akan memotong markah. Lebih membimbangkan, apabila sudah terbiasa, kita tidak lagi sedar bahawa "
-                     "ayat itu salah."))
+                     "bermula apabila struktur ayat seperti tiga contoh tadi dibawa ke dalam karangan, surat rasmi dan urusan formal."))
+story.append(say(H1, "Lebih membimbangkan, apabila sudah terbiasa, kita tidak lagi sedar bahawa ayat itu rancu. Bayangkan "
+                     "adik-adik kita menulis \"semua orang dia tegur\" dalam karangan peperiksaan."))
 story.append(say(H2, "Sebagai bakal guru, kita boleh jadikan isu ini aktiviti <b>\"Detektif Kapsyen\"</b>. Murid mengumpulkan "
-                     "kapsyen TikTok, mengaburkan nama pengguna, kemudian bermain \"cari subjek, cari predikat\" seperti yang "
-                     "kita buat tadi."))
-story.append(say(H3, "Seronok, dan murid belajar sintaksis daripada bahan yang dekat dengan mereka. Mereka juga sedar bahawa "
-                     "santai tidak bermaksud rancu. Malah, guru boleh meminta murid membuat video TikTok sendiri dengan "
-                     "kapsyen yang gramatis. Siapa tahu, mungkin tular!"))
-story.append(say(H2, "Satu lagi aktiviti yang seronok ialah <b>\"Alih Laras\"</b>. Murid mengambil satu komen TikTok, "
-                     "kemudian menukarnya kepada dua versi: versi formal untuk surat rasmi, dan versi santai yang masih "
-                     "gramatis. Contohnya, \"Hebat sungguh pakaian awak hari ini!\" Santai, tetapi subjek dan predikatnya lengkap."))
+                     "kapsyen TikTok, mengaburkan nama pengguna, kemudian mengenal pasti pola ayat, jenis kerancuan dan membina "
+                     "semula ayat yang gramatis."))
+story.append(say(H3, "Dengan cara ini, murid belajar sintaksis daripada bahan yang dekat dengan mereka, dan sedar bahawa "
+                     "santai tidak bermaksud rancu. Malah, guru boleh meminta murid menghasilkan video TikTok sendiri dengan "
+                     "kapsyen yang gramatis."))
 
 story += bar("SEGMEN 7 · PENUTUP  (11:15 – 12:00)")
-story.append(say(H1, "Kesimpulannya, kita hanya perlu ingat satu soalan mudah: di mana subjek, dan di mana predikat? Ayat POV "
-                     "mengajar kita supaya ayat lengkap. Selain itu, ayat \"slay\" mengingatkan kita supaya menyambung ayat "
-                     "dengan betul. Akhirnya, ayat \"terpaling\" mengajar kita supaya tidak mengulang maksud dan menyusun ayat "
-                     "pasif dengan betul."))
+story.append(say(H2, "Kesimpulannya, kerancuan bahasa TikTok menyentuh struktur ayat itu sendiri. Mula-mula, ayat POV "
+                     "menunjukkan unsur tergantung dan campur kod. Seterusnya, ayat \"slay\" menunjukkan klausa yang disambung "
+                     "tanpa kata hubung dan kata Inggeris yang berubah golongan. Akhirnya, ayat \"terpaling\" menunjukkan "
+                     "kelewahan dan ayat pasif yang salah susunannya."))
 story.append(say(H3, "Pesanan saya, sebelum menekan butang muat naik, baca kapsyen anda sekali lagi. Lima saat sahaja!"))
 story.append(say(H2, "Kepada semua pendengar, mari kita jadikan bahasa Melayu yang betul dan gramatis sebagai \"trend\" yang "
-                     "sebenar. Ingat, santai boleh, rancu jangan! Bahasa jiwa bangsa! Sebagai penutup, kami bertiga mempersembahkan serangkap pantun."))
+                     "sebenar. Ingat, santai boleh, rancu jangan! Sebagai penutup, kami bertiga mempersembahkan serangkap pantun."))
 story.append(KeepTogether([say(H3, "<i>(berpantun bersama, setiap orang menyambung satu baris)</i>"),
                            box(P("Pucuk paku di tepi perigi,<br/>Dipetik adik dibawa pulang;<br/>"
-                                 "Kapsyen TikTok tulislah lagi,<br/>Subjek predikat jangan hilang.", "pantun"), bg=CREAM),
+                                 "Kapsyen TikTok tulislah lagi,<br/>Bahasa rancu jangan diulang.", "pantun"), bg=CREAM),
                            Spacer(1, 4)]))
 story.append(say(H2, "Contoh dalam episod ini berdasarkan kandungan awam TikTok dan digunakan untuk tujuan pendidikan sahaja. "
                      "Hak cipta kekal milik pencipta asal. Muzik latar episod ini ialah muzik bebas hak cipta."))
@@ -323,29 +319,29 @@ story.append(PageBreak())
 # ===== 4. Analisis ayat =====
 link = lambda u: f"<link href='{u}' color='#E03A2F'><u>{u}</u></link>"
 story.append(P("4. Ringkasan Analisis Sintaksis Tiga Ayat", "h1"))
-rows = [["", "Ayat TikTok", "Cari subjek & predikat", "Apa yang tidak kena", "Ayat gramatis"],
+rows = [["", "Ayat TikTok", "Struktur ayat", "Kerancuan", "Ayat gramatis & strukturnya"],
         ["1", "POV: kau first time masuk kelas Cikgu Bahasa Melayu.",
-         "Subjek: kau<br/>Predikat: masuk kelas",
-         "• \"POV\" tergantung, bukan subjek atau predikat<br/>• \"first time\" ialah campur kod<br/>"
-         "• \"masuk kelas\" lebih tepat dengan \"ke\"",
-         "Bayangkan anda masuk ke kelas guru Bahasa Melayu buat kali pertama.<br/><i>(ayat perintah)</i>"],
+         "Ayat tunggal, pola FN + FK<br/>S: kau<br/>P: masuk kelas Cikgu Bahasa Melayu",
+         "• \"POV\" unsur tergantung (meniru format kapsyen Inggeris)<br/>• \"first time\": campur kod peringkat frasa<br/>"
+         "• Kata sendi nama \"ke\" digugurkan",
+         "Bayangkan anda masuk ke kelas guru Bahasa Melayu buat kali pertama.<br/><i>Ayat perintah; \"bayangkan\" + klausa sebagai objek</i>"],
         ["2", "Outfit dia hari ni slay gila, confirm ramai yang jealous!",
-         "Sebelum koma – Subjek: outfit dia; Predikat: slay gila<br/>Selepas koma – Subjek: tidak jelas",
-         "• Dua ayat kecil dicantumkan dengan koma sahaja<br/>• \"slay\" (kata kerja Inggeris) dijadikan kata sifat<br/>"
-         "• \"hari ni\" terselit dalam subjek<br/>• Perkataan \"orang\" hilang",
-         "Pakaiannya sungguh hebat hari ini, dan pasti ramai orang berasa cemburu.<br/><i>(disambung dengan \"dan\")</i>"],
+         "Ayat majmuk (2 klausa) tanpa kata hubung<br/>Klausa 1: FN + FA<br/>Klausa 2: subjek tidak lengkap",
+         "• Klausa dicantumkan dengan koma sahaja<br/>• \"slay\" (kata kerja transitif Inggeris) dijadikan kata adjektif<br/>"
+         "• Penguat \"gila\" & \"hari ni\": bahasa percakapan<br/>• \"yang\" tanpa kata nama \"orang\"<br/>• Campur kod: outfit, confirm, jealous",
+         "Pakaiannya sungguh hebat hari ini, dan pasti ramai orang berasa cemburu.<br/><i>Ayat majmuk gabungan: [FN + FA] dan [FN + FK]</i>"],
         ["3", "Dia ni terpaling alim, semua orang dia tegur.",
-         "Sebelum koma – Subjek: dia; Predikat: terpaling alim<br/>Selepas koma – ayat pasif",
-         "• \"ter-\" + \"paling\" mengulang maksud (kelewahan)<br/>• \"dia tegur\" salah; mesti \"ditegurnya\"<br/>"
-         "• Tiada penyambung yang menunjukkan akibat",
-         "Dia berlagak paling alim sehingga semua orang ditegurnya.<br/><i>(disambung dengan \"sehingga\")</i>"]]
+         "Ayat majmuk (2 klausa) tanpa kata hubung<br/>Klausa 1: FN + FA<br/>Klausa 2: ayat pasif",
+         "• Kelewahan ter- + paling<br/>• \"ni\": bahasa percakapan<br/>• Pasif diri ketiga tanpa imbuhan di-<br/>"
+         "• Tiada kata hubung akibat",
+         "Dia berlagak paling alim sehingga semua orang ditegurnya.<br/><i>Ayat majmuk pancangan keterangan (akibat)</i>"]]
 rows = [[P(c, "smallb" if (i == 0 or j == 0) else "small") for j, c in enumerate(r)] for i, r in enumerate(rows)]
 t = Table(rows, colWidths=[7 * mm, 36 * mm, 40 * mm, 50 * mm, 41 * mm], repeatRows=1)
 t.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), PINK), ("GRID", (0, 0), (-1, -1), 0.4, TERRA),
                        ("VALIGN", (0, 0), (-1, -1), "TOP"), ("TEXTCOLOR", (4, 1), (4, -1), GREEN),
                        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, CREAM])]))
 story.append(t)
-story.append(P("<i>Ayat TikTok dalam jadual ini mewakili pola kapsyen dan komen yang lazim. Untuk bukti yang lebih kukuh, "
+story.append(P("<i>S = subjek, P = predikat, FN = frasa nama, FK = frasa kerja, FA = frasa adjektif. Ayat TikTok dalam jadual ini mewakili pola kapsyen dan komen yang lazim. Untuk bukti yang lebih kukuh, "
                "kumpulan anda boleh menggantikannya dengan tangkap layar sebenar daripada pautan di bawah (kaburkan nama "
                "pengguna).</i>", "small"))
 
@@ -374,8 +370,8 @@ story.append(PageBreak())
 # ===== 6. Semakan ciri =====
 story.append(P("6. Semakan Ciri-ciri Audio Siar Akademik", "h1"))
 rows = [["Ciri", "Bagaimana skrip memenuhinya"],
-        ["Ketepatan ilmu", "Analisis berdasarkan konsep sintaksis yang diterangkan dengan mudah: subjek dan predikat, binaan tergantung, "
-                           "campur kod, kata penyambung, kelewahan, ayat perintah dan ayat pasif."],
+        ["Ketepatan ilmu", "Analisis sintaksis berdasarkan Tatabahasa Dewan (2008): pola ayat dasar, ayat tunggal dan majmuk, unsur "
+                           "tergantung, campur kod, perubahan golongan kata, kelewahan, ayat perintah dan ayat pasif."],
         ["Bukti autentik", "Tiga ayat berdasarkan pola kapsyen dan komen sebenar di TikTok, disokong oleh pautan TikTok awam."],
         ["Pemikiran kritis", "Setiap ayat dinilai: apa yang salah, mengapa ia digunakan, dan bagaimana membaikinya tanpa "
                              "menghilangkan nada asal. Hujah balas (\"slay\" lebih pendek) turut dijawab."],
