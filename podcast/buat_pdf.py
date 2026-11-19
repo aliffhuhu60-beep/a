@@ -61,7 +61,7 @@ def box(flow, bg=PINK, border=TERRA):
     return t
 
 # ---------------- Watak ----------------
-H1, H2, H3 = "AIN", "DANIAL", "MIRA"
+H1, H2, H3 = "ALIFF", "AMMAR", "IMAN"
 WARNA = {H1: colors.HexColor("#C9836C"), H2: colors.HexColor("#5E1F2A"), H3: colors.HexColor("#8A6F5A")}
 
 def say(who, text):
@@ -101,8 +101,8 @@ story.append(Spacer(1, 18 * mm))
 info = [
     [P("<b>Format</b>", "smallb"), P("Audio siar perbualan, 3 orang penutur", "small")],
     [P("<b>Durasi</b>", "smallb"), P("± 11 minit (julat 10–12 minit; kira-kira 1,550 patah perkataan dialog)", "small")],
-    [P("<b>Penutur</b>", "smallb"), P("AIN (Hos 1 – pengacara utama) · DANIAL (Hos 2 – \"suara warganet\") · "
-                                      "MIRA (Hos 3 – \"detektif sintaksis\"). Nama boleh ditukar kepada nama kumpulan anda.", "small")],
+    [P("<b>Penutur</b>", "smallb"), P("ALIFF (Hos 1 – pengacara utama) · AMMAR (Hos 2 – \"suara warganet\") · "
+                                      "IMAN (Hos 3 – \"detektif sintaksis\"). Nama boleh ditukar kepada nama kumpulan anda.", "small")],
     [P("<b>Isi kandungan</b>", "smallb"), P("1. Judul alternatif  ·  2. Struktur & masa  ·  3. Skrip penuh  ·  "
                                             "4. Bukti autentik: contoh TikTok & pautan  ·  5. Semakan ciri audio siar akademik  ·  "
                                             "6. Rujukan  ·  7. Tip rakaman", "small")],
@@ -136,7 +136,7 @@ for j in ["<b>#FYP Bahasa:</b> Bahasa Melayu Ke Mana di Era TikTok?",
 # ===== 2. Struktur =====
 story.append(P("2. Struktur dan Peruntukan Masa", "h1"))
 seg = [["Masa", "Segmen", "Fokus", "Ciri akademik"],
-       ["0:00 – 1:30", "Pembukaan", "Muzik, pantun Ain & Danial, pengenalan isu", "–"],
+       ["0:00 – 1:30", "Pembukaan", "Muzik, pantun Aliff & Ammar, pengenalan isu", "–"],
        ["1:30 – 3:15", "Apa itu bahasa TikTok?", "Takrif rancu & slanga, data kajian", "Ketepatan ilmu, etika"],
        ["3:15 – 6:45", "Bedah Ayat TikTok", "6 contoh sebenar + pembetulan sintaksis", "Bukti autentik, ketepatan ilmu"],
        ["6:45 – 8:45", "Salah atau kreatif?", "Punca, kesan, pandangan berbeza, laras", "Pemikiran kritis"],
@@ -159,24 +159,24 @@ story.append(P("3. Skrip Penuh", "h1"))
 story += bar("SEGMEN 1 · PEMBUKAAN  (0:00 – 1:30)")
 story.append(cue("Muzik latar bebas hak cipta masuk selama 5 saat, kemudian diperlahankan"))
 story.append(say(H1, "Assalamualaikum dan salam sejahtera kepada semua pendengar! Selamat datang ke audio siar kami, "
-                     "<b>\"Slay atau Salah? Bila Bahasa Kita Terpaling Rancu di TikTok\"</b>. Saya Ain, dan seperti biasa, "
+                     "<b>\"Slay atau Salah? Bila Bahasa Kita Terpaling Rancu di TikTok\"</b>. Saya Aliff, dan seperti biasa, "
                      "sebelum kita mula berbual, izinkan saya membuka bicara dengan serangkap pantun."))
 story.append(pantun(H1, ["Burung merbah terbang ke hulu,", "Hinggap sebentar di pohon jati;",
                          "Bahasa TikTok viral selalu,", "Bahasa Melayu tetap di hati."]))
-story.append(say(H2, "Wah, pembukaan yang cantik! Tidak mahu kalah, saya pun ada pantun juga. Saya Danial, wakil warganet yang "
+story.append(say(H2, "Wah, pembukaan yang cantik! Tidak mahu kalah, saya pun ada pantun juga. Saya Ammar, wakil warganet yang "
                      "menghabiskan masa tiga jam sehari menatal TikTok."))
 story.append(pantun(H2, ["Anak dara menenun kain,", "Kain disulam benang suasa;",
                          "Slanga boleh sekadar bermain,", "Jangan rosakkan martabat bahasa."]))
 story.append(say(H3, "Cantik! Pantun kamu berdua betul-betul... saya hampir sebut \"<i>ate</i>\", tetapi hari ini kita kena jaga "
-                     "bahasa. <i>(ketawa)</i> Saya Mira, dan hari ini saya akan menjadi \"detektif sintaksis\" kita."))
+                     "bahasa. <i>(ketawa)</i> Saya Iman, dan hari ini saya akan menjadi \"detektif sintaksis\" kita."))
 story.append(say(H1, "Sesuai sangat! Pendengar sekalian, cuba bayangkan. Anda membuka TikTok dan membaca kapsyen "
                      "\"<i>POV: korang bila cikgu suruh present, terus blank, no cap</i>\". Anda faham, tetapi adakah ayat itu "
                      "betul dari segi tatabahasa? Itulah isu yang akan kita bongkar hari ini: <b>kerancuan bahasa akibat "
                      "bahasa TikTok</b>."))
 
 story += bar("SEGMEN 2 · APA ITU BAHASA TIKTOK?  (1:30 – 3:15)")
-story.append(say(H2, "Mira, sebelum kita pergi lebih jauh, apakah sebenarnya maksud \"rancu\"? Bunyinya seperti nama makanan."))
-story.append(say(H3, "<i>(ketawa)</i> Bukan, Danial. Menurut <b>Kamus Dewan Edisi Keempat</b>, \"rancu\" bermaksud bercampur aduk "
+story.append(say(H2, "Iman, sebelum kita pergi lebih jauh, apakah sebenarnya maksud \"rancu\"? Bunyinya seperti nama makanan."))
+story.append(say(H3, "<i>(ketawa)</i> Bukan, Ammar. Menurut <b>Kamus Dewan Edisi Keempat</b>, \"rancu\" bermaksud bercampur aduk "
                      "atau kacau, khususnya dalam penggunaan bahasa. Jadi, kerancuan bahasa berlaku apabila unsur bahasa "
                      "bercampur aduk sehingga melanggar sistem bahasa Melayu, sama ada dari segi ejaan, kosa kata, atau yang "
                      "paling penting bagi kita hari ini, <b>struktur ayat</b>."))
@@ -229,10 +229,10 @@ story.append(say(H2, "Wah, enam ayat, enam kesalahan. Saya rasa separuh kapsyen 
 
 story += bar("SEGMEN 4 · SALAH ATAU KREATIF?  (6:45 – 8:45)")
 story.append(say(H1, "Namun, adakah semua ini salah? Ada pendengar yang mungkin berkata, \"Alah, di TikTok sahaja. Bahasa "
-                     "memang berkembang.\" Danial, apakah pendapat kamu sebagai warganet?"))
+                     "memang berkembang.\" Ammar, apakah pendapat kamu sebagai warganet?"))
 story.append(say(H2, "Jujurnya, saya rasa slanga membuatkan kita rasa rapat. Apabila seseorang menulis \"ytjt\", kita terus rasa "
                      "satu geng. Jadi, ada nilai identiti di situ."))
-story.append(say(H1, "Saya faham, Danial. Tetapi bagaimana pula dengan generasi ibu bapa kita? Mak saya pernah bertanya "
+story.append(say(H1, "Saya faham, Ammar. Tetapi bagaimana pula dengan generasi ibu bapa kita? Mak saya pernah bertanya "
                      "mengapa saya kata makanannya \"<i>mid</i>\". Beliau ingat saya memuji!"))
 story.append(say(H2, "<i>(ketawa)</i> Itu memang bahaya. Maksud \"mid\" ialah biasa-biasa sahaja."))
 story.append(say(H3, "Pandangan itu ada asasnya. Dalam laporan <b>Malay Mail (Oktober 2025)</b>, <b>Profesor Emeritus Datuk Dr. Nik "
