@@ -103,10 +103,10 @@ story.append(Paragraph("Tajuk asal: <b>Kerancuan Bahasa – Bahasa TikTok</b>",
 story.append(Spacer(1, 18 * mm))
 info = [
     [P("<b>Format</b>", "smallb"), P("Audio siar perbualan, 3 orang penutur", "small")],
-    [P("<b>Durasi</b>", "smallb"), P("± 11 minit (julat 10–12 minit; kira-kira 1,400 patah perkataan dialog termasuk pantun)", "small")],
+    [P("<b>Durasi</b>", "smallb"), P("± 12 minit (kira-kira 1,700 patah perkataan dialog termasuk pantun)", "small")],
     [P("<b>Penutur</b>", "smallb"), P("ALIFF (Hos 1 – pengacara utama) · AMMAR (Hos 2 – \"suara warganet\") · "
                                       "IMAN (Hos 3 – \"detektif sintaksis\"). Dialog dibahagikan sama rata: setiap penutur "
-                                      "bercakap kira-kira 450 patah perkataan dan mengetuai perbincangan "
+                                      "bercakap kira-kira 550 patah perkataan dan mengetuai perbincangan "
                                       "satu daripada tiga istilah TikTok (Iman: POV, Aliff: slay, Ammar: terpaling).", "small")],
     [P("<b>Isi kandungan</b>", "smallb"), P("1. Judul alternatif  ·  2. Struktur & masa  ·  3. Skrip penuh  ·  "
                                             "4. Tiga istilah: maksud PRPM & analisis  ·  5. Bukti autentik: pautan TikTok  ·  "
@@ -147,12 +147,12 @@ story.append(P("Episod ini memberi tumpuan kepada <b>tiga istilah bahasa TikTok 
                "sintaksis, dan bentuk ayat yang gramatis. Setiap penutur mengetuai perbincangan satu istilah."))
 seg = [["Masa", "Segmen", "Fokus", "Ciri akademik"],
        ["0:00 – 1:30", "Pembukaan", "Pengenalan Podcast Tengah Jalan, pantun Aliff & Ammar, topik episod", "–"],
-       ["1:30 – 3:00", "Kenali bahasa TikTok", "Takrif rancu, slanga dan bahasa rojak (PRPM); mengapa TikTok melahirkan bahasanya sendiri", "Ketepatan ilmu"],
-       ["3:00 – 5:00", "Istilah 1: \"POV\"", "Diketuai Iman", "Ketepatan ilmu, bukti autentik"],
-       ["5:00 – 7:00", "Istilah 2: \"Slay\"", "Diketuai Aliff", "Ketepatan ilmu, bukti autentik"],
-       ["7:00 – 8:45", "Istilah 3: \"Terpaling\"", "Diketuai Ammar", "Ketepatan ilmu, bukti autentik"],
-       ["8:45 – 10:15", "Salah atau kreatif? & bilik darjah", "Laras bahasa, kesan, aktiviti pengajaran", "Pemikiran kritis, aplikasi pedagogi"],
-       ["10:15 – 11:30", "Penutup", "Seruan berbahasa gramatis, pantun, kredit", "Etika akademik"]]
+       ["1:30 – 3:30", "Kenali bahasa TikTok", "Takrif rancu dan slanga, dapatan kajian, mengapa TikTok melahirkan bahasanya sendiri", "Ketepatan ilmu, bukti autentik"],
+       ["3:30 – 5:45", "Istilah 1: \"POV\"", "Diketuai Iman", "Ketepatan ilmu, bukti autentik"],
+       ["5:45 – 8:00", "Istilah 2: \"Slay\"", "Diketuai Aliff", "Ketepatan ilmu, bukti autentik"],
+       ["8:00 – 9:45", "Istilah 3: \"Terpaling\"", "Diketuai Ammar", "Ketepatan ilmu, bukti autentik"],
+       ["9:45 – 11:00", "Salah atau kreatif? & bilik darjah", "Laras bahasa, kesan, aktiviti pengajaran", "Pemikiran kritis, aplikasi pedagogi"],
+       ["11:00 – 12:00", "Penutup", "Seruan berbahasa gramatis, pantun, kredit", "Etika akademik"]]
 seg = [[P(c, "smallb" if i == 0 else "small") for c in r] for i, r in enumerate(seg)]
 t = Table(seg, colWidths=[24 * mm, 40 * mm, 62 * mm, 48 * mm])
 t.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), PINK), ("GRID", (0, 0), (-1, -1), 0.4, TERRA),
@@ -161,7 +161,7 @@ story.append(t)
 story.append(Spacer(1, 6))
 story.append(P("<i>Nota bahasa: Skrip ditulis dalam bahasa Melayu gramatis tetapi bernada santai. Perkataan slanga atau "
                "bahasa Inggeris yang muncul hanya dipetik sebagai <b>contoh yang dianalisis</b> dan ditandakan dengan "
-               "tanda petik. Semua maksud kata dirujuk daripada Pusat Rujukan Persuratan Melayu (PRPM), DBP.</i>", "small"))
+               "tanda petik. Maksud bagi tiga istilah yang dibedah dirujuk daripada Pusat Rujukan Persuratan Melayu (PRPM), DBP.</i>", "small"))
 story.append(PageBreak())
 
 # ===== 3. Skrip =====
@@ -184,23 +184,31 @@ story.append(say(H1, "Episod kali ini bertajuk <b>\"Slay atau Salah? Bila Bahasa
                      "tidak akan membawa senarai slanga yang panjang. Sebaliknya, kita akan membedah <b>tiga istilah</b> yang "
                      "paling kerap muncul di TikTok, iaitu \"POV\", \"slay\" dan \"terpaling\", satu demi satu."))
 
-story += bar("SEGMEN 2 · KENALI BAHASA TIKTOK  (1:30 – 3:00)")
-story.append(say(H2, "Sebelum kita bedah, saya nak tahu dahulu. Apakah sebenarnya maksud \"rancu\"? Bunyinya seperti nama makanan."))
-story.append(say(H3, "<i>(ketawa)</i> Bukan, Ammar. Saya sudah semak di laman <b>Pusat Rujukan Persuratan Melayu, atau PRPM</b>, "
-                     "milik Dewan Bahasa dan Pustaka. Menurut <b>Kamus Dewan Edisi Keempat (2005)</b> dalam PRPM, \"rancu\" "
-                     "bermaksud tidak teratur, campur aduk dan kacau, khususnya tentang bahasa. Kerancuan pula ialah keadaan "
-                     "rancu itu sendiri."))
-story.append(say(H1, "Saya pula menyemak kata \"slanga\". Kamus yang sama mentakrifkannya sebagai kata-kata atau ungkapan yang "
-                     "tidak tergolong dalam bahasa baku dan biasa digunakan dalam percakapan tidak rasmi. Ada juga entri "
-                     "\"bahasa rojak\", iaitu bahasa yang bercampur aduk, seketika perkataan Melayu dan seketika perkataan Inggeris."))
-story.append(say(H2, "Bahasa rojak! Itulah bahasa TikTok. Tetapi mengapa TikTok, bukan aplikasi lain?"))
-story.append(say(H3, "Kerana formatnya. Video TikTok pendek, kapsyennya pun pendek, dan semua orang mengejar \"trend\". Menariknya, "
-                     "PRPM mentakrifkan \"trend\" sebagai arah aliran. Jadi, apabila satu istilah menjadi arah aliran, berjuta-juta "
-                     "pengguna menirunya dalam masa beberapa hari sahaja, termasuk struktur ayatnya."))
+story += bar("SEGMEN 2 · KENALI BAHASA TIKTOK  (1:30 – 3:30)")
+story.append(say(H2, "Iman, sebelum kita pergi lebih jauh, apakah sebenarnya maksud \"rancu\"? Bunyinya seperti nama makanan."))
+story.append(say(H3, "<i>(ketawa)</i> Bukan, Ammar. Menurut <b>Kamus Dewan Edisi Keempat (2005)</b>, \"rancu\" bermaksud bercampur aduk "
+                     "atau kacau, khususnya dalam penggunaan bahasa. Jadi, kerancuan bahasa berlaku apabila unsur bahasa "
+                     "bercampur aduk sehingga melanggar sistem bahasa Melayu, terutamanya <b>struktur ayat</b>."))
+story.append(say(H1, "Bahasa TikTok pula ialah gabungan slanga, singkatan, campur kod Melayu-Inggeris dan struktur ayat yang "
+                     "dipinjam daripada bahasa Inggeris. <b>Kamus Bahasa Melayu Nusantara (2003)</b> mentakrifkan slanga sebagai "
+                     "ragam bahasa yang tidak rasmi, tidak baku dan bersifat tidak tetap atau bermusim."))
+story.append(say(H2, "Bermusim! Betul juga. Tahun lepas semua orang sebut \"mantul\", iaitu \"mantap betul\". Sekarang orang sebut "
+                     "\"<i>delulu</i>\", \"<i>terpaling</i>\" dan \"<i>ytjt</i>\", iaitu \"yang tahu, tahu je\". Fenomena ini "
+                     "juga sudah dikaji. <b>Nor Alia Nadia Husain dan Nora'Azian Nahar (2025)</b> dalam <i>LSP International "
+                     "Journal</i> meneliti 13 sesi siaran langsung jual beli di TikTok."))
+story.append(say(H3, "Apakah dapatan mereka, Ammar?"))
+story.append(say(H2, "Mereka mendapati slanga memudahkan komunikasi dengan pembeli tetap, tetapi mengelirukan pembeli baharu "
+                     "kerana tafsirannya berbeza-beza. Kajian itu juga mencadangkan agar penjual menyediakan glosari ringkas "
+                     "slanga supaya komunikasi lebih inklusif."))
+story.append(say(H3, "Ini menunjukkan bahawa pengkaji pun mengakui kewujudan jurang pemahaman. Mengapa TikTok? Kerana formatnya. "
+                     "Video TikTok pendek, kapsyennya pun pendek, dan semua orang mengejar \"trend\". Apabila satu istilah "
+                     "tular, berjuta-juta pengguna menirunya dalam masa beberapa hari sahaja, termasuk struktur ayatnya."))
 story.append(say(H2, "Betul. Apabila satu video tular, ruangan komennya dipenuhi istilah yang sama. Dalam masa seminggu, "
                      "kawan-kawan saya pun mula menggunakannya dalam perbualan harian, malah dalam mesej kepada pensyarah!"))
+story.append(say(H1, "Maknanya, bahasa yang rancu bukan sahaja isu tatabahasa. Bahasa itu juga boleh menyebabkan mesej tidak sampai "
+                     "kepada pendengar. Baiklah, mari kita bedah istilah pertama!"))
 
-story += bar("SEGMEN 3 · ISTILAH 1: \"POV\"  (3:00 – 5:00)")
+story += bar("SEGMEN 3 · ISTILAH 1: \"POV\"  (3:30 – 5:45)")
 story.append(cue("Kesan bunyi \"ting!\""))
 story.append(say(H3, "Istilah pertama, saya yang ketuai: <b>\"POV\"</b>. Ini singkatan Inggeris <i>point of view</i>. Di TikTok, "
                      "\"POV\" ialah format video yang meminta penonton membayangkan diri mereka dalam sesuatu situasi. Contoh "
@@ -212,8 +220,7 @@ story.append(say(H3, "Faham, ya. Tetapi dari segi sintaksis, ada dua masalah. Pe
                      "klausa Melayu."))
 story.append(say(H2, "Maksudnya, perkataan \"POV\" itu sebenarnya berfungsi seperti tajuk kecil, bukan sebahagian daripada ayat?"))
 story.append(say(H1, "Ya, sama seperti kita menulis \"Tajuk:\" sebelum karangan. Tajuk boleh berupa frasa, tetapi isi karangan "
-                     "mesti terdiri daripada ayat yang lengkap."))
-story.append(say(H1, "Kalau begitu, apakah padanan bahasa Melayunya?"))
+                     "mesti terdiri daripada ayat yang lengkap. Kalau begitu, Iman, apakah padanan bahasa Melayunya?"))
 story.append(say(H3, "Dalam PRPM, kata \"sudut\" mempunyai maksud arah pandangan atau segi. Jadi, terjemahan harfiahnya ialah "
                      "\"sudut pandangan\". Namun, fungsi \"POV\" di TikTok sebenarnya mengajak penonton membayangkan sesuatu. "
                      "Ayat yang gramatis ialah: <b>\"Bayangkan anda masuk ke kelas guru Bahasa Melayu buat kali pertama.\"</b> "
@@ -221,8 +228,14 @@ story.append(say(H3, "Dalam PRPM, kata \"sudut\" mempunyai maksud arah pandangan
 story.append(say(H2, "Kedengarannya lebih sopan juga. \"Kau\" pun bertukar menjadi \"anda\"."))
 story.append(say(H3, "Tepat, itu soal laras. Saya bukan menyuruh semua orang membuang format POV, tetapi apabila struktur "
                      "\"label: klausa\" ini dibawa ke dalam karangan, ayat murid mula tergantung tanpa mereka sedari."))
+story.append(say(H2, "Ada juga kapsyen POV yang meletakkan penonton sebagai orang lain, contohnya \"POV: mak kau nampak "
+                     "result SPM kau.\" Yang ini lebih mengelirukan!"))
+story.append(say(H3, "Betul, kerana pembaca tidak pasti siapa yang sedang memandang. Dalam bahasa Melayu, kita perlu menyatakan "
+                     "subjek dengan jelas: <b>\"Bayangkan anda seorang ibu yang sedang melihat keputusan SPM anak anda.\"</b> "
+                     "Ayat ini panjang sedikit, tetapi subjek, predikat dan maksudnya jelas. Inilah kelebihan ayat yang "
+                     "gramatis: pembaca tidak perlu meneka."))
 
-story += bar("SEGMEN 4 · ISTILAH 2: \"SLAY\"  (5:00 – 7:00)")
+story += bar("SEGMEN 4 · ISTILAH 2: \"SLAY\"  (5:45 – 8:00)")
 story.append(cue("Kesan bunyi \"ting!\""))
 story.append(say(H1, "Istilah kedua, giliran saya: <b>\"slay\"</b>. Di TikTok, \"slay\" digunakan untuk memuji, misalnya "
                      "penampilan atau persembahan yang sangat hebat. Contoh komen: \"<b>Outfit dia hari ni slay gila!</b>\" "
@@ -231,7 +244,13 @@ story.append(say(H2, "Hebat? Cantik?"))
 story.append(say(H1, "Salah! Menurut <b>Kamus Inggeris-Melayu Dewan (1992)</b> dalam PRPM, \"slay\" bermaksud <b>membunuh</b>, "
                      "contohnya \"<i>he slew the dragon with his sword</i>\", iaitu dia membunuh naga itu dengan pedangnya."))
 story.append(say(H3, "<i>(ketawa)</i> Jadi, kalau ikut kamus, kita sedang berkata pakaian itu membunuh!"))
-story.append(say(H1, "Betul! Inilah <b>perubahan makna</b>. Dari segi sintaksis pula, ayat itu bermasalah. Subjeknya, \"outfit "
+story.append(say(H2, "Tetapi bagaimana makna membunuh boleh berubah menjadi pujian?"))
+story.append(say(H1, "Dalam bahasa Inggeris tidak rasmi, \"slay\" sudah lama digunakan dengan makna mengagumkan penonton, sama "
+                     "seperti kita berkata persembahan itu \"memukau\". Kemudian, makna itu tersebar melalui hiburan Barat dan "
+                     "media sosial. Berita Harian sendiri pernah bertanya warganet di TikTok pada tahun 2024 tentang maksud "
+                     "\"slay\" dalam bahasa Malaysia. Ini menunjukkan bahawa istilah ini benar-benar tular."))
+story.append(say(H3, "Menarik. Jadi, \"slay\" mengalami <b>perubahan makna</b>. Bagaimana pula dari segi sintaksis, Aliff?"))
+story.append(say(H1, "Dari segi sintaksis, ayat itu bermasalah. Subjeknya, \"outfit "
                      "dia\", menggunakan kata Inggeris. Predikatnya, \"slay\", ialah kata kerja transitif Inggeris yang "
                      "dipaksa berfungsi sebagai adjektif tanpa objek. Kemudian, kata \"gila\" digunakan sebagai penguat. PRPM "
                      "melabelkan makna \"gila\" sebagai luar biasa itu sebagai bahasa percakapan."))
@@ -245,7 +264,7 @@ story.append(say(H1, "Itu hujah yang baik, Ammar. Namun, bahasa Melayu ada kata 
                      "\"Cantik!\" atau \"Menawan!\". Satu perkataan pun sudah boleh menjadi ayat seruan yang gramatis."))
 story.append(say(H3, "Hal ini menunjukkan bahawa bahasa Melayu tidak kekurangan kata. Kita yang malas mencarinya."))
 
-story += bar("SEGMEN 5 · ISTILAH 3: \"TERPALING\"  (7:00 – 8:45)")
+story += bar("SEGMEN 5 · ISTILAH 3: \"TERPALING\"  (8:00 – 9:45)")
 story.append(cue("Kesan bunyi \"ting!\""))
 story.append(say(H2, "Istilah ketiga, saya yang ketuai, dan ini perkataan dalam judul kita: <b>\"terpaling\"</b>. Di TikTok, "
                      "\"terpaling\" biasanya bernada sindiran. Contoh: \"<b>Dia ni terpaling alim, semua orang dia tegur.</b>\" "
@@ -259,14 +278,20 @@ story.append(say(H3, "Dan PRPM ada contoh yang sangat sesuai untuk kata \"lewah\
 story.append(say(H2, "Betul. Jadi, ayat gramatisnya ialah: <b>\"Dia berlagak paling alim sehingga semua orang ditegurnya.\"</b> "
                      "Kata \"berlagak\" mengekalkan nada sindiran, \"paling alim\" menggantikan \"terpaling\", dan klausa "
                      "\"semua orang dia tegur\" ditukar kepada ayat pasif yang betul."))
+story.append(say(H1, "Bijak. Ada apa-apa lagi tentang istilah ini, Ammar?"))
 story.append(say(H2, "Satu lagi perkara yang menarik. Kadang-kadang \"terpaling\" tidak diikuti adjektif. Orang menulis "
                      "\"terpaling Kelantan\" atau \"terpaling anak sulung\". Kata nama diletakkan selepas \"paling\", "
                      "sedangkan contoh dalam PRPM, seperti \"mawar yang paling indah\", menunjukkan \"paling\" menerangkan adjektif."))
 story.append(say(H1, "Jadi, binaan itu melanggar fungsi kata penguat. Ayat yang betul mungkin \"Dia berlagak seolah-olah dialah "
                      "anak jati Kelantan yang paling tulen.\""))
-story.append(say(H1, "Menarik. Sindirannya masih ada, tetapi ayatnya gramatis."))
+story.append(say(H3, "Satu lagi sebab \"terpaling\" mengelirukan ialah awalan <i>ter-</i> mempunyai beberapa makna dalam "
+                     "<b>Tatabahasa Dewan (2008)</b>, bukan hanya paling. Contohnya, \"tertidur\" bermaksud tidak sengaja, "
+                     "\"tertutup\" menunjukkan keadaan, dan \"terangkat\" bermaksud boleh diangkat. Jadi, menggabungkan "
+                     "<i>ter-</i> dengan \"paling\" bukan sahaja lewah, malah kabur."))
+story.append(say(H2, "Wah, saya tidak sangka satu awalan pun ada banyak makna!"))
+story.append(say(H1, "Menarik. Jadi, sindirannya masih boleh dikekalkan, tetapi ayatnya gramatis. Kita tidak kehilangan apa-apa pun."))
 
-story += bar("SEGMEN 6 · SALAH ATAU KREATIF?  (8:45 – 10:15)")
+story += bar("SEGMEN 6 · SALAH ATAU KREATIF?  (9:45 – 11:00)")
 story.append(say(H2, "Namun, jujurnya, saya rasa istilah ini membuatkan kita rasa rapat. Adakah semuanya salah?"))
 story.append(say(H3, "Ada asasnya, Ammar. Dalam laporan <b>Malay Mail (2025)</b>, <b>Profesor Emeritus Datuk Dr. Nik Safiah "
                      "Karim</b> berpendapat bahawa slanga ialah tanda bahasa itu hidup. Akan tetapi, beliau menegaskan bahawa "
@@ -286,9 +311,10 @@ story.append(say(H2, "Satu lagi aktiviti ialah <b>\"Alih Laras\"</b>. Murid menu
                      "kemudian kepada laras santai yang masih gramatis. Dengan cara ini, murid sedar bahawa santai tidak "
                      "bermaksud rancu."))
 
-story += bar("SEGMEN 7 · PENUTUP  (10:15 – 11:30)")
+story += bar("SEGMEN 7 · PENUTUP  (11:00 – 12:00)")
 story.append(say(H1, "Kesimpulannya, tiga istilah, tiga pengajaran. \"POV\" mengajar kita tentang ayat yang lengkap, \"slay\" "
-                     "tentang makna kata, dan \"terpaling\" tentang kelewahan."))
+                     "tentang makna kata, dan \"terpaling\" tentang kelewahan. Ketiga-tiga istilah ini membuktikan bahawa "
+                     "kerancuan bahasa bukan isu kecil, kerana ia menyentuh ayat, makna dan bentuk kata sekali gus."))
 story.append(say(H3, "Pesanan saya: sebelum memuat naik kapsyen, semak PRPM. Laman itu percuma dan hanya mengambil masa beberapa saat."))
 story.append(say(H2, "Kepada semua pendengar, mari kita jadikan bahasa Melayu yang betul dan gramatis sebagai \"trend\" yang "
                      "sebenar. Bahasa jiwa bangsa. Jika bukan kita yang memartabatkannya, siapa lagi? Sebagai penutup, kami "
@@ -360,10 +386,11 @@ story.append(PageBreak())
 # ===== 6. Semakan ciri =====
 story.append(P("6. Semakan Ciri-ciri Audio Siar Akademik", "h1"))
 rows = [["Ciri", "Bagaimana skrip memenuhinya"],
-        ["Ketepatan ilmu", "Semua maksud kata dirujuk daripada PRPM: rancu, slanga, bahasa rojak, trend, sudut, slay, gila, "
-                           "hebat, paling dan lewah. Analisis sintaksis meliputi binaan tergantung, predikat adjektif, "
+        ["Ketepatan ilmu", "Takrif \"rancu\" (Kamus Dewan Edisi Keempat, 2005) dan \"slanga\" (Kamus Bahasa Melayu Nusantara, 2003); "
+                           "maksud tiga istilah yang dibedah dirujuk daripada PRPM (sudut, slay, gila, hebat, paling, lewah). Analisis sintaksis meliputi binaan tergantung, predikat adjektif, "
                            "susunan frasa adjektif, kelewahan dan ayat pasif."],
-        ["Bukti autentik", "Tiga istilah sebenar yang tular di TikTok, disokong oleh lapan pautan TikTok awam yang bertahun."],
+        ["Bukti autentik", "Tiga istilah sebenar yang tular di TikTok, disokong oleh lapan pautan TikTok awam yang bertahun dan dapatan "
+                           "kajian Husain &amp; Nahar (2025) tentang slanga dalam siaran langsung jual beli di TikTok."],
         ["Pemikiran kritis", "Setiap istilah dinilai: mengapa digunakan, apa masalahnya, dan bagaimana membaikinya tanpa "
                              "menghilangkan nada asal. Segmen 6 menimbang pandangan Prof. Emeritus Nik Safiah Karim tentang laras."],
         ["Aplikasi pedagogi", "Aktiviti \"Detektif Kapsyen\": murid menyemak maksud istilah di PRPM dan membina semula ayat yang gramatis."],
@@ -383,16 +410,18 @@ refs = [
     "Dewan Bahasa dan Pustaka. (2005). <i>Kamus Dewan</i> (Edisi Keempat). Kuala Lumpur: Dewan Bahasa dan Pustaka.",
     "Dewan Bahasa dan Pustaka. (1992). <i>Kamus Inggeris-Melayu Dewan</i>. Kuala Lumpur: Dewan Bahasa dan Pustaka.",
     "Dewan Bahasa dan Pustaka. (2026). <i>Pusat Rujukan Persuratan Melayu (PRPM)</i>. Diakses pada 19 November 2026 "
-    "daripada " + link("https://prpm.dbp.gov.my") + ". Entri yang dirujuk:",
+    "daripada " + link("https://prpm.dbp.gov.my") + ". Entri yang dirujuk bagi tiga istilah yang dibedah:",
 ]
-for k, src in [("rancu", "Kamus Dewan Edisi Keempat, 2005"), ("slanga", "Kamus Dewan Edisi Keempat, 2005"),
-               ("bahasa rojak", "Kamus Dewan Edisi Keempat, 2005"), ("trend", "Kamus Dewan Edisi Keempat, 2005"),
-               ("sudut", "Kamus Dewan Edisi Keempat, 2005"), ("slay", "Kamus Inggeris-Melayu Dewan, 1992"),
+for k, src in [("sudut", "Kamus Dewan Edisi Keempat, 2005"), ("slay", "Kamus Inggeris-Melayu Dewan, 1992"),
                ("gila", "Kamus Dewan Edisi Keempat, 2005"), ("hebat", "Kamus Dewan Edisi Keempat, 2005"),
                ("paling", "Kamus Dewan Edisi Keempat, 2005"), ("lewah", "Kamus Dewan Edisi Keempat, 2005")]:
     refs.append(f"&nbsp;&nbsp;&nbsp;&nbsp;• \"{k}\" ({src}) — " + prpm(k))
 refs += [
     "<b>Rujukan lain</b>",
+    "<i>Kamus Bahasa Melayu Nusantara</i>. (2003). Brunei Darussalam: Dewan Bahasa dan Pustaka Brunei.",
+    "Nor Alia Nadia Husain, &amp; Nora'Azian Nahar. (2025). Penggunaan slanga dalam urusan jual beli di TikTok. "
+    "<i>LSP International Journal, 12</i>(1). https://doi.org/10.11113/lspi.v12.24433 — "
+    + link("https://journals.utm.my/lsp/article/view/24433"),
     "Nik Safiah Karim, Farid M. Onn, Hashim Haji Musa, &amp; Abdul Hamid Mahmood. (2008). <i>Tatabahasa Dewan</i> "
     "(Edisi Ketiga). Kuala Lumpur: Dewan Bahasa dan Pustaka.",
     "Malay Mail. (2025, 7 Oktober). Linguists weigh in on fast-evolving slang Malaysian youth are creating online. "
@@ -411,8 +440,8 @@ for tip in ["Baca skrip dua kali sebelum merakam supaya nada kedengaran seperti 
             "Segmen \"Slay\" (maksud PRPM = membunuh) sangat sesuai dipotong menjadi klip promosi 60 saat.",
             "Gunakan kapsyen yang gramatis sendiri, contohnya: \"Tahukah anda bahawa 'slay' dalam kamus bermaksud membunuh? "
             "Dengar Podcast Tengah Jalan episod ini!\"",
-            "Masa sasaran: bacaan santai sekitar 130–140 patah perkataan seminit menghasilkan kira-kira 10–11 minit. Jika "
-            "terlalu pendek, panjangkan perbincangan spontan dalam Segmen 6."]:
+            "Masa sasaran: bacaan santai sekitar 140 patah perkataan seminit menghasilkan kira-kira 12 minit. Jika terlalu "
+            "panjang, ringkaskan Segmen 6; jika terlalu pendek, tambah reaksi spontan."]:
     story.append(P("•&nbsp;&nbsp;" + tip))
 
 # ---------------- Templat halaman ----------------
