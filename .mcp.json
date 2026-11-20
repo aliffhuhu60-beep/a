@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "blendrelay": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--no-sync",
+        "blendrelay-mcp",
+        "mcp"
+      ],
+      "env": {}
+    }
+  }
+}

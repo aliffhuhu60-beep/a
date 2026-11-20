@@ -1,0 +1,9 @@
+# Persekitaran & log
+.venv/
+.logs/
+__pycache__/
+# Output Blender yang boleh dijana semula
+*.blend1
+projek_ujian/*.blend
+projek_ujian/render/
+projek_ujian/output/tmp/
