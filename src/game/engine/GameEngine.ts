@@ -118,7 +118,7 @@ export class GameEngine {
     this.noObstacles = !!opts.noObstacles;
     const q = QUALITY[this.quality];
     this.renderer = new THREE.WebGLRenderer({ antialias: q.antialias, powerPreference: 'high-performance', stencil: false });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, q.pixelRatio));
+    this.applyPixelRatio();
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.0;
@@ -162,32 +162,56 @@ export class GameEngine {
     this.setCharacter(look);
     this.generator = new PatternGenerator({ seed: this.seed, noObstacles: this.noObstacles });
     await nextFrame();
-    onProgress?.(0.3, 'Preparing trains');
+    onProgress?.(0.4, 'Compiling shaders');
+    if (QUALITY[this.quality].post) await this.enablePost(true);
+    await this.warmUp();
+    onProgress?.(0.9, 'Tuning engines');
+    this.setState('menu');
+    this.resetWorld();
+    this.last = performance.now();
+    this.raf = requestAnimationFrame(this.frame);
+    onProgress?.(1, 'Ready');
+  }
+
+  /**
+   * Renders every object the game can show (all obstacle kinds and LOD levels,
+   * coins, power-ups and their effects, tunnel, station, sky props, speed lines)
+   * from the running camera, so that every shader program, shadow variant and
+   * GPU upload happens behind the loading screen instead of mid-run (which
+   * caused multi-second stalls on phones).
+   */
+  private async warmUp(): Promise<void> {
     const release = this.obstacles.prewarm();
-    // Prewarm a few coins and every power-up so shader programs exist before play.
-    for (let i = 0; i < 6; i++) this.coins.spawn(laneX(((i % 3) - 1) as Lane), 1, 12 + i * 2);
-    (['magnet', 'jetpack', 'multiplier', 'shield'] as PowerUpType[]).forEach((t, i) => this.powerUps.spawnAt(t, (i - 1.5) * 2, 1.1, 16));
+    for (let i = 0; i < 6; i++) this.coins.spawn(laneX(((i % 3) - 1) as Lane), 1, 8 + i * 2);
+    (['magnet', 'jetpack', 'multiplier', 'shield'] as PowerUpType[]).forEach((t, i) => this.powerUps.spawnAt(t, (i - 1.5) * 2, 1.1, 10));
     this.env.update(0, 0, 0);
+    const restoreEnv = this.env.setWarmup(true);
+    const fx = [this.powerUps.shieldBubble, this.powerUps.magnetAura, this.powerUps.jetpackModel];
+    const fxVis = fx.map((o) => o.visible);
+    fx.forEach((o) => (o.visible = true));
+    this.speedLines.prewarm(true);
     this.coins.update(0);
+    const prevMode = this.cam.mode;
+    this.cam.mode = 'run';
+    this.cam.snap();
     this.cam.update(0, this.cameraTarget());
-    onProgress?.(0.55, 'Compiling shaders');
     await nextFrame();
     try {
       await this.renderer.compileAsync(this.scene, this.cam.camera);
     } catch {
       this.renderer.compile(this.scene, this.cam.camera);
     }
-    this.renderer.render(this.scene, this.cam.camera);
+    this.render(0);
+    await nextFrame();
+    this.render(0);
+    restoreEnv();
+    fx.forEach((o, i) => (o.visible = fxVis[i]));
+    this.speedLines.prewarm(false);
     release();
     this.coins.clear();
     this.powerUps.clear();
-    onProgress?.(0.75, 'Tuning engines');
-    if (QUALITY[this.quality].post) await this.enablePost(true);
-    this.setState('menu');
-    this.resetWorld();
-    this.last = performance.now();
-    this.raf = requestAnimationFrame(this.frame);
-    onProgress?.(1, 'Ready');
+    this.cam.mode = prevMode;
+    this.cam.snap();
   }
 
   // ---------------------------------------------------------------- setup ---
@@ -239,8 +263,19 @@ export class GameEngine {
     }
   }
 
+  private pendingQuality: Quality | null = null;
+
   async setQuality(q: Quality): Promise<void> {
-    if (q === this.quality) return;
+    if (q === this.quality) {
+      this.pendingQuality = null;
+      return;
+    }
+    // Changing quality recompiles every shader; never do that mid-run.
+    if (this.state === 'running' || this.state === 'countdown' || this.state === 'dying' || this.state === 'paused') {
+      this.pendingQuality = q;
+      return;
+    }
+    this.pendingQuality = null;
     this.quality = q;
     const s = QUALITY[q];
     this.dynScale = 1;
@@ -255,6 +290,11 @@ export class GameEngine {
     this.env.setQuality(q);
     await this.enablePost(s.post);
     this.resize();
+    if (this.state !== 'loading') await this.warmUp();
+  }
+
+  private applyPendingQuality(): void {
+    if (this.pendingQuality) void this.setQuality(this.pendingQuality);
   }
 
   setCharacter(look: CharacterLook): void {
@@ -375,6 +415,7 @@ export class GameEngine {
   quitToMenu(): void {
     this.setState('menu');
     this.resetWorld();
+    this.applyPendingQuality();
     void AudioManager.playMusic('menu');
   }
 
@@ -589,6 +630,7 @@ export class GameEngine {
 
   private finishRun(): void {
     this.setState('gameover');
+    this.applyPendingQuality();
     AudioManager.play('gameover');
     void AudioManager.playMusic('menu');
     this.callbacks.onRunEnd?.({
@@ -694,7 +736,10 @@ export class GameEngine {
   }
 
   private applyPixelRatio(): void {
-    const base = Math.min(window.devicePixelRatio || 1, QUALITY[this.quality].pixelRatio);
+    // Phones have tiny, very dense screens: rendering above ~1x costs a lot for little gain.
+    const touch = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+    const cap = touch ? Math.min(QUALITY[this.quality].pixelRatio, this.quality === 'high' ? 1.5 : 1) : QUALITY[this.quality].pixelRatio;
+    const base = Math.min(window.devicePixelRatio || 1, cap);
     this.renderer.setPixelRatio(Math.max(0.5, base * this.dynScale));
   }
 
