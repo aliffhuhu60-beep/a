@@ -1,0 +1,13 @@
+{
+  "name": "CITY DASH 3D",
+  "short_name": "City Dash",
+  "description": "An original 3D endless runner.",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0b0f1f",
+  "theme_color": "#0b0f1f",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
