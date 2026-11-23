@@ -17,13 +17,14 @@ const KEYMAP: Record<string, InputAction> = {
 /**
  * Keyboard + touch/mouse swipe input. Swipes fire as soon as the finger has
  * travelled far enough (during pointermove), not on release, so they feel
- * instant; the origin then resets so several swipes can chain in one touch.
+ * instant. Different directions can chain within one touch; the same direction
+ * needs a new touch, so one long swipe never skips two lanes.
  */
 export class InputManager {
   enabled = true;
   /** 0.5 (less sensitive) .. 2 (very sensitive). */
   sensitivity = 1;
-  private start: { id: number; x: number; y: number; t: number } | null = null;
+  private start: { id: number; x: number; y: number; t: number; last: InputAction | null } | null = null;
 
   constructor(
     private readonly target: HTMLElement | Window,
@@ -68,7 +69,7 @@ export class InputManager {
     const el = e.target as HTMLElement | null;
     if (el?.closest?.('[data-no-swipe]')) return;
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    this.start = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now() };
+    this.start = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), last: null };
   };
 
   private onMove = (e: PointerEvent): void => {
@@ -81,7 +82,10 @@ export class InputManager {
     let action: InputAction;
     if (Math.abs(dx) > Math.abs(dy)) action = dx > 0 ? 'right' : 'left';
     else action = dy > 0 ? 'slide' : 'jump';
-    this.onAction(action);
+    // One swipe = one action: repeating the same direction needs a new touch,
+    // but a change of direction (e.g. left then up) chains within one touch.
+    if (action !== s.last) this.onAction(action);
+    s.last = action;
     s.x = e.clientX;
     s.y = e.clientY;
     s.t = performance.now();

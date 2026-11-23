@@ -439,7 +439,7 @@ export class EnvironmentGenerator {
           return;
         }
         const stack = rng.int(0, 2);
-        out.matrix.compose(this.tmpV.set(side * rng.range(7.2, 8.5), stack * 2.6, -s), this.tmpQ.setFromAxisAngle(this.tmpS.set(0, 1, 0), rng.range(-0.08, 0.08)), this.tmpS.set(1, 1, 1));
+        out.matrix.compose(this.tmpV.set(side * rng.range(7.2, 8.5), 0, -s), this.tmpQ.setFromAxisAngle(this.tmpS.set(0, 1, 0), rng.range(-0.08, 0.08)), this.tmpS.set(1, stack + 1, 1));
         out.color.set(rng.pick([0xc0392b, 0x2e86c1, 0x27ae60, 0xf39c12, 0x7f8c8d, 0x8e44ad]));
       },
     );
