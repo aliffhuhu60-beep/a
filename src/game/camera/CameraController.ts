@@ -55,8 +55,9 @@ export class CameraController {
       }
       case 'showcase': {
         const a = Math.sin(this.time * 0.4) * 0.5;
-        this.desiredPos.set(Math.sin(a) * 3.4 - 0.9, 1.5, z - Math.cos(a) * 3.4);
-        this.desiredLook.set(-0.6, 1.0, z);
+        // Runner centred between the side panels of the character screens.
+        this.desiredPos.set(Math.sin(a) * 3.6, 1.45, z - Math.cos(a) * 3.6);
+        this.desiredLook.set(0, 0.95, z);
         fov = 46;
         rate = 4;
         break;

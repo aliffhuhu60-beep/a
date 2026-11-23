@@ -62,7 +62,7 @@ export const ScreenShell = ({ title, children, right, onBack, testId }: { title:
   return (
     <motion.div
       data-testid={testId}
-      className="absolute inset-0 z-20 flex flex-col bg-gradient-to-b from-[#0b0f1f]/70 to-[#0b0f1f]/40 safe-pad"
+      className="absolute inset-0 z-20 flex flex-col bg-gradient-to-b from-[#0b0f1f]/70 to-[#0b0f1f]/30 safe-pad"
       initial={{ opacity: 0, x: 40 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 40 }}

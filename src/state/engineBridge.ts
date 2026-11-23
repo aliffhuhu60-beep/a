@@ -11,7 +11,6 @@ import { useProgress } from './progressStore';
 import { useSettings } from './settingsStore';
 import { useAuth } from './authStore';
 import type { MissionUpdate } from './progressLogic';
-import { POWER_UPS } from '../game/powerups/powerupDefs';
 
 let engine: GameEngine | null = null;
 let lastRunValues = 0;
@@ -90,7 +89,6 @@ export const createEngine = async (container: HTMLElement): Promise<GameEngine> 
       onEvent: (e) => {
         if (e.type === 'fps') useGame.getState().setFps(e.fps);
         if (e.type === 'stumble') useGame.getState().flashStumble();
-        if (e.type === 'powerUp') useGame.getState().toast({ icon: POWER_UPS[e.powerUp].icon, title: POWER_UPS[e.powerUp].name });
       },
     },
   });

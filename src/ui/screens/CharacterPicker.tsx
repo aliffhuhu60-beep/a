@@ -32,8 +32,8 @@ export const CharacterPicker = ({ showSkins = true }: { showSkins?: boolean }) =
   };
 
   return (
-    <div className="flex flex-col gap-3 md:flex-row" data-testid="character-picker">
-      <div className="grid grid-cols-2 gap-2 md:w-72 md:grid-cols-1">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between" data-testid="character-picker">
+      <div className="grid grid-cols-2 gap-2 sm:w-40 sm:shrink-0 sm:grid-cols-1 lg:w-56">
         {CHARACTERS.map((ch) => {
           const isOwned = p.unlockedCharacters.includes(ch.id);
           return (
@@ -49,7 +49,7 @@ export const CharacterPicker = ({ showSkins = true }: { showSkins?: boolean }) =
               }}
               className={`glass flex items-center gap-3 rounded-2xl p-2 text-left transition ${viewing === ch.id ? 'ring-2 ring-dash-yellow' : ''}`}
             >
-              <span className="h-10 w-10 shrink-0 rounded-xl" style={{ background: `linear-gradient(135deg, ${hex(ch.colors.top)}, ${hex(ch.colors.topAccent)})` }} />
+              <span className="h-9 w-9 shrink-0 rounded-xl" style={{ background: `linear-gradient(135deg, ${hex(ch.colors.top)}, ${hex(ch.colors.topAccent)})` }} />
               <span className="min-w-0">
                 <span className="block font-bold">{ch.name}</span>
                 <span className="block text-xs text-white/70">{p.selectedCharacter === ch.id ? '✔ Selected' : isOwned ? 'Owned' : <CoinPrice amount={ch.price} />}</span>
@@ -58,7 +58,7 @@ export const CharacterPicker = ({ showSkins = true }: { showSkins?: boolean }) =
           );
         })}
       </div>
-      <div className="glass flex-1 rounded-3xl p-4 md:max-w-sm">
+      <div className="glass rounded-3xl p-4 sm:w-72 sm:shrink-0 lg:w-80">
         <div className="font-display text-2xl">{c.name}</div>
         <div className="text-sm text-dash-cyan">{c.tagline}</div>
         <p className="my-2 text-sm text-white/80">{c.bio}</p>
