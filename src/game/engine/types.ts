@@ -105,4 +105,5 @@ export type EngineEvent =
   | { type: 'powerUp'; powerUp: PowerUpType }
   | { type: 'theme'; theme: string }
   | { type: 'crash' }
-  | { type: 'fps'; fps: number };
+  | { type: 'fps'; fps: number }
+  | { type: 'lowFps'; fps: number; suggest: Quality };

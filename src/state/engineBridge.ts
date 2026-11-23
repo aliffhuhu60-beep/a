@@ -89,6 +89,10 @@ export const createEngine = async (container: HTMLElement): Promise<GameEngine> 
       onEvent: (e) => {
         if (e.type === 'fps') useGame.getState().setFps(e.fps);
         if (e.type === 'stumble') useGame.getState().flashStumble();
+        if (e.type === 'lowFps') {
+          useSettings.getState().set({ quality: e.suggest });
+          useGame.getState().toast({ icon: '⚙️', title: 'Graphics lowered for smoother play', text: `Quality set to ${e.suggest} (${e.fps} FPS). Change it in Settings.` });
+        }
       },
     },
   });

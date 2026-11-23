@@ -89,6 +89,10 @@ export class GameEngine {
   private hudTimer = 0;
   private fpsFrames = 0;
   private fpsTime = 0;
+  private perfFrames = 0;
+  private perfTime = 0;
+  /** Dynamic resolution scale (1 = full quality resolution). */
+  private dynScale = 1;
   private prevX = 0;
   private landSquash = 0;
   private maxSpeed = 0;
@@ -239,7 +243,8 @@ export class GameEngine {
     if (q === this.quality) return;
     this.quality = q;
     const s = QUALITY[q];
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, s.pixelRatio));
+    this.dynScale = 1;
+    this.applyPixelRatio();
     this.applyShadowSettings();
     this.scene.traverse((o) => {
       const m = (o as THREE.Mesh).material;
@@ -602,21 +607,24 @@ export class GameEngine {
   private frame = (now: number): void => {
     if (this.disposed) return;
     this.raf = requestAnimationFrame(this.frame);
-    let dt = (now - this.last) / 1000;
+    let raw = (now - this.last) / 1000;
     this.last = now;
-    if (!(dt > 0)) dt = 0;
-    dt = Math.min(MAX_FRAME_DT, dt) * this.timeScale;
+    if (!(raw > 0)) raw = 0;
+    // Wall-clock time (capped) drives countdowns so they never "freeze" on slow devices.
+    const realDt = Math.min(0.5, raw) * this.timeScale;
+    const dt = Math.min(MAX_FRAME_DT, raw) * this.timeScale;
 
     this.fpsFrames++;
-    this.fpsTime += dt;
+    this.fpsTime += realDt;
     if (this.fpsTime >= 1) {
       this.callbacks.onEvent?.({ type: 'fps', fps: Math.round(this.fpsFrames / this.fpsTime) });
       this.fpsFrames = 0;
       this.fpsTime = 0;
     }
+    this.watchPerformance(realDt);
 
     if (this.state === 'countdown') {
-      this.countdown -= dt;
+      this.countdown -= realDt;
       const tick = Math.ceil(this.countdown);
       if (tick !== this.lastCountdownTick) {
         this.lastCountdownTick = tick;
@@ -642,7 +650,7 @@ export class GameEngine {
       }
       if (steps >= 14) this.acc = 0;
     } else if (this.state === 'dying') {
-      this.dyingT += dt;
+      this.dyingT += realDt;
       if (this.dyingT >= DYING_TIME) this.finishRun();
     }
 
@@ -657,6 +665,38 @@ export class GameEngine {
       }
     }
   };
+
+  /**
+   * Adaptive performance: if the device cannot keep ~40 FPS while playing,
+   * lower the render resolution step by step, then ask for a lower quality tier.
+   */
+  private watchPerformance(realDt: number): void {
+    const active = this.state === 'running' || this.state === 'countdown';
+    if (!active || this.timeScale !== 1) {
+      this.perfFrames = 0;
+      this.perfTime = 0;
+      return;
+    }
+    this.perfFrames++;
+    this.perfTime += realDt;
+    if (this.perfTime < 2.5) return;
+    const fps = this.perfFrames / this.perfTime;
+    this.perfFrames = 0;
+    this.perfTime = 0;
+    if (fps >= 40) return;
+    if (this.dynScale > 0.55) {
+      this.dynScale = Math.max(0.55, this.dynScale - 0.15);
+      this.applyPixelRatio();
+      this.resize();
+    } else if (this.quality !== 'low') {
+      this.callbacks.onEvent?.({ type: 'lowFps', fps: Math.round(fps), suggest: this.quality === 'high' ? 'medium' : 'low' });
+    }
+  }
+
+  private applyPixelRatio(): void {
+    const base = Math.min(window.devicePixelRatio || 1, QUALITY[this.quality].pixelRatio);
+    this.renderer.setPixelRatio(Math.max(0.5, base * this.dynScale));
+  }
 
   private cameraTarget(): { x: number; y: number; s: number; groundY: number; jetpack: boolean; speedFrac: number } {
     const p = this.player;
