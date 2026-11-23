@@ -122,21 +122,32 @@ export const Tutorial = () => {
   const seen = useSettings((s) => s.tutorialSeen);
   const state = useGame((s) => s.gameState);
   const distance = useGame((s) => s.hud.distance);
-  if (seen || !(state === 'countdown' || (state === 'running' && distance < 120))) return null;
+  const [moved, setMoved] = useState(false);
+  useEffect(() => {
+    // Hide the hints as soon as the player makes their first move.
+    const hide = () => setMoved(true);
+    window.addEventListener('keydown', hide);
+    window.addEventListener('pointerdown', hide);
+    return () => {
+      window.removeEventListener('keydown', hide);
+      window.removeEventListener('pointerdown', hide);
+    };
+  }, []);
+  if (seen || moved || !(state === 'countdown' || (state === 'running' && distance < 80))) return null;
   const touch = typeof window !== 'undefined' && 'ontouchstart' in window;
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex justify-center" data-testid="tutorial">
-      <div className="glass grid grid-cols-4 gap-3 rounded-3xl px-4 py-3 text-center text-xs sm:text-sm">
+    <div className="pointer-events-none absolute inset-x-0 top-20 z-20 flex justify-center px-3" data-testid="tutorial">
+      <div className="glass flex gap-3 rounded-2xl px-3 py-1.5 text-center text-[11px] sm:gap-5 sm:text-xs">
         {[
-          ['⬅️', touch ? 'Swipe left' : 'A / ←', 'Left lane'],
-          ['➡️', touch ? 'Swipe right' : 'D / →', 'Right lane'],
-          ['⬆️', touch ? 'Swipe up' : 'W / Space', 'Jump'],
-          ['⬇️', touch ? 'Swipe down' : 'S / ↓', 'Slide'],
+          ['⬅️', touch ? 'Swipe' : 'A / ←', 'Left'],
+          ['➡️', touch ? 'Swipe' : 'D / →', 'Right'],
+          ['⬆️', touch ? 'Swipe' : 'W / Space', 'Jump'],
+          ['⬇️', touch ? 'Swipe' : 'S / ↓', 'Slide'],
         ].map(([i, k, l]) => (
-          <div key={l}>
-            <div className="text-2xl">{i}</div>
-            <div className="font-bold">{k}</div>
-            <div className="text-white/70">{l}</div>
+          <div key={l} className="leading-tight">
+            <div className="text-base">{i}</div>
+            <div className="font-bold">{l}</div>
+            <div className="text-white/70">{k}</div>
           </div>
         ))}
       </div>
