@@ -21,6 +21,12 @@ export class SpeedLines {
     camera.add(this.mesh);
   }
 
+  /** Forces the mesh to draw once so its shader compiles during loading. */
+  prewarm(on: boolean): void {
+    this.mesh.visible = on;
+    this.mat.opacity = on ? 0.01 : 0;
+  }
+
   update(dt: number, speed: number): void {
     const target = this.intensity;
     this.mat.opacity += (target * 0.35 - this.mat.opacity) * Math.min(1, dt * 4);

@@ -81,10 +81,27 @@ export class ObstacleManager {
       ['overhead', 2, 3],
     ];
     for (const [k, v, n] of want) for (let i = 0; i < n; i++) created.push(this.pool(k, v).acquire());
-    // Spread them out in front of the camera so they are all compiled/uploaded.
-    created.forEach((c, i) => c.root.position.set(((i % 3) - 1) * 2.6, 0, -20 - Math.floor(i / 3) * 3));
-    // Caller compiles shaders, then returns them to the pool.
+    // Spread them out in front of the camera so they are all compiled/uploaded,
+    // with every LOD level, headlight and gantry frame visible.
+    created.forEach((c, i) => c.root.position.set(((i % 3) - 1) * 2.6, 0, -12 - Math.floor(i / 3) * 2.5));
+    const lods: THREE.LOD[] = [];
+    for (const c of created) {
+      if (c.headlights) c.headlights.visible = true;
+      if (c.frame) c.frame.visible = true;
+      c.root.traverse((o) => {
+        if (o instanceof THREE.LOD) {
+          lods.push(o);
+          o.autoUpdate = false;
+          o.levels.forEach((l) => (l.object.visible = true));
+        }
+      });
+    }
+    // Caller renders, then returns them to the pool.
     return () => {
+      for (const l of lods) {
+        l.autoUpdate = true;
+        l.levels.forEach((lv, i) => (lv.object.visible = i === 0));
+      }
       for (const c of created) {
         c.root.position.set(0, 0, 0);
         this.pool(c.kind, c.variant).release(c);

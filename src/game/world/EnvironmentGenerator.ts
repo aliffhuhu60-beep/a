@@ -262,6 +262,26 @@ export class EnvironmentGenerator {
     this.applyTheme(THEMES[0], 1);
   }
 
+  /** Makes every optional prop visible near the start for shader warm-up; returns a restore function. */
+  setWarmup(on: boolean): () => void {
+    const objs: THREE.Object3D[] = [this.tunnel, this.station, this.drones, this.droneLights, this.neonStrips, this.catenaryWires, ...this.clouds, ...this.billboards.map((b) => b.mesh)];
+    const prev = objs.map((o) => ({ o, v: o.visible, z: o.position.z }));
+    if (on) {
+      for (const o of objs) o.visible = true;
+      this.tunnel.position.z = -40;
+      this.station.position.z = -20;
+      this.billboards.forEach((b, i) => b.mesh.position.set(i % 2 ? 12 : -12, 0, -20 - i * 6));
+    }
+    return () => {
+      for (const p of prev) {
+        p.o.visible = p.v;
+        p.o.position.z = p.z;
+      }
+      for (const b of this.billboards) b.k = -1;
+      this.stationK = -1;
+    };
+  }
+
   setQuality(q: Quality): void {
     this.profile = QUALITY[q];
     for (const l of this.layers) l.invalidate();
