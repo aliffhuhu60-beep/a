@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import type { ObstacleKind } from '../engine/types';
 import { boxAt, sharedGeometry, sharedMaterial } from '../world/materials';
 import { crateTexture, glowTexture, signTexture, stripeTexture, trainFrontTexture, trainSideTexture } from '../world/textures';
@@ -56,13 +57,13 @@ const buildTrainCar = (variant: number): ObstacleVisual => {
     return g;
   });
   const wheelMat = standard('wheel', { color: 0x30333a, metalness: 0.8, roughness: 0.4 });
-  for (const z of [1.6, 2.6, L - 2.4, L - 1.4]) {
-    for (const x of [-0.72, 0.72]) {
-      const w = new THREE.Mesh(wheelGeo, wheelMat);
-      w.position.set(x, 0.36, -z);
-      detailed.add(w);
-    }
-  }
+  // All 8 wheels in one geometry = one draw call per car.
+  const wheels = sharedGeometry('train-wheels', () => {
+    const parts: THREE.BufferGeometry[] = [];
+    for (const z of [1.6, 2.6, L - 2.4, L - 1.4]) for (const x of [-0.72, 0.72]) parts.push(wheelGeo.clone().translate(x, 0.36, -z));
+    return mergeGeometries(parts)!;
+  });
+  detailed.add(new THREE.Mesh(wheels, wheelMat));
   const acGeo = sharedGeometry('train-ac', () => boxAt(1.2, 0.18, 2.2, TRAIN_HEIGHT - 0.02, 0));
   const ac1 = new THREE.Mesh(acGeo, roof);
   ac1.position.z = -2.5;
@@ -174,11 +175,7 @@ const buildVehicle = (variant: number): ObstacleVisual => {
     const roof = lambert('bus-roof', { color: 0xe0e0e0 });
     body = shadowed(new THREE.Mesh(sharedGeometry('bus-body', () => boxAt(2.2, BUS_DIMS.topY - 0.35, L - 0.2, 0.35, 0.1)), [busTex, busTex, roof, roof, busFront, busFront]));
     root.add(body);
-    for (const z of [1.3, L - 1.5]) for (const x of [-0.95, 0.95]) {
-      const w = new THREE.Mesh(wheelGeo, wheelMat);
-      w.position.set(x, 0.34, -z);
-      root.add(w);
-    }
+    root.add(new THREE.Mesh(sharedGeometry('bus-wheels', () => mergeGeometries([1.3, L - 1.5].flatMap((z) => [-0.95, 0.95].map((x) => wheelGeo.clone().translate(x, 0.34, -z))))!), wheelMat));
   } else {
     const L = OBSTACLE_DIMS.vehicle.length;
     const paint = standard('car-paint-0', { color: CAR_COLORS[0], roughness: 0.35, metalness: 0.5 });
@@ -193,11 +190,7 @@ const buildVehicle = (variant: number): ObstacleVisual => {
       return g;
     }), lightMat);
     root.add(lights);
-    for (const z of [0.85, L - 0.95]) for (const x of [-0.88, 0.88]) {
-      const w = new THREE.Mesh(wheelGeo, wheelMat);
-      w.position.set(x, 0.34, -z);
-      root.add(w);
-    }
+    root.add(new THREE.Mesh(sharedGeometry('car-wheels', () => mergeGeometries([0.85, L - 0.95].flatMap((z) => [-0.88, 0.88].map((x) => wheelGeo.clone().translate(x, 0.34, -z))))!), wheelMat));
   }
   return { root, kind: 'vehicle', variant, body };
 };

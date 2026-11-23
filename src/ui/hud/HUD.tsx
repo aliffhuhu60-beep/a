@@ -37,14 +37,14 @@ export const HUD = () => {
           </div>
           <div className="text-xs font-bold text-white/80 text-stroke">BEST {Math.max(best, hud.score).toLocaleString()}</div>
         </div>
-        <div className="glass rounded-2xl px-3 py-1 text-center text-xs font-bold">
+        <div className="hud-glass rounded-2xl px-3 py-1 text-center text-xs font-bold">
           <div data-testid="hud-distance">
             <span className="font-display text-lg">{hud.distance.toLocaleString()}</span> m
           </div>
           <div className="text-white/70" data-testid="hud-speed">{hud.speed} km/h</div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="glass flex items-center gap-2 rounded-full px-3 py-1 font-display text-lg" data-testid="hud-coins">
+          <div className="hud-glass flex items-center gap-2 rounded-full px-3 py-1 font-display text-lg" data-testid="hud-coins">
             <span className="inline-block h-5 w-5 rounded-full bg-gradient-to-b from-[#fff3a0] to-[#e09a00]" />
             {hud.coins.toLocaleString()}
           </div>
@@ -54,7 +54,7 @@ export const HUD = () => {
             aria-label="Pause"
             data-testid="pause-button"
             onClick={() => getEngine()?.pause()}
-            className="pointer-events-auto glass flex h-11 w-11 items-center justify-center rounded-2xl text-xl font-bold active:scale-95"
+            className="pointer-events-auto hud-glass flex h-11 w-11 items-center justify-center rounded-2xl text-xl font-bold active:scale-95"
           >
             ❚❚
           </button>
@@ -65,7 +65,7 @@ export const HUD = () => {
           {hud.powerUps.map((p) => {
             const d = POWER_UPS[p.type];
             return (
-              <motion.div key={p.type} initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -40, opacity: 0 }} className="glass flex w-44 items-center gap-2 rounded-2xl px-2 py-1" data-testid={`powerup-${p.type}`}>
+              <motion.div key={p.type} initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -40, opacity: 0 }} className="hud-glass flex w-44 items-center gap-2 rounded-2xl px-2 py-1" data-testid={`powerup-${p.type}`}>
                 <span className="text-xl">{d.icon}</span>
                 <div className="flex-1">
                   <div className="text-xs font-bold">{d.name}</div>
@@ -105,7 +105,7 @@ export const Toasts = () => {
     <div className="pointer-events-none absolute left-1/2 top-16 z-40 flex w-[min(92vw,420px)] -translate-x-1/2 flex-col gap-2">
       <AnimatePresence>
         {toasts.map((t) => (
-          <motion.div key={t.id} layout initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} className="glass flex items-center gap-3 rounded-2xl px-3 py-2" data-testid="toast">
+          <motion.div key={t.id} layout initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} className="hud-glass flex items-center gap-3 rounded-2xl px-3 py-2" data-testid="toast">
             <span className="text-2xl">{t.icon}</span>
             <div>
               <div className="text-sm font-bold">{t.title}</div>
@@ -137,7 +137,7 @@ export const Tutorial = () => {
   const touch = typeof window !== 'undefined' && 'ontouchstart' in window;
   return (
     <div className="pointer-events-none absolute inset-x-0 top-20 z-20 flex justify-center px-3" data-testid="tutorial">
-      <div className="glass flex gap-3 rounded-2xl px-3 py-1.5 text-center text-[11px] sm:gap-5 sm:text-xs">
+      <div className="hud-glass flex gap-3 rounded-2xl px-3 py-1.5 text-center text-[11px] sm:gap-5 sm:text-xs">
         {[
           ['⬅️', touch ? 'Swipe' : 'A / ←', 'Left'],
           ['➡️', touch ? 'Swipe' : 'D / →', 'Right'],
