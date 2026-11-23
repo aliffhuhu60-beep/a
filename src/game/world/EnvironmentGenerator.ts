@@ -647,6 +647,7 @@ export class EnvironmentGenerator {
     this.trackMat.color.copy(col.set(A.track).lerp(col2.set(B.track), b));
     this.wallMat.color.copy(col.set(A.wall).lerp(col2.set(B.wall), b));
     this.lampHeadMat.color.copy(col.set(A.lampLight).lerp(col2.set(B.lampLight), b));
+    this.tunnelLights.color.set(B.id === 'neon' ? 0xff6be0 : B.id === 'railway' ? 0xffc070 : 0xfff3c4);
     this.neonStrips.visible = B.props.neonSigns;
     this.neonStripMat.color.setHSL((this.time * 0.05) % 1, 1, 0.55);
     this.catenaryWires.visible = B.props.catenary && !tun;
