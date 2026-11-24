@@ -29,9 +29,9 @@ async function gatePos(page, i) {
 
 async function cameraSettled(page) {
   for (let k = 0; k < 40; k++) {
-    const a = await page.evaluate(() => JSON.stringify(window.__kppb.world.cam) + window.__kppb.world.busy);
+    const a = await page.evaluate(() => (({ x, y, z, h }) => [x, y, z, h].map((v) => v.toFixed(3)).join(','))(window.__kppb.world.cam) + window.__kppb.world.busy);
     await page.waitForTimeout(120);
-    const b = await page.evaluate(() => JSON.stringify(window.__kppb.world.cam) + window.__kppb.world.busy);
+    const b = await page.evaluate(() => (({ x, y, z, h }) => [x, y, z, h].map((v) => v.toFixed(3)).join(','))(window.__kppb.world.cam) + window.__kppb.world.busy);
     if (a === b && !b.endsWith('true')) return;
   }
 }
@@ -166,8 +166,7 @@ async function run(nCorrect, opts = {}) {
   assert(fname === `Sijil_Pencapaian_${name.replace(/ /g, '_')}.pdf`, `nama fail ${fname}`);
   const pdfPath = path.join(OUT, fname);
   await dl.saveAs(pdfPath);
-  await page.waitForSelector('#certDone:not(.hidden)');
-  const status = await page.textContent('#certStatus');
+  await page.waitForFunction(() => document.querySelector('#certStatus').textContent.includes('dimuat turun'));
   const txt = pdfText(pdfPath);
   if (txt) {
     assert(txt.includes(name), 'nama dalam PDF');
@@ -176,13 +175,13 @@ async function run(nCorrect, opts = {}) {
     assert(txt.includes(rankName), 'pangkat dalam PDF');
   }
   if (process.env.SHEET_MOCK) {
-    assert(status.includes('disimpan dalam Google Sheet'), 'status Google Sheet: ' + status);
-    const id = /No\. Sijil: (KPPB-\d{4}-\d{4})/.exec(status);
-    assert(id, 'No. Sijil rasmi daripada Google Sheet');
-    if (txt) assert(txt.includes(id[1]), 'No. Sijil dalam PDF');
-    await page.waitForSelector('#driveStatus.ok', { timeout: 15000 });
-    const row = sheetEnv.sheets.Rekod_Sijil.rows.find((r) => r[1] === id[1]);
-    assert(row && row[2] === name && row[3] === kelas && row[4] === nCorrect * 10 && row[8] === rankName, 'baris Google Sheet tepat');
+    await page.waitForSelector('#sheetStatus.ok', { timeout: 20000 });
+    const id = txt && /No\. Sijil: (KPPB-\d{8}-[A-Z0-9]{4})/.exec(txt);
+    assert(!txt || id, 'No. Sijil dalam PDF');
+    const row = sheetEnv.sheets.Rekod_Sijil.rows.find((r) => r[2] === name && r[3] === kelas);
+    assert(row && row[4] === nCorrect * 10 && row[8] === rankName, 'baris Google Sheet tepat');
+    if (id) assert(row[1] === id[1], 'No. Sijil Sheet = No. Sijil PDF');
+    for (let k = 0; k < 40 && !String(row[12]).includes('drive.google.com'); k++) await page.waitForTimeout(250);
     assert(String(row[12]).includes('drive.google.com'), 'pautan PDF dalam Google Sheet');
   }
   if (opts.shots) await page.screenshot({ path: path.join(OUT, `${opts.tag}_cert.png`) });

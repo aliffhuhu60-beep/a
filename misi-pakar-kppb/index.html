@@ -147,34 +147,41 @@
     </div>
 
     <!-- F: SIJIL -->
-    <div class="modal" id="modal-cert" role="dialog" aria-modal="true">
+    <div class="modal" id="modal-cert" role="dialog" aria-modal="true" aria-label="Sijil digital">
       <div class="panel modal-panel cert-panel">
-        <div class="sec-head"><span class="sec-num"><i data-lucide="award"></i></span><span class="sec-label">SIJIL DIGITAL</span></div>
-        <p class="desc">Isi maklumat di bawah untuk menjana Sijil Pengiktirafan Pencapaian (PDF).</p>
-        <form id="certForm" novalidate>
-          <label class="field">
-            <span>NAMA PENUH</span>
-            <input id="inName" name="name" type="text" autocomplete="name" maxlength="80" placeholder="Contoh: Nur Aisyah binti Ahmad" />
-            <small class="err" id="errName"></small>
-          </label>
-          <label class="field">
-            <span>KELAS</span>
-            <input id="inKelas" name="kelas" type="text" maxlength="40" placeholder="Contoh: PISMP Ambilan Jun 2024" />
-            <small class="err" id="errKelas"></small>
-          </label>
-          <div class="cert-summary" id="certSummary"></div>
-          <p class="privacy"><i data-lucide="shield"></i> Nama dan kelas hanya digunakan untuk sijil ini dan rekod pencapaian dalam Google Sheet penganjur.</p>
-          <div class="modal-actions">
-            <button type="button" class="btn btn-ghost btn-sm" data-close>BATAL</button>
-            <button type="submit" class="btn btn-gold" id="btnGenerate"><i data-lucide="file-text"></i> JANA SIJIL</button>
+        <div class="sec-head"><span class="sec-num"><i data-lucide="award"></i></span><span class="sec-label">SIJIL DIGITAL ANDA</span></div>
+        <div class="cert-grid">
+          <div class="cert-preview-wrap">
+            <div class="cert-preview" id="certTilt">
+              <canvas id="certCanvas" width="1240" height="877" aria-label="Pratonton sijil"></canvas>
+              <span class="cert-shine"></span>
+            </div>
+            <p class="hint"><i data-lucide="sparkles"></i> Pratonton langsung: sijil berubah semasa anda menaip.</p>
           </div>
-        </form>
-        <div class="cert-done hidden" id="certDone">
-          <div class="cert-status" id="certStatus"></div>
-          <div class="modal-actions">
-            <button class="btn btn-ghost btn-sm" id="btnCertAgain">UBAH MAKLUMAT</button>
-            <button class="btn btn-green" id="btnDownload"><i data-lucide="download"></i> MUAT TURUN SIJIL</button>
-          </div>
+          <form id="certForm" class="cert-form" novalidate>
+            <label class="field">
+              <span>1. NAMA PENUH</span>
+              <input id="inName" name="name" type="text" autocomplete="name" maxlength="80" placeholder="Contoh: Nur Aisyah binti Ahmad" />
+              <small class="err" id="errName"></small>
+            </label>
+            <label class="field">
+              <span>2. KELAS</span>
+              <input id="inKelas" name="kelas" type="text" maxlength="40" placeholder="Contoh: 4 Bestari" />
+              <small class="err" id="errKelas"></small>
+            </label>
+            <div class="field"><span>3. PILIH TEMA</span>
+              <div class="theme-row" id="themeRow">
+                <button type="button" class="theme-btn on" data-theme="klasik"><i style="--a:#1b2a4a;--b:#c49a2c"></i>KLASIK</button>
+                <button type="button" class="theme-btn" data-theme="voxel"><i style="--a:#5a1834;--b:#ff7fae"></i>VOXEL</button>
+                <button type="button" class="theme-btn" data-theme="lencana"><i id="themeBadgeSwatch" style="--a:#1b2a4a;--b:#8af3ff"></i>LENCANA</button>
+              </div>
+            </div>
+            <div class="cert-summary" id="certSummary"></div>
+            <button type="submit" class="btn btn-gold btn-big cert-dl" id="btnGenerate"><i data-lucide="download"></i> MUAT TURUN SIJIL (PDF)</button>
+            <div class="cert-status" id="certStatus" role="status"></div>
+            <p class="privacy"><i data-lucide="shield"></i> Nama dan kelas hanya digunakan untuk sijil ini.</p>
+            <div class="modal-actions"><button type="button" class="btn btn-ghost btn-sm" data-close>TUTUP</button></div>
+          </form>
         </div>
       </div>
     </div>

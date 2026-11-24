@@ -4,6 +4,8 @@ import '@fontsource/vt323/400.css';
 import '@fontsource/montserrat/500.css';
 import '@fontsource/montserrat/600.css';
 import '@fontsource/montserrat/700.css';
+import '@fontsource/montserrat/800.css';
+import '@fontsource/great-vibes/400.css';
 import './style.css';
 import gsap from 'gsap';
 import { Vector3 } from 'three';
@@ -11,7 +13,7 @@ import {
   createIcons, Play, Gamepad2, BookOpen, Music, Volume2, VolumeX, House, ChevronLeft, ChevronRight, Check,
   MousePointerClick, Trophy, ChartColumn, Award, RotateCcw, Shield, FileText, Download, Monitor, Smartphone,
   Layers, Box, Users, Lightbulb, Rotate3d, Clock, Handshake, Target, Plus, LifeBuoy, Split, UserRound, Globe,
-  Wifi, HeartHandshake, X,
+  Wifi, HeartHandshake, X, Sparkles,
 } from 'lucide';
 
 import { World } from './game.js';
@@ -19,13 +21,13 @@ import { AudioManager } from './audio.js';
 import { SLIDES, TOTAL_SLIDES, bindSlideInteractions } from './learning.js';
 import { QUESTIONS, TOTAL_QUESTIONS, LETTERS, emptyAnswers, computeResult, submitAnswer, isCorrect, answersToString } from './quiz.js';
 import { RANKS, rankIndexFor, BadgeViewer } from './ranking.js';
-import { buildCertificate, validateForm, certFileName, formatTarikh, sendToSheet, sheetConfigured, localCertId, uploadPdfToSheet } from './certificate.js';
+import { buildCertificate, drawCertificate, loadCertFonts, validateForm, certFileName, formatTarikh, sendToSheet, sheetConfigured, localCertId, uploadPdfToSheet } from './certificate.js';
 import { STORAGE_KEY } from './config.js';
 
 const ICONS = {
   Play, Gamepad2, BookOpen, Music, Volume2, VolumeX, House, ChevronLeft, ChevronRight, Check, MousePointerClick, Trophy,
   ChartColumn, Award, RotateCcw, Shield, FileText, Download, Monitor, Smartphone, Layers, Box, Users, Lightbulb, Rotate3d,
-  Clock, Handshake, Target, Plus, LifeBuoy, Split, UserRound, Globe, Wifi, HeartHandshake, X,
+  Clock, Handshake, Target, Plus, LifeBuoy, Split, UserRound, Globe, Wifi, HeartHandshake, X, Sparkles,
 };
 const icons = () => createIcons({ icons: ICONS, attrs: { 'aria-hidden': 'true' } });
 const $ = (s) => document.querySelector(s);
@@ -629,6 +631,7 @@ $('#btnReplay').addEventListener('click', () => {
   closeModal('#modal-results');
   badgeViewer.stop();
   state.quiz.answers = emptyAnswers();
+  certId = null;
   state.plays += 1;
   save();
   world.resetArena();
@@ -638,112 +641,139 @@ $('#btnReplay').addEventListener('click', () => {
 });
 
 // ---------------------------------------------------------------------------
-// F: Sijil
+// F: Sijil (pratonton langsung + muat turun PDF terus)
 // ---------------------------------------------------------------------------
-let lastDoc = null;
-let lastFile = '';
+let certTheme = 'klasik';
+let certId = null;
+let certDate = '';
+let drawQueued = false;
 
-$('#btnCert').addEventListener('click', () => {
+function certData() {
   const r = computeResult(state.quiz.answers);
-  if (!r.finished) { toast('JAWAB KESEMUA 10 SOALAN DAHULU', true); return; }
-  const rank = RANKS[rankIndexFor(r.correct)];
-  $('#certSummary').innerHTML = `<span class="chip c-gold">MARKAH ${r.score}/100</span><span class="chip c-green">BETUL ${r.correct}/10</span><span class="chip c-pink">${rank.name}</span><span class="chip c-blue">${rank.badge ? rank.badge.toUpperCase() : 'TIADA LENCANA'}</span>`;
-  $('#certForm').classList.remove('hidden');
-  $('#certDone').classList.add('hidden');
-  $('#errName').textContent = '';
-  $('#errKelas').textContent = '';
-  openModal('#modal-cert');
-  setTimeout(() => $('#inName').focus(), 350);
-});
+  return {
+    name: $('#inName').value.replace(/\s+/g, ' ').trim(),
+    kelas: $('#inKelas').value.replace(/\s+/g, ' ').trim(),
+    correct: r.correct,
+    score: r.score,
+    rankIdx: rankIndexFor(r.correct),
+    date: certDate,
+    certId,
+  };
+}
 
-$('#certForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const name = $('#inName').value.replace(/\s+/g, ' ').trim();
-  const kelas = $('#inKelas').value.replace(/\s+/g, ' ').trim();
-  const errs = validateForm(name, kelas);
-  $('#errName').textContent = errs.name || '';
-  $('#errKelas').textContent = errs.kelas || '';
-  $('#inName').classList.toggle('invalid', !!errs.name);
-  $('#inKelas').classList.toggle('invalid', !!errs.kelas);
-  if (errs.name || errs.kelas) { sfx('error'); return; }
+function redrawCert() {
+  if (drawQueued) return;
+  drawQueued = true;
+  requestAnimationFrame(() => {
+    drawQueued = false;
+    drawCertificate($('#certCanvas'), certData(), certTheme);
+  });
+}
 
+function replayClass(el, cls) {
+  el.classList.toggle(cls, false);
+  void el.offsetWidth;
+  el.classList.toggle(cls, true);
+}
+
+function sparkleCert() {
+  replayClass($('#certTilt'), 'shine');
+}
+
+$('#btnCert').addEventListener('click', async () => {
   const r = computeResult(state.quiz.answers);
   if (!r.finished) { toast('JAWAB KESEMUA 10 SOALAN DAHULU', true); return; }
   const ri = rankIndexFor(r.correct);
   const rank = RANKS[ri];
+  const now = new Date();
+  certDate = formatTarikh(now);
+  certId = certId || localCertId(now);
+  $('#themeBadgeSwatch').style.setProperty('--b', rank.key === 'pemula' ? '#9c8a94' : rank.color);
+  $('#certSummary').innerHTML = `<span class="chip c-gold">MARKAH ${r.score}/100</span><span class="chip c-green">BETUL ${r.correct}/10</span><span class="chip c-pink">${rank.name}</span><span class="chip c-blue">${rank.badge ? rank.badge.toUpperCase() : 'TIADA LENCANA'}</span>`;
+  $('#errName').textContent = '';
+  $('#errKelas').textContent = '';
+  $('#certStatus').innerHTML = '';
+  openModal('#modal-cert');
+  await loadCertFonts();
+  redrawCert();
+  setTimeout(sparkleCert, 300);
+  if (window.matchMedia('(pointer: fine)').matches) setTimeout(() => $('#inName').focus(), 350);
+});
+
+['#inName', '#inKelas'].forEach((id) => $(id).addEventListener('input', () => {
+  $(id).classList.toggle('invalid', false);
+  $(id === '#inName' ? '#errName' : '#errKelas').textContent = '';
+  redrawCert();
+}));
+['#inName', '#inKelas'].forEach((id) => $(id).addEventListener('change', sparkleCert));
+
+$$('#themeRow .theme-btn').forEach((b) => b.addEventListener('click', () => {
+  certTheme = b.dataset.theme;
+  $$('#themeRow .theme-btn').forEach((o) => o.classList.toggle('on', o === b));
+  sfx('select');
+  redrawCert();
+  replayClass($('#certTilt'), 'pop');
+  sparkleCert();
+}));
+
+// kesan condong 3D pada pratonton
+(() => {
+  const el = $('#certTilt');
+  el.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 8}deg)`;
+  });
+  el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+})();
+
+$('#certForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const d = certData();
+  const errs = validateForm(d.name, d.kelas);
+  $('#errName').textContent = errs.name || '';
+  $('#errKelas').textContent = errs.kelas || '';
+  $('#inName').classList.toggle('invalid', !!errs.name);
+  $('#inKelas').classList.toggle('invalid', !!errs.kelas);
+  if (errs.name || errs.kelas) { sfx('error'); (errs.name ? $('#inName') : $('#inKelas')).focus(); return; }
+  const r = computeResult(state.quiz.answers);
+  if (!r.finished) { toast('JAWAB KESEMUA 10 SOALAN DAHULU', true); return; }
+  const rank = RANKS[d.rankIdx];
   const btn = $('#btnGenerate');
   btn.disabled = true;
-  btn.textContent = 'MENJANA...';
-  const now = new Date();
-  const tarikh = formatTarikh(now);
-
-  let certId = localCertId(now);
-  let recorded = false;
-  let uploadToken = null;
-  let sheetMsg = '';
-  if (sheetConfigured()) {
-    btn.textContent = 'MENYIMPAN KE GOOGLE SHEET...';
-    const res = await sendToSheet({
-      nama: name,
-      kelas,
-      jawapan: answersToString(state.quiz.answers),
-      markah: r.score,
-      betul: r.correct,
-      pangkat: rank.name,
-      lencana: rank.badge || 'Tiada',
-      tarikh,
-      sumber: location.host,
-    });
-    if (res.ok) {
-      certId = res.certificateId || certId;
-      recorded = true;
-      if (res.simpanPdf && res.token) uploadToken = res.token;
-      sheetMsg = '<span class="ok">✔ Rekod pencapaian telah disimpan dalam Google Sheet.</span>';
-    } else {
-      sheetMsg = '<span class="warn">⚠ Rekod tidak dapat dihantar ke Google Sheet (sambungan gagal). Sijil tetap dijana — anda boleh cuba semula kemudian.</span>';
-    }
-  } else {
-    sheetMsg = '<span class="warn">ⓘ Google Sheet belum disambungkan oleh penganjur. Sijil dijana di peranti anda.</span>';
-  }
-
   btn.textContent = 'MENJANA PDF...';
   try {
-    lastDoc = await buildCertificate({ name, kelas, correct: r.correct, score: r.score, rankIdx: ri, date: tarikh, certId, recorded });
-    lastFile = certFileName(name);
-    lastDoc.save(lastFile);
-    $('#certStatus').innerHTML = `<span class="big">SIJIL BERJAYA DIJANA!</span>Fail: <b>${lastFile}</b><br>No. Sijil: <b>${certId}</b><br>${sheetMsg}`;
-    $('#certForm').classList.add('hidden');
-    $('#certDone').classList.remove('hidden');
+    const doc = await buildCertificate(d, certTheme);
+    const file = certFileName(d.name);
+    doc.save(file);
     sfx('victory');
-    world.celebrate(Math.max(1, ri));
-    if (uploadToken) {
-      const statusEl = $('#certStatus');
-      statusEl.insertAdjacentHTML('beforeend', '<br><span class="warn" id="driveStatus">⏳ Menyimpan salinan PDF ke Google Drive penganjur...</span>');
-      uploadPdfToSheet(lastDoc, certId, uploadToken).then((up) => {
-        const el = $('#driveStatus');
-        if (!el) return;
-        el.className = up.ok ? 'ok' : 'warn';
-        el.textContent = up.ok ? '✔ Salinan PDF sijil disimpan dalam Google Drive penganjur.' : '⚠ Salinan PDF tidak dapat disimpan ke Google Drive (sijil anda tetap sah).';
+    world.celebrate(Math.max(1, d.rankIdx));
+    sparkleCert();
+    $('#certStatus').innerHTML = `<span class="ok">✔ Sijil dimuat turun: <b>${file}</b></span>`;
+    btn.innerHTML = '<i data-lucide="download"></i> MUAT TURUN SEMULA';
+    // Rekod ke Google Sheet (pilihan): berjalan di latar, tidak menghalang muat turun
+    if (sheetConfigured()) {
+      sendToSheet({
+        nama: d.name, kelas: d.kelas, noSijil: d.certId, jawapan: answersToString(state.quiz.answers),
+        markah: r.score, betul: r.correct, pangkat: rank.name, lencana: rank.badge || 'Tiada', tarikh: d.date, sumber: location.host,
+      }).then((res) => {
+        if (res.ok && res.simpanPdf && res.token) uploadPdfToSheet(doc, res.certificateId, res.token);
+        $('#certStatus').insertAdjacentHTML('beforeend', res.ok
+          ? '<br><span class="ok" id="sheetStatus">✔ Rekod disimpan dalam Google Sheet penganjur.</span>'
+          : '<br><span class="warn" id="sheetStatus">⚠ Rekod tidak dapat dihantar ke Google Sheet (sijil anda tetap sah).</span>');
       });
     }
   } catch (err) {
     console.error(err);
     toast('RALAT SEMASA MENJANA SIJIL. SILA CUBA LAGI.', true);
+    btn.innerHTML = '<i data-lucide="download"></i> MUAT TURUN SIJIL (PDF)';
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<i data-lucide="file-text"></i> JANA SIJIL';
     icons();
   }
 });
-$('#btnDownload').addEventListener('click', () => { if (lastDoc) lastDoc.save(lastFile); });
-$('#btnCertAgain').addEventListener('click', () => {
-  $('#certForm').classList.remove('hidden');
-  $('#certDone').classList.add('hidden');
-});
-['#inName', '#inKelas'].forEach((id) => $(id).addEventListener('input', () => {
-  $(id).classList.remove('invalid');
-  $(id === '#inName' ? '#errName' : '#errKelas').textContent = '';
-}));
 
 // ---------------------------------------------------------------------------
 // Mula

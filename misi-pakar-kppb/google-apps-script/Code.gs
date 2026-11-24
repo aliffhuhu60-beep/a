@@ -12,7 +12,7 @@
  *      (src/config.js atau pemboleh ubah VITE_GOOGLE_SCRIPT_URL).
  *
  * Fungsi:
- *   POST {nama, kelas, jawapan, ...}         -> simpan rekod, pulangkan No. Sijil rasmi
+ *   POST {nama, kelas, jawapan, noSijil?, ...} -> simpan rekod, pulangkan No. Sijil
  *   POST {tindakan:'pdf', noSijil, token, pdf} -> simpan salinan PDF sijil ke Google Drive
  *   GET  ?tindakan=semak&id=KPPB-2026-0001    -> semak kesahihan sijil
  */
@@ -110,9 +110,16 @@ function simpanRekod_(d) {
   lock.waitLock(15000);
   try {
     var sh = sheet_();
-    var bil = Math.max(0, sh.getLastRow() - 1) + 1;
-    var tahun = Utilities.formatDate(new Date(), ZON_MASA, 'yyyy');
-    var noSijil = 'KPPB-' + tahun + '-' + ('0000' + bil).slice(-4);
+    // Guna No. Sijil yang tertera pada PDF pemain jika sah dan unik; jika tidak, jana nombor berurutan.
+    var cadangan = String(d.noSijil || '').toUpperCase();
+    var noSijil;
+    if (/^KPPB-\d{8}-[A-Z0-9]{4}$/.test(cadangan) && !cariBaris_(sh, cadangan)) {
+      noSijil = cadangan;
+    } else {
+      var bil = Math.max(0, sh.getLastRow() - 1) + 1;
+      var tahun = Utilities.formatDate(new Date(), ZON_MASA, 'yyyy');
+      noSijil = 'KPPB-' + tahun + '-' + ('0000' + bil).slice(-4);
+    }
     var token = Utilities.getUuid();
     var tarikh = bersih_(d.tarikh, 40) || Utilities.formatDate(new Date(), ZON_MASA, 'd/M/yyyy');
     sh.appendRow([

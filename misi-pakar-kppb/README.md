@@ -2,7 +2,9 @@
 
 Permainan pembelajaran **3D voxel isometrik** berasaskan web untuk **Topik 2: Model Pengintegrasian Teknologi dalam Pengajaran dan Pembelajaran (PdP)**: Model 3E (Engagement, Enhancement, Extension) dan Kerangka 3R (Rigor, Relevance, Relationship).
 
-Pemain membaca 8 slaid interaktif, memasuki **Arena Misi KPPB** yang mempunyai 10 portal soalan, naik pangkat daripada Pemula hingga **Pakar KPPB (Lencana Berlian)** dan menjana **sijil PDF**. Setiap sijil boleh direkodkan secara automatik dalam **Google Sheet** penganjur, lengkap dengan No. Sijil rasmi dan salinan PDF dalam Google Drive.
+Pemain membaca 8 slaid interaktif, memasuki **Arena Misi KPPB** yang mempunyai 10 portal soalan, naik pangkat daripada Pemula hingga **Pakar KPPB (Lencana Berlian)** dan **terus memuat turun sijil PDF**. Sijil boleh juga direkodkan dalam **Google Sheet** penganjur (pilihan).
+
+**Pautan permainan:** https://misi-pakar-kppb.netlify.app
 
 ---
 
@@ -16,8 +18,8 @@ Pemain membaca 8 slaid interaktif, memasuki **Arena Misi KPPB** yang mempunyai 1
 | D. Kuiz | 10 soalan (4 pilihan). Butang SAHKAN JAWAPAN, maklum balas BETUL / CUBA LAGI dengan penerangan, jawapan dikunci selepas dihantar. |
 | Pemarkahan & pangkat | Betul = 10 mata, salah = 0. Pangkat: 0–1 Pemula, 2–3 Perantis (Gangsa), 4–5 Penjelajah (Perak), 6–7 Pengamal (Emas), 8–9 Strategis (Platinum), 10 Pakar (Berlian). Animasi naik pangkat dengan lencana 3D, partikel dan bunyi. |
 | E. Keputusan | Jumlah soalan, betul, salah, markah, peratus, pangkat tertinggi, lencana. Butang LIHAT PRESTASI, DAPATKAN SIJIL dan ULANGI PERMAINAN. |
-| F. Sijil PDF | A4 landskap, bingkai navy dan emas, hiasan blok di penjuru, simbol lencana, nama dalam tulisan skrip (Great Vibes), ruang tandatangan. Fail: `Sijil_Pencapaian_[Nama_Peserta].pdf`. Borang kosong ditolak. |
-| Google Sheet | Rekod setiap sijil, No. Sijil berurutan (`KPPB-2026-0001`), markah dikira semula di pelayan, papan pemuka, salinan PDF dalam Drive, semakan kesahihan sijil. |
+| F. Sijil PDF | Borang mudah (nama + kelas) dengan **pratonton langsung** yang berubah semasa menaip, **3 tema** (Klasik Navy & Emas, Voxel Marun, Warna Lencana), kesan condong 3D dan kilauan, kemudian satu butang **MUAT TURUN SIJIL (PDF)**. Sijil A4 landskap: bingkai navy/emas, tangga blok di penjuru, lencana piksel ikut pangkat, nama dalam tulisan skrip, jubin pencapaian, bar penguasaan 10 blok, cop "DISAHKAN", ruang tandatangan dan No. Sijil. PDF mempunyai lapisan teks tersembunyi supaya boleh dicari. Fail: `Sijil_Pencapaian_[Nama_Peserta].pdf`. Borang kosong ditolak. |
+| Google Sheet (pilihan) | Rekod setiap sijil di latar belakang (tidak melambatkan muat turun): No. Sijil yang sama seperti pada PDF, markah dikira semula di pelayan, papan pemuka, salinan PDF dalam Drive, semakan kesahihan sijil. |
 | Audio | Muzik chiptune dan kesan bunyi disintesis dengan Web Audio. Butang muzik dan bunyi boleh dimatikan berasingan. |
 | Simpanan | LocalStorage: kemajuan slaid, jawapan, markah, rekod terbaik, tetapan audio. Tiada akaun diperlukan. |
 
@@ -38,7 +40,7 @@ misi-pakar-kppb/
 │   ├── learning.js      # kandungan 8 slaid + interaksi
 │   ├── quiz.js          # 10 soalan, pemarkahan, penguncian jawapan
 │   ├── ranking.js       # pangkat, lencana, model lencana 3D
-│   ├── certificate.js   # sijil PDF (jsPDF) + sambungan Google Sheet
+│   ├── certificate.js   # lukisan sijil (kanvas) → PDF (jsPDF) + sambungan Google Sheet
 │   ├── audio.js         # muzik & kesan bunyi (Web Audio)
 │   └── config.js        # URL Google Apps Script, label penganjur
 ├── google-apps-script/
@@ -49,6 +51,7 @@ misi-pakar-kppb/
 │   ├── apps-script-mock.cjs
 │   └── e2e.cjs               # ujian pelayar penuh (Playwright)
 ├── index.html
+├── netlify.toml
 ├── vercel.json
 ├── package.json
 └── README.md
@@ -104,22 +107,22 @@ Langkah sambungan (sekali sahaja, kira-kira 5 minit):
    - Siapa yang mempunyai akses (Who has access): **Sesiapa sahaja (Anyone)**
 5. Tekan **Terapkan**, kemudian salin **URL aplikasi web** (berakhir dengan `/exec`).
 6. Masukkan URL itu ke dalam permainan menggunakan **salah satu** cara:
-   - **Vercel** (disyorkan): Project > Settings > Environment Variables, tambah `VITE_GOOGLE_SCRIPT_URL` = URL tadi, kemudian **Redeploy**.
-   - **Fail**: tampal URL dalam `src/config.js` (`GOOGLE_SCRIPT_URL`), kemudian bina dan terbit semula.
+   - **Fail** (paling mudah): tampal URL dalam `src/config.js` (`GOOGLE_SCRIPT_URL`), kemudian terbit semula ke Netlify (lihat bahagian 3).
+   - **Netlify**: Project configuration > Environment variables, tambah `VITE_GOOGLE_SCRIPT_URL` = URL tadi, kemudian terbit semula.
    - **Komputer sendiri**: cipta fail `.env.local` dengan `VITE_GOOGLE_SCRIPT_URL=https://script.google.com/macros/s/XXXX/exec`.
 
 Uji: buka URL `/exec` dalam pelayar. Ia patut memaparkan `{"ok":true,"servis":"Misi Pakar KPPB — Google Sheet",...}`.
 
 ### Apa yang berlaku apabila pemain menekan JANA SIJIL
 
-1. Permainan menghantar nama, kelas dan rentetan jawapan (cth. `BABCBCBCAD`) ke Apps Script.
-2. Apps Script **mengira semula markah** daripada kunci jawapan (bukan bergantung pada nilai daripada pelayar), menetapkan pangkat dan lencana, memberi **No. Sijil berurutan** (`KPPB-2026-0001`) dan menambah baris dalam `Rekod_Sijil`.
-3. Permainan menjana PDF dengan No. Sijil rasmi dan memuat turunnya untuk pemain.
+1. PDF dijana di peranti pemain dan **terus dimuat turun** (tidak perlu menunggu Google Sheet).
+2. Di latar belakang, permainan menghantar nama, kelas, No. Sijil (cth. `KPPB-20261124-AB12`) dan rentetan jawapan (cth. `BABCBCBCAD`) ke Apps Script.
+3. Apps Script **mengira semula markah** daripada kunci jawapan (bukan bergantung pada nilai daripada pelayar), menetapkan pangkat dan lencana, dan menambah baris dalam `Rekod_Sijil` dengan No. Sijil yang sama seperti pada PDF.
 4. Salinan PDF dihantar ke Apps Script dan disimpan dalam folder Drive **"Sijil Misi Pakar KPPB"**. Pautannya ditulis dalam lajur *Pautan PDF Sijil*. (Matikan dengan `SIMPAN_PDF_KE_DRIVE = false` dalam `Code.gs`.)
 
 Semak kesahihan sijil: `URL_EXEC?tindakan=semak&id=KPPB-2026-0001`.
 
-Jika Google Sheet belum disambungkan atau talian gagal, sijil **tetap dijana** di peranti pemain (dengan No. Sijil tempatan) dan pemain dimaklumkan.
+Jika Google Sheet belum disambungkan atau talian gagal, sijil **tetap dimuat turun** seperti biasa.
 
 > Jika anda mengubah `Code.gs` selepas penerapan, gunakan **Terapkan > Urus penerapan > Edit > Versi baharu** supaya URL kekal sama.
 
@@ -127,15 +130,26 @@ Jika Google Sheet belum disambungkan atau talian gagal, sijil **tetap dijana** d
 
 ## 3. Menerbitkan permainan dalam talian (pautan web)
 
-### Vercel (sudah disediakan)
+### Netlify (utama)
 
-Projek Vercel `misi-pakar-kppb` disambungkan kepada repo GitHub ini dengan **Root Directory = `misi-pakar-kppb`**. Tetapan build dibaca daripada `vercel.json` (`npm run build`, output `dist`).
+Laman: **https://misi-pakar-kppb.netlify.app** (projek Netlify `misi-pakar-kppb`). Tetapan build dibaca daripada `netlify.toml` (`npm run build`, folder `dist`).
 
-Untuk menerbit semula selepas perubahan: tolak (push) perubahan ke GitHub, atau tekan **Redeploy** dalam papan pemuka Vercel.
+Untuk menerbit semula selepas perubahan, pilih satu:
 
-### Alternatif
+- **Seret & lepas (paling mudah):** jalankan `npm run build`, buka https://app.netlify.com/projects/misi-pakar-kppb/deploys dan seret folder `dist` ke kawasan muat naik.
+- **Netlify CLI:** dalam folder `misi-pakar-kppb`:
 
-Folder `dist/` hasil `npm run build` ialah laman statik biasa. Ia boleh dimuat naik ke **Netlify** (seret & lepas folder `dist`), **GitHub Pages** atau mana-mana pelayan web. Tetapan `base: './'` dalam `vite.config.js` membolehkan permainan berjalan dalam subfolder.
+```bash
+npx netlify-cli deploy --prod --build
+```
+
+### Vercel (salinan kedua)
+
+Projek Vercel `misi-pakar-kppb` (https://misi-pakar-kppb.vercel.app) disambungkan kepada repo GitHub ini dengan Root Directory `misi-pakar-kppb` dan tetapan daripada `vercel.json`.
+
+### Alternatif lain
+
+Folder `dist/` ialah laman statik biasa dan boleh dimuat naik ke GitHub Pages atau mana-mana pelayan web. Tetapan `base: './'` dalam `vite.config.js` membolehkan permainan berjalan dalam subfolder.
 
 ---
 

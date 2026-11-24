@@ -58,6 +58,14 @@ test('salinan PDF: token salah ditolak, token betul disimpan ke Drive', () => {
   assert.equal(env.files[0].name, `Sijil_Pencapaian_Nur_Aisyah_binti_Ahmad_${rec.certificateId}.pdf`);
   assert.equal(env.sheets.Rekod_Sijil.rows[1][12], ok.url);
 });
+test('No. Sijil daripada PDF pemain diterima jika sah dan unik', () => {
+  const a = env.post({ nama: 'Siti Aminah', kelas: '5 Cemerlang', jawapan: 'BABCBCBCAD', noSijil: 'KPPB-20261124-AB12' });
+  assert.equal(a.certificateId, 'KPPB-20261124-AB12');
+  const b = env.post({ nama: 'Siti Aminah', kelas: '5 Cemerlang', jawapan: 'BABCBCBCAD', noSijil: 'KPPB-20261124-AB12' });
+  assert.notEqual(b.certificateId, 'KPPB-20261124-AB12');
+  const c = env.post({ nama: 'Siti Aminah', kelas: '5 Cemerlang', jawapan: 'BABCBCBCAD', noSijil: '=EVIL()' });
+  assert.ok(/^KPPB-\d{4}-\d{4}$/.test(c.certificateId));
+});
 test('semak kesahihan sijil', () => {
   const s = env.get({ tindakan: 'semak', id: rec.certificateId });
   assert.equal(s.sah, true);
