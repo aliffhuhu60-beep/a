@@ -52,6 +52,7 @@
               </div>
             </div>
             <div class="home-status reveal" id="homeStatus"></div>
+            <button class="btn btn-sm btn-ghost reset-btn reveal" id="btnReset"><i data-lucide="rotate-ccw"></i> RESET SEMUA (MULA DARI AWAL)</button>
           </div>
         </div>
       </section>
@@ -86,7 +87,19 @@
             <div class="hud-k small" id="hudAnswered">0/10 SOALAN DIJAWAB</div>
           </div>
         </div>
-        <div class="arena-hint panel" id="arenaHint"><i data-lucide="mouse-pointer-click"></i> <span>Klik / sentuh portal bernombor untuk membuka soalan. Seret untuk melihat sekeliling.</span></div>
+        <canvas id="minimap" class="minimap" width="216" height="124" aria-label="Peta mini arena"></canvas>
+        <div class="arena-hint panel" id="arenaHint"><i data-lucide="gamepad-2"></i>
+          <span class="kbd-only">Gerak: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / anak panah · Lari: <kbd>SHIFT</kbd> · Masuk portal: <kbd>E</kbd> · Atau klik portal</span>
+          <span class="touch-only">Gunakan butang arah untuk meneroka. Dekati portal dan tekan MASUK, atau sentuh portal.</span>
+        </div>
+        <div class="gate-prompt hidden" id="gatePrompt"></div>
+        <div class="move-pad" id="movePad" aria-label="Butang arah">
+          <button class="pad up" data-dir="up" aria-label="Atas"><i data-lucide="chevron-up"></i></button>
+          <button class="pad left" data-dir="left" aria-label="Kiri"><i data-lucide="chevron-left"></i></button>
+          <button class="pad right" data-dir="right" aria-label="Kanan"><i data-lucide="chevron-right"></i></button>
+          <button class="pad down" data-dir="down" aria-label="Bawah"><i data-lucide="chevron-down"></i></button>
+        </div>
+        <button class="btn btn-gold enter-btn dim" id="btnEnterGate"><i data-lucide="log-in"></i> MASUK</button>
         <button class="btn btn-gold btn-big arena-results hidden" id="btnShowResults"><i data-lucide="trophy"></i> LIHAT KEPUTUSAN</button>
       </section>
     </main>
@@ -198,13 +211,13 @@
         <div class="sec-head"><span class="sec-num"><i data-lucide="gamepad-2"></i></span><span class="sec-label">PANDUAN PERMAINAN</span></div>
         <ol class="guide">
           <li><span class="chip c-gold">1</span><div><b>Belajar dahulu.</b> Tekan BELAJAR / ULANG KAJI dan baca kesemua 10 slaid Topik 2 di Pusat Pembelajaran (1/10 hingga 10/10). Tekan SELESAI BELAJAR pada slaid terakhir. Butang NOTA boleh dibuka pada bila-bila masa.</div></li>
-          <li><span class="chip c-gold">2</span><div><b>Masuk Arena Misi KPPB</b> melalui butang BUAT MISI. Terdapat 10 portal bernombor 01–10. Klik atau sentuh portal untuk berjalan ke sana dan membuka soalan.</div></li>
+          <li><span class="chip c-gold">2</span><div><b>Teroka Arena Misi KPPB</b> melalui butang BUAT MISI. Terdapat 10 portal bernombor 01–10 di sekeliling peta. Komputer: gerak dengan W A S D / anak panah, SHIFT untuk lari, E untuk masuk portal. Telefon: butang arah dan butang MASUK. Anda juga boleh klik/sentuh portal.</div></li>
           <li><span class="chip c-gold">3</span><div><b>Jawab soalan.</b> Pilih satu daripada empat jawapan, kemudian tekan SAHKAN JAWAPAN. Jika salah, tekan CUBA LAGI untuk menjawab semula soalan itu. Markah rasmi dikira daripada cubaan pertama.</div></li>
           <li><span class="chip c-gold">4</span><div><b>Kumpul mata.</b> Jawapan betul = 10 mata. Jawapan salah = 0 mata. Markah maksimum 100.</div></li>
           <li><span class="chip c-gold">5</span><div><b>Naik pangkat.</b> Pemula → Perantis (Gangsa) → Penjelajah (Perak) → Pengamal (Emas) → Strategis (Platinum) → Pakar KPPB (Berlian).</div></li>
           <li><span class="chip c-gold">6</span><div><b>Dapatkan sijil.</b> Selepas 10 soalan, isi nama penuh dan kelas untuk menjana sijil PDF.</div></li>
         </ol>
-        <p class="desc small"><i data-lucide="monitor"></i> Komputer: klik &amp; seret, roda tetikus untuk zum. <i data-lucide="smartphone"></i> Telefon/tablet: sentuh, seret dan cubit untuk zum.</p>
+        <p class="desc small"><i data-lucide="monitor"></i> Komputer: W A S D / anak panah, E untuk masuk, roda tetikus untuk zum. <i data-lucide="smartphone"></i> Telefon/tablet: butang arah, MASUK, cubit untuk zum. Peta mini menunjukkan kedudukan anda dan status setiap portal.</p>
         <div class="modal-actions"><button class="btn btn-gold" data-close>FAHAM!</button></div>
       </div>
     </div>
@@ -220,6 +233,25 @@
           <div class="sub-panel"><h4 class="c-blue-t">MODEL &amp; TAKSONOMI</h4><p><span class="chip c-pink">Model 3E</span> <span class="chip c-blue">Model 3R</span> <span class="chip c-green">Taksonomi Digital Bloom</span></p><p class="desc small">Penglibatan, pemikiran mendalam dan aras kemahiran berfikir dalam aktiviti digital.</p></div>
         </div>
         <div class="modal-actions"><button class="btn btn-sm" id="btnAboutNota"><i data-lucide="notebook-text"></i> BACA NOTA</button><button class="btn btn-gold" data-close>TUTUP</button></div>
+      </div>
+    </div>
+
+    <!-- Pengesahan reset -->
+    <div class="modal" id="modal-reset" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+      <div class="panel modal-panel reset-panel">
+        <div class="sec-head"><span class="sec-num"><i data-lucide="rotate-ccw"></i></span><span class="sec-label" id="resetTitle">RESET SEMUA?</span></div>
+        <p class="desc">Tindakan ini akan memadam <b>semua</b> maklumat dalam peranti ini dan memulakan permainan dari awal:</p>
+        <ul class="reset-list">
+          <li>Kemajuan slaid pembelajaran (kembali ke 0/10)</li>
+          <li>Semua jawapan, cubaan semula dan markah misi</li>
+          <li>Pangkat, lencana dan rekod terbaik</li>
+          <li>Nama, kelas dan No. Sijil pada borang sijil</li>
+        </ul>
+        <p class="desc small">Sijil PDF yang sudah dimuat turun tidak terjejas. Tetapan muzik dan bunyi dikekalkan.</p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" data-close>BATAL</button>
+          <button class="btn reset-confirm" id="btnResetConfirm"><i data-lucide="rotate-ccw"></i> YA, RESET SEMUA</button>
+        </div>
       </div>
     </div>
 

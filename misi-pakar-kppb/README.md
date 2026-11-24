@@ -15,7 +15,8 @@ Pemain membaca 10 slaid interaktif (dengan nota Topik 2 yang boleh dimuat turun)
 | A. Halaman utama | Dunia voxel 3D (Three.js): bilik akademik isometrik, portal bercahaya, watak voxel berlabel, jubin huruf "KPPB" terapung, blok terapung, langit plum dengan awan piksel. Butang MULA MISI, PANDUAN PERMAINAN dan TENTANG TOPIK. |
 | A. Halaman utama (tambahan) | Butang **BELAJAR / ULANG KAJI** (boleh kembali belajar bila-bila masa), **BUAT MISI** (dikunci sehingga pembelajaran selesai), **NOTA**, PANDUAN dan TENTANG TOPIK. Skrin memuatkan beranimasi: blok voxel jatuh dan bertindan, portal berputar, watak piksel berlari di atas bar kemajuan, tip Topik 2. |
 | B. Pusat pembelajaran | 10 slaid wajib: konsep & peranan, TPACK (rajah Venn interaktif), SAMR (tangga), TIM (matriks 5×5), Model 3E (kad 3D + tab komponen), Rigor & Relevance, Relationship, Taksonomi Digital Bloom (piramid), rumusan. Penunjuk 1/10 hingga 10/10. Papan putih dan rak buku 3D berubah mengikut slaid. Butang SELESAI BELAJAR hanya aktif selepas semua slaid dibaca. |
-| C. Arena 3D | Pulau blok dengan laluan, 10 portal bernombor 01 hingga 10, papan markah terapung, lencana pangkat 3D berputar. Klik portal: watak berjalan ke portal, kamera menyelam masuk, soalan dibuka. Seret untuk melihat, roda/cubit untuk zum. |
+| C. Arena 3D | Peta luas (60×44 blok) untuk diteroka: plaza tengah dengan lencana pangkat 3D, laluan ke 10 portal bernombor 01 hingga 10 (setiap satu berlabel zon subtopik), pokok, lampu jalan dan papan markah terapung. Watak bergerak bebas dengan perlanggaran, kamera mengikut watak, **peta mini** menunjukkan kedudukan dan status portal. Dekati portal untuk melihat petunjuk, kemudian masuk dengan E / MASUK, atau klik portal (watak berjalan sendiri). |
+| Reset | Butang **RESET SEMUA (MULA DARI AWAL)** di Halaman Utama (dengan pengesahan) memadam kemajuan slaid, jawapan, cubaan semula, markah, rekod terbaik dan maklumat borang sijil. |
 | D. Kuiz | 10 soalan (4 pilihan) meliputi semua subtopik Topik 2. Butang SAHKAN JAWAPAN. Jika salah: maklum balas SALAH dengan petunjuk nota (jawapan tidak didedahkan) dan butang **CUBA LAGI** yang menetapkan semula soalan untuk dijawab semula sehingga betul. **Markah rasmi dikira daripada cubaan pertama** (betul = 10, salah = 0); soalan yang diperbetulkan ditandakan oren. |
 | Nota Topik 2 | Butang NOTA di bar atas (juga dari Halaman Utama dan dalam soalan): nota lengkap 8 bahagian dengan pautan pantas, dan **MUAT TURUN NOTA (PDF)**. |
 | Pemarkahan & pangkat | Betul = 10 mata, salah = 0. Pangkat: 0–1 Pemula, 2–3 Perantis (Gangsa), 4–5 Penjelajah (Perak), 6–7 Pengamal (Emas), 8–9 Strategis (Platinum), 10 Pakar (Berlian). Animasi naik pangkat dengan lencana 3D, partikel dan bunyi. |
@@ -189,8 +190,8 @@ Ujian ini membaca 10 slaid, mengklik 10 portal 3D sebenar, menjawab soalan untuk
 
 | Peranti | Tindakan |
 | --- | --- |
-| Komputer | Klik butang dan portal. Seret untuk melihat arena. Roda tetikus untuk zum. Kekunci ← → untuk slaid. Kekunci 1–4 / A–D dan Enter dalam soalan. |
-| Telefon / tablet | Sentuh butang dan portal. Leret slaid ke kiri/kanan. Seret untuk melihat arena, cubit untuk zum. |
+| Komputer | Arena: **W A S D / anak panah** untuk bergerak, **SHIFT** untuk berlari, **E / Enter / Space** untuk masuk portal, klik portal, roda tetikus untuk zum. Kekunci ← → untuk slaid. Kekunci 1–4 / A–D dan Enter dalam soalan. |
+| Telefon / tablet | Arena: **butang arah (D-pad)** untuk bergerak dan butang **MASUK** untuk masuk portal; sentuh portal; cubit untuk zum. Leret slaid ke kiri/kanan. |
 
 ## 6. Privasi
 

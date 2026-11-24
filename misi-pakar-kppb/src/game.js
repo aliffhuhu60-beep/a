@@ -2,6 +2,9 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { createBadgeModel, RANKS } from './ranking.js';
+import { QUESTIONS } from './quiz.js';
+
+const GATE_TAGS = QUESTIONS.map((q) => q.tag);
 
 const PIX = '"Press Start 2P", monospace';
 
@@ -621,53 +624,100 @@ export class World {
     else Object.assign(this.cam, target);
   }
 
-  // ---------------- Arena ----------------
+  // ---------------- Arena (peta luas, pergerakan bebas) ----------------
   buildArena() {
     const g = new THREE.Group();
     g.position.copy(AREA_OFFSET.arena);
     const b = new VoxelBatch(31);
     const glow = new VoxelBatch(32);
-    const X0 = -19, X1 = 18, Z0 = -11, Z1 = 10;
-    // laluan: z=-5 (x -16..16), x=16 (z -5..5), z=5 (x 16..-16)
-    const onPath = (x, z) => (Math.abs(z + 5) <= 1 && x >= -17 && x <= 17) || (Math.abs(z - 5) <= 1 && x >= -17 && x <= 17) || (Math.abs(x - 16) <= 1 && z >= -6 && z <= 6);
+    const X0 = -30, X1 = 29, Z0 = -22, Z1 = 21;
+    this.bounds = { x0: X0 + 1, x1: X1 - 1, z0: Z0 + 1, z1: Z1 - 1 };
+
+    // 10 portal di sekeliling pulau, setiap satu menghadap ke tengah
+    const GATE_POS = [[-22, -14], [-8, -17], [8, -17], [22, -14], [25, 0], [22, 14], [8, 17], [-8, 17], [-22, 14], [-25, 0]];
+    const segs = GATE_POS.map(([x, z]) => [0, 0, x, z]);
+    const distSeg = (px, pz, [ax, az, bx, bz]) => {
+      const vx = bx - ax, vz = bz - az;
+      const t = Math.max(0, Math.min(1, ((px - ax) * vx + (pz - az) * vz) / (vx * vx + vz * vz)));
+      return Math.hypot(px - (ax + vx * t), pz - (az + vz * t));
+    };
+    const ringD = (x, z) => Math.abs(Math.hypot(x / 1.18, z) - 17.5);
+    const onPath = (x, z) => segs.some((s) => distSeg(x, z, s) < 1.25) || ringD(x, z) < 1.1;
+    const plaza = (x, z) => Math.hypot(x, z) < 6.5;
+
+    // lantai
     b.fill(X0, -1, Z0, X1, -1, Z1, (x, y, z) => {
+      if (plaza(x, z)) return (Math.floor(Math.hypot(x, z)) % 2) ? PAL.gold : PAL.tileA;
       if (onPath(x, z)) return (x + z) & 1 ? PAL.tileA : PAL.tileB;
-      return (x + z) & 1 ? PAL.rose : PAL.maroon;
-    }, 0.05);
+      return (x + z) & 1 ? 0x5e1c36 : 0x6a2240;
+    }, 0.06);
     for (let y = -3; y <= -2; y++) b.fill(X0, y, Z0, X1, y, Z1, (x, yy, z) => (x === X0 || x === X1 || z === Z0 || z === Z1 ? (yy === -2 ? PAL.maroonDark : PAL.plum) : null));
-    for (let x = X0 + 2; x <= X1 - 2; x++) for (let z = Z0 + 2; z <= Z1 - 2; z++) {
-      if (((x * 31 + z * 17) & 3) !== 0) b.add(x, -4, z, PAL.plum);
+    for (let x = X0 + 2; x <= X1 - 2; x += 1) for (let z = Z0 + 2; z <= Z1 - 2; z += 1) {
+      if (((x * 31 + z * 17) & 7) === 0) b.add(x, -4, z, PAL.plum);
     }
-    // dinding rendah + lampu
+    // dinding rendah di belakang + lampu
     for (let y = 0; y <= 2; y++) {
       for (let z = Z0; z <= Z1; z++) b.add(X0 - 1, y, z, (y + z) & 1 ? PAL.wallA : PAL.wallB, 0.02);
       for (let x = X0 - 1; x <= X1; x++) b.add(x, y, Z0 - 1, (y + x) & 1 ? PAL.wallA : PAL.wallB, 0.02);
     }
-    for (let z = Z0; z <= Z1; z += 4) glow.add(X0 - 1, 3, z, PAL.pink, 0);
-    for (let x = X0 + 1; x <= X1; x += 4) glow.add(x, 3, Z0 - 1, PAL.pink, 0);
-    // pad mula & tamat
-    b.fill(-18, -1, -6, -17, -1, -4, PAL.gold, 0.04);
-    b.fill(-18, -1, 4, -17, -1, 6, PAL.green, 0.04);
-    // podium tengah untuk lencana
-    b.fill(-1, 0, -1, 1, 0, 1, PAL.purpleDark);
-    b.fill(0, 1, 0, 0, 1, 0, PAL.purple);
-    glow.add(-1, 1, -1, PAL.gold, 0); glow.add(1, 1, 1, PAL.gold, 0); glow.add(-1, 1, 1, PAL.gold, 0); glow.add(1, 1, -1, PAL.gold, 0);
+    for (let z = Z0; z <= Z1; z += 5) glow.add(X0 - 1, 3, z, PAL.pink, 0);
+    for (let x = X0 + 1; x <= X1; x += 5) glow.add(x, 3, Z0 - 1, PAL.pink, 0);
     // tiang papan markah
-    b.fill(-8, 3, Z0 - 1, -8, 10, Z0 - 1, PAL.plum);
-    b.fill(8, 3, Z0 - 1, 8, 10, Z0 - 1, PAL.plum);
+    b.fill(-11, 3, Z0 - 1, -11, 12, Z0 - 1, PAL.plum);
+    b.fill(11, 3, Z0 - 1, 11, 12, Z0 - 1, PAL.plum);
+    // plaza tengah: podium lencana
+    b.fill(-1, 0, -1, 1, 0, 1, PAL.purpleDark);
+    b.add(0, 1, 0, PAL.purple);
+    [[-1, -1], [1, 1], [-1, 1], [1, -1]].forEach(([x, z]) => glow.add(x, 1, z, PAL.gold, 0));
+
+    // halangan (bulatan perlanggaran)
+    this.obstacles = [{ x: 0, z: 0, r: 2.3 }];
+    const rnd = rng(77);
+    const free = (x, z, r) => !onPath(x, z) && !plaza(x, z) && Math.hypot(x, z) > 8 && segs.every((sg) => distSeg(x, z, sg) > r + 2) && ringD(x, z) > r + 1.6 &&
+      GATE_POS.every(([gx, gz]) => Math.hypot(x - gx, z - gz) > 4.5) &&
+      this.obstacles.every((o) => Math.hypot(x - o.x, z - o.z) > o.r + r + 1.2) &&
+      x > X0 + 2 && x < X1 - 2 && z > Z0 + 2 && z < Z1 - 2;
     // pokok sakura voxel
-    [[-15, 0], [12, 0], [-6, 0], [6, 9], [-12, 9]].forEach(([x, z]) => {
+    let trees = 0;
+    for (let k = 0; k < 400 && trees < 14; k++) {
+      const x = Math.round(X0 + 3 + rnd() * (X1 - X0 - 6));
+      const z = Math.round(Z0 + 3 + rnd() * (Z1 - Z0 - 6));
+      if (!free(x, z, 1.3)) continue;
+      const leaf = rnd() < 0.5 ? 0xf08cb5 : 0xe2689a;
       b.fill(x, 0, z, x, 2, z, PAL.woodDark);
-      b.fill(x - 1, 3, z - 1, x + 1, 4, z + 1, (xx, yy, zz) => (yy === 4 && Math.abs(xx - x) + Math.abs(zz - z) === 2 ? null : PAL.roseLight));
+      b.fill(x - 1, 3, z - 1, x + 1, 4, z + 1, (xx, yy, zz) => (yy === 4 && Math.abs(xx - x) + Math.abs(zz - z) === 2 ? null : leaf));
       b.add(x, 5, z, PAL.pink);
-    });
+      this.obstacles.push({ x, z, r: 1.25 });
+      trees++;
+    }
+    // semak & batu kecil
+    for (let k = 0; k < 300; k++) {
+      const x = Math.round(X0 + 3 + rnd() * (X1 - X0 - 6));
+      const z = Math.round(Z0 + 3 + rnd() * (Z1 - Z0 - 6));
+      if (!free(x, z, 0.6)) continue;
+      const stone = rnd() < 0.35;
+      b.add(x, 0, z, stone ? 0x9a8c94 : 0xc04a7c);
+      if (!stone && rnd() < 0.4) b.add(x, 1, z, 0xf08cb5);
+      this.obstacles.push({ x, z, r: 0.75 });
+      if (this.obstacles.length > 34) break;
+    }
+    // lampu jalan pada gelang laluan
+    for (let k = 0; k < 10; k++) {
+      const a = (k + 0.5) / 10 * Math.PI * 2;
+      const x = Math.round(Math.cos(a) * 17.5 * 1.18 * 1.12);
+      const z = Math.round(Math.sin(a) * 17.5 * 1.12);
+      if (!free(x, z, 0.7)) continue;
+      b.fill(x, 0, z, x, 2, z, PAL.plum);
+      glow.add(x, 3, z, PAL.gold, 0);
+      this.obstacles.push({ x, z, r: 0.7 });
+    }
     g.add(b.build(this.blockMat));
     g.add(glow.build(this.glowMat));
 
     // papan markah terapung
     this.scoreBoard = textCanvas(1024, 400);
-    const sb = new THREE.Mesh(new THREE.PlaneGeometry(16.5, 6.45), new THREE.MeshBasicMaterial({ map: this.scoreBoard.tex }));
-    sb.position.set(0, 7.6, Z0 - 0.4);
+    const sb = new THREE.Mesh(new THREE.PlaneGeometry(22, 8.6), new THREE.MeshBasicMaterial({ map: this.scoreBoard.tex }));
+    sb.position.set(0, 8.6, Z0 - 0.4);
     g.add(sb);
     this.scoreBoardMesh = sb;
 
@@ -679,19 +729,14 @@ export class World {
     bl.position.set(2, 5, 3);
     g.add(this.arenaBadgeHolder, bl);
 
-    // laluan polyline
-    this.pathPts = [new THREE.Vector3(-17, 0, -5), new THREE.Vector3(16, 0, -5), new THREE.Vector3(16, 0, 5), new THREE.Vector3(-17, 0, 5)];
-    this.pathLens = [0];
-    for (let i = 1; i < this.pathPts.length; i++) this.pathLens.push(this.pathLens[i - 1] + this.pathPts[i].distanceTo(this.pathPts[i - 1]));
-
-    // 10 portal
+    // portal
     this.gates = [];
-    const gateX = [-12, -6, 0, 6, 12, 12, 6, 0, -6, -12];
-    for (let i = 0; i < 10; i++) {
-      const gx = gateX[i];
-      const gz = i < 5 ? -5 : 5;
+    GATE_POS.forEach(([gx, gz], i) => {
       const gate = new THREE.Group();
       gate.position.set(gx, 0, gz);
+      const len = Math.hypot(gx, gz);
+      const dx = -gx / len, dz = -gz / len; // arah ke tengah
+      gate.rotation.y = Math.atan2(-dz, dx);
       const fb = new VoxelBatch(100 + i);
       for (let y = 0; y <= 5; y++) { fb.add(0, y, -2, PAL.purpleDark, 0.08); fb.add(0, y, 2, PAL.purpleDark, 0.08); }
       for (let z = -2; z <= 2; z++) fb.add(0, 5, z, PAL.purpleDark, 0.08);
@@ -709,12 +754,21 @@ export class World {
       hit.userData.gate = i;
       gate.add(hit);
       const label = makeNumberTile(String(i + 1).padStart(2, '0'));
-      label.position.set(0, 7.6, 0);
+      label.position.set(0, 7.4, 0);
       gate.add(label);
+      const zone = makeNameTag(GATE_TAGS[i] || 'PORTAL', `ZON ${String(i + 1).padStart(2, '0')}`);
+      zone.scale.multiplyScalar(0.95);
+      zone.position.set(0, 9.1, 0);
+      gate.add(zone);
       g.add(gate);
-      const s = i < 5 ? gx + 17 : this.pathLens[2] + (16 - gx);
-      this.gates.push({ group: gate, frame, plane, mat, hit, label, state: 'open', s, x: gx, z: gz });
-    }
+      // tiang bingkai sebagai halangan
+      const side = new THREE.Vector3(0, 0, 2).applyAxisAngle(new THREE.Vector3(0, 1, 0), gate.rotation.y);
+      this.obstacles.push({ x: gx + side.x, z: gz + side.z, r: 0.7 }, { x: gx - side.x, z: gz - side.z, r: 0.7 });
+      this.gates.push({
+        group: gate, frame, plane, mat, hit, label, state: 'open', x: gx, z: gz,
+        stand: { x: gx + dx * 2.4, z: gz + dz * 2.4 }, dir: { x: dx, z: dz },
+      });
+    });
 
     const player = makeCharacter({ jacket: 0x7a1f3d, accent: 0xf2c14e, hair: 0x2b1a10 });
     const tag = makeNameTag('ANDA', 'PEMAIN');
@@ -723,33 +777,22 @@ export class World {
     g.add(player);
     this.characters.push(player);
     this.arenaPlayer = player;
-    this.playerS = 1;
-    this.placePlayerAt(this.playerS);
+    // penanda bulatan di bawah pemain
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.75, 1.0, 24), new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.75, side: THREE.DoubleSide }));
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.06;
+    player.add(ring);
+    this.input = { x: 0, y: 0, run: false };
+    this.nearGate = -1;
+    this.stepAcc = 0;
+    this.resetArena();
 
     this.areas.arena = g;
     this.setArenaState({ states: Array(10).fill('open'), score: 0, answered: 0, rankIdx: 0 });
   }
 
-  pathPoint(s) {
-    const L = this.pathLens;
-    s = Math.max(0, Math.min(L[L.length - 1], s));
-    for (let i = 1; i < L.length; i++) {
-      if (s <= L[i]) {
-        const t = (s - L[i - 1]) / (L[i] - L[i - 1]);
-        return this.pathPts[i - 1].clone().lerp(this.pathPts[i], t);
-      }
-    }
-    return this.pathPts[this.pathPts.length - 1].clone();
-  }
-
-  placePlayerAt(s) {
-    const p = this.pathPoint(s);
-    const ahead = this.pathPoint(s + 0.5);
-    this.arenaPlayer.position.copy(p);
-    this.arenaPlayer.rotation.y = Math.atan2(ahead.x - p.x, ahead.z - p.z);
-  }
-
   setArenaState({ states, score, answered, rankIdx }) {
+    this.gateStateList = states;
     const colors = {
       open: [0xff4f9a, 0x6a2cc0, 1.0, PAL.purpleDark],
       correct: [0x7cf0a0, 0x1f7a48, 0.95, 0x1f6a3e],
@@ -818,52 +861,117 @@ export class World {
     }
   }
 
-  /** Gerakkan pemain ke portal i, mainkan animasi masuk, kemudian selesaikan Promise. */
+  /** Arah input (skrin) -> arah dunia isometrik. x: kanan, y: atas. */
+  setMoveInput(x, y, run = false) {
+    this.input.x = x;
+    this.input.y = y;
+    this.input.run = run;
+  }
+
+  resolveCollisions(p) {
+    for (const o of this.obstacles) {
+      const dx = p.x - o.x;
+      const dz = p.z - o.z;
+      const d = Math.hypot(dx, dz);
+      const min = o.r + 0.55;
+      if (d < min && d > 1e-4) {
+        p.x = o.x + (dx / d) * min;
+        p.z = o.z + (dz / d) * min;
+      }
+    }
+    p.x = Math.max(this.bounds.x0, Math.min(this.bounds.x1, p.x));
+    p.z = Math.max(this.bounds.z0, Math.min(this.bounds.z1, p.z));
+  }
+
+  updateArenaMovement(dt) {
+    const p = this.arenaPlayer;
+    const inp = this.input;
+    let mx = 0;
+    let mz = 0;
+    if (!this.busy && this.controlsEnabled !== false && (inp.x || inp.y)) {
+      const k = Math.SQRT1_2;
+      mx = inp.x * k - inp.y * k;
+      mz = -inp.x * k - inp.y * k;
+      const len = Math.hypot(mx, mz) || 1;
+      mx /= len;
+      mz /= len;
+    }
+    if (mx || mz) {
+      const speed = inp.run ? 11 : 7;
+      p.position.x += mx * speed * dt;
+      p.position.z += mz * speed * dt;
+      this.resolveCollisions(p.position);
+      const target = Math.atan2(mx, mz);
+      let diff = target - p.rotation.y;
+      diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+      p.rotation.y += diff * Math.min(1, dt * 14);
+      p.userData.walk = Math.min(1, p.userData.walk + dt * 6);
+      this.stepAcc += speed * dt;
+      if (this.stepAcc > (inp.run ? 1.8 : 1.4)) { this.stepAcc = 0; this.onStep?.(); }
+    } else if (!this.busy) {
+      p.userData.walk = Math.max(0, p.userData.walk - dt * 8);
+    }
+    // portal terdekat
+    let best = -1;
+    let bd = 3.4;
+    this.gates.forEach((gt, i) => {
+      const d = Math.hypot(p.position.x - gt.stand.x, p.position.z - gt.stand.z);
+      const d2 = Math.hypot(p.position.x - gt.x, p.position.z - gt.z);
+      const m = Math.min(d, d2 - 0.6);
+      if (m < bd) { bd = m; best = i; }
+    });
+    if (best !== this.nearGate) {
+      this.nearGate = best;
+      this.onNearGate?.(best);
+    }
+    // kamera mengikut pemain
+    if (!this.busy && !this.camTweening) {
+      const base = AREA_OFFSET.arena;
+      const k = Math.min(1, dt * 4);
+      this.cam.x += (base.x + p.position.x - this.cam.x) * k;
+      this.cam.z += (base.z + p.position.z - this.cam.z) * k;
+      this.cam.y += (2.4 - this.cam.y) * k;
+    }
+  }
+
+  /** Jalan ke hadapan portal i, mainkan animasi masuk, kemudian selesaikan Promise. */
   enterGate(i, sfx) {
     if (this.busy) return Promise.resolve(false);
     this.busy = true;
+    this.setMoveInput(0, 0);
     const gt = this.gates[i];
-    const dir = i < 5 ? 1 : -1; // arah laluan di depan pintu
-    const standS = gt.s - 1.8;
-    const from = this.playerS;
-    const dist = Math.abs(standS - from);
     const p = this.arenaPlayer;
-    p.userData.walk = 1;
-    const st = { s: from };
     const base = AREA_OFFSET.arena;
+    const from = { x: p.position.x, z: p.position.z };
+    const dist = Math.hypot(gt.stand.x - from.x, gt.stand.z - from.z);
+    const st = { t: 0 };
+    p.userData.walk = dist > 0.3 ? 1 : 0;
+    if (dist > 0.3) p.rotation.y = Math.atan2(gt.stand.x - from.x, gt.stand.z - from.z);
+    let stepAcc = 0;
+    let last = 0;
     return new Promise((resolve) => {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          this.busy = false;
-          resolve(true);
-        },
-      });
-      let stepAcc = 0;
+      const tl = gsap.timeline({ onComplete: () => { this.busy = false; resolve(true); } });
       tl.to(st, {
-        s: standS,
-        duration: Math.min(3.2, 0.25 + dist / 9),
+        t: 1,
+        duration: Math.min(3, 0.15 + dist / 10),
         ease: 'none',
         onUpdate: () => {
-          const prev = this.playerS;
-          this.playerS = st.s;
-          const pt = this.pathPoint(st.s);
-          const dS = st.s - prev;
-          const look = this.pathPoint(st.s + (dS >= 0 ? 0.6 : -0.6));
-          p.position.copy(pt);
-          if (look.distanceToSquared(pt) > 0.001) p.rotation.y = Math.atan2(look.x - pt.x, look.z - pt.z);
-          stepAcc += Math.abs(dS);
+          p.position.x = from.x + (gt.stand.x - from.x) * st.t;
+          p.position.z = from.z + (gt.stand.z - from.z) * st.t;
+          stepAcc += (st.t - last) * dist;
+          last = st.t;
           if (stepAcc > 1.4) { stepAcc = 0; sfx?.('step'); }
-          this.cam.x = base.x + pt.x * 0.55;
-          this.cam.z = base.z + pt.z * 0.35;
+          this.cam.x += (base.x + p.position.x - this.cam.x) * 0.12;
+          this.cam.z += (base.z + p.position.z - this.cam.z) * 0.12;
         },
       });
       tl.add(() => {
         p.userData.walk = 0;
-        p.rotation.y = Math.atan2(dir, 0);
+        p.rotation.y = Math.atan2(-gt.dir.x, -gt.dir.z);
         sfx?.('portal');
       });
-      tl.to(this.cam, { x: base.x + gt.x, y: 3, z: base.z + gt.z, h: 11, duration: 0.8, ease: 'power2.in' }, '<');
-      tl.to(p.position, { x: gt.x - dir * 0.2, duration: 0.5, ease: 'power1.in' }, '-=0.5');
+      tl.to(this.cam, { x: base.x + gt.x, y: 3, z: base.z + gt.z, h: 11, duration: 0.8, ease: 'power2.in' });
+      tl.to(p.position, { x: gt.x + gt.dir.x * 0.3, z: gt.z + gt.dir.z * 0.3, duration: 0.5, ease: 'power1.in' }, '-=0.5');
       tl.to(p.scale, { x: 0.2, y: 0.2, z: 0.2, duration: 0.35, ease: 'back.in(2)' }, '-=0.3');
       tl.to(gt.mat.uniforms.uI, { value: 2.6, duration: 0.3 }, '<');
     });
@@ -873,8 +981,8 @@ export class World {
   exitGate(i) {
     const gt = this.gates[i];
     const p = this.arenaPlayer;
-    this.playerS = gt.s + 1.6;
-    this.placePlayerAt(this.playerS);
+    p.position.set(gt.stand.x + gt.dir.x * 0.8, 0, gt.stand.z + gt.dir.z * 0.8);
+    p.rotation.y = Math.atan2(gt.dir.x, gt.dir.z);
     p.scale.setScalar(0.2);
     gsap.to(p.scale, { x: 1, y: 1, z: 1, duration: 0.5, ease: 'back.out(2)' });
     gsap.to(gt.mat.uniforms.uI, { value: gt.baseI ?? 1, duration: 0.6 });
@@ -882,21 +990,34 @@ export class World {
   }
 
   resetArena() {
-    this.playerS = 1;
-    this.arenaPlayer.scale.setScalar(1);
-    this.arenaPlayer.userData.cheer = false;
-    this.placePlayerAt(1);
+    const p = this.arenaPlayer;
+    p.scale.setScalar(1);
+    p.userData.cheer = false;
+    p.userData.walk = 0;
+    p.position.set(0, 0, 4);
+    p.rotation.y = 0;
+    this.setMoveInput(0, 0);
+  }
+
+  /** Letak pemain di hadapan portal (digunakan oleh ujian & butang bantuan). */
+  placePlayerNear(i) {
+    const gt = this.gates[i];
+    this.arenaPlayer.position.set(gt.stand.x, 0, gt.stand.z);
+    this.arenaPlayer.rotation.y = Math.atan2(-gt.dir.x, -gt.dir.z);
+  }
+
+  arenaZoom() {
+    return this.isPortrait() ? Math.min(34, 17 / Math.max(0.4, this.aspect)) : 24;
   }
 
   focusArena(animate) {
     const base = AREA_OFFSET.arena;
-    const portrait = this.isPortrait();
     const pp = this.arenaPlayer.position;
-    const target = portrait
-      ? { x: base.x + pp.x * 0.55, y: 2.5, z: base.z + pp.z * 0.35, h: 36 }
-      : { x: base.x - 0.5, y: 3.6, z: base.z + 0.5, h: 30 };
-    if (animate) gsap.to(this.cam, { ...target, duration: 1.0, ease: 'power2.inOut' });
-    else Object.assign(this.cam, target);
+    const target = { x: base.x + pp.x, y: 2.4, z: base.z + pp.z, h: this.arenaZoom() };
+    if (animate) {
+      this.camTweening = true;
+      gsap.to(this.cam, { ...target, duration: 0.9, ease: 'power2.inOut', onComplete: () => { this.camTweening = false; } });
+    } else Object.assign(this.cam, target);
   }
 
   // ---------------- Ambien & partikel ----------------
@@ -956,7 +1077,8 @@ export class World {
     const palettes = [[0xff5c9a, 0xffffff], [0xd58a4e, 0xffd39a], [0xd7dde6, 0xffffff], [0xf3c64f, 0xfff1b0], [0xa9e4ef, 0xffffff], [0x8af3ff, 0xff5c9a, 0xf3c64f, 0xffffff]];
     for (let k = 0; k < bursts; k++) {
       setTimeout(() => {
-        const p = new THREE.Vector3(base.x + (Math.random() - 0.5) * 22, 6 + Math.random() * 6, base.z + (Math.random() - 0.5) * 14);
+        const c = this.active === 'arena' ? this.arenaPlayer.position : { x: 0, z: 0 };
+        const p = new THREE.Vector3(base.x + c.x + (Math.random() - 0.5) * 22, 6 + Math.random() * 6, base.z + c.z + (Math.random() - 0.5) * 14);
         this.burst(p, palettes[Math.max(0, Math.min(5, level))], 50 + level * 8, 7 + level);
       }, k * 260);
     }
@@ -1017,7 +1139,7 @@ export class World {
       if (pointers.size === 2 && this.active === 'arena') {
         const [a, b] = [...pointers.values()];
         const d = Math.hypot(a.x - b.x, a.y - b.y);
-        if (pinchStart > 0) this.cam.h = THREE.MathUtils.clamp(hStart * (pinchStart / d), 12, 44);
+        if (pinchStart > 0) this.cam.h = THREE.MathUtils.clamp(hStart * (pinchStart / d), 14, 40);
         if (down) down.moved = true;
         return;
       }
@@ -1025,15 +1147,7 @@ export class World {
         const dx = e.clientX - down.x;
         const dy = e.clientY - down.y;
         if (Math.abs(dx) + Math.abs(dy) > 8) down.moved = true;
-        if (down.moved && this.active === 'arena' && !this.busy) {
-          const k = this.cam.h / window.innerHeight;
-          // seret: alihkan sasaran di satah isometrik
-          const right = new THREE.Vector3(1, 0, -1).normalize();
-          const fwd = new THREE.Vector3(-1, 0, -1).normalize();
-          const base = AREA_OFFSET.arena;
-          this.cam.x = THREE.MathUtils.clamp(down.cx - right.x * dx * k - fwd.x * dy * k * 1.4, base.x - 18, base.x + 18);
-          this.cam.z = THREE.MathUtils.clamp(down.cz - right.z * dx * k - fwd.z * dy * k * 1.4, base.z - 12, base.z + 12);
-        }
+
       }
       if (!down) this.hover(e);
     });
@@ -1048,7 +1162,7 @@ export class World {
     el.addEventListener('wheel', (e) => {
       if (this.active !== 'arena') return;
       e.preventDefault();
-      this.cam.h = THREE.MathUtils.clamp(this.cam.h * (1 + Math.sign(e.deltaY) * 0.08), 12, 44);
+      this.cam.h = THREE.MathUtils.clamp(this.cam.h * (1 + Math.sign(e.deltaY) * 0.08), 14, 40);
     }, { passive: false });
   }
 
@@ -1072,7 +1186,7 @@ export class World {
     const p = this.pick(e);
     const gi = p && p.gate !== undefined ? p.gate : -1;
     this.hoverGate = gi;
-    this.canvas.style.cursor = p ? 'pointer' : this.active === 'arena' ? 'grab' : 'default';
+    this.canvas.style.cursor = p ? 'pointer' : 'default';
   }
 
   click(e) {
@@ -1118,7 +1232,7 @@ export class World {
     const tick = () => {
       requestAnimationFrame(tick);
       const now = performance.now();
-      const dt = Math.min(0.05, (now - this.lastT) / 1000);
+      const dt = Math.min(0.1, (now - this.lastT) / 1000);
       this.lastT = now;
       this.time += dt;
       const t = this.time;
@@ -1139,10 +1253,12 @@ export class World {
       } else if (this.active === 'arena') {
         this.arenaBadgeHolder.rotation.y = t * 0.9;
         this.arenaBadgeHolder.position.y = 4.3 + Math.sin(t * 1.8) * 0.25;
+        this.updateArenaMovement(dt);
         this.gates.forEach((gt, i) => {
-          const target = (gt.baseI ?? 1) * (this.hoverGate === i ? 1.45 : 1);
+          const glowUp = this.hoverGate === i || this.nearGate === i;
+          const target = (gt.baseI ?? 1) * (glowUp ? 1.5 : 1);
           if (!this.busy) gt.mat.uniforms.uI.value += (target - gt.mat.uniforms.uI.value) * 0.15;
-          gt.label.position.y = 7.6 + Math.sin(t * 2 + i) * 0.15;
+          gt.label.position.y = 7.4 + Math.sin(t * 2 + i) * 0.15;
         });
       }
 
@@ -1152,8 +1268,9 @@ export class World {
       const e = new THREE.Euler();
       const s = new THREE.Vector3();
       const p = new THREE.Vector3();
+      const fs = this.active === 'arena' ? 1.75 : 1;
       this.floatData.forEach((d, i) => {
-        p.set(d.x, d.y + Math.sin(t * d.sp + d.ph) * 1.2, d.z);
+        p.set(d.x * fs, d.y + Math.sin(t * d.sp + d.ph) * 1.2, d.z * fs);
         e.set(t * d.sp * 0.4 + d.ph, t * d.sp * 0.3, 0);
         q.setFromEuler(e);
         s.setScalar(d.s);

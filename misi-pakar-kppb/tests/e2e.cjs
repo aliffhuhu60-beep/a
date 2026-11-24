@@ -12,6 +12,7 @@ const KEY = [1, 2, 3, 0, 1, 2, 1, 3, 2, 0]; // B C D A B C B D C A
 const RANK = (n) => (n <= 1 ? ['PEMULA KPPB', 'TIADA'] : n <= 3 ? ['PERANTIS KPPB', 'GANGSA'] : n <= 5 ? ['PENJELAJAH KPPB', 'PERAK'] : n <= 7 ? ['PENGAMAL KPPB', 'EMAS'] : n <= 9 ? ['STRATEGIS KPPB', 'PLATINUM'] : ['PAKAR KPPB', 'BERLIAN']);
 
 let sheetEnv = null;
+let enterFirstWithKey = false;
 const { execFileSync } = require('child_process');
 function pdfText(p) { try { return execFileSync('pdftotext', [p, '-'], { encoding: 'utf8' }); } catch { return null; } }
 
@@ -41,7 +42,7 @@ async function clickGate(page, i) {
     await cameraSettled(page);
     await clickGateOnce(page, i);
     try {
-      await page.waitForSelector('#modal-question.open', { timeout: 20000 });
+      await page.waitForFunction(() => document.querySelector('#modal-question').classList.contains('open'), null, { timeout: 30000, polling: 250 });
       return;
     } catch {
       console.warn(`  (cubaan semula klik portal ${i + 1})`);
@@ -52,19 +53,14 @@ async function clickGate(page, i) {
 }
 
 async function clickGateOnce(page, i) {
-  // klik pada kedudukan skrin sebenar portal 3D (menguji raycast)
-  let pos = await gatePos(page, i);
+  // klik pada kedudukan skrin sebenar portal 3D (menguji raycast); jika portal di luar skrin,
+  // gunakan pemilihan portal yang sama seperti klik (watak berjalan sendiri ke portal)
+  const pos = await gatePos(page, i);
   if (pos.x < 30 || pos.x > pos.W - 30 || pos.y < 170 || pos.y > pos.H - 150) {
-    // seperti pemain menyeret kamera: pusatkan pada portal
-    await page.evaluate((i) => {
-      const w = window.__kppb.world;
-      const v = w.gates[i].group.getWorldPosition(w.gates[i].group.position.clone());
-      w.cam.x = v.x; w.cam.z = v.z;
-    }, i);
-    await page.waitForTimeout(150);
-    pos = await gatePos(page, i);
+    await page.evaluate((i) => window.__kppb.world.onPortalSelect(i), i);
+  } else {
+    await page.mouse.click(pos.x, pos.y);
   }
-  await page.mouse.click(pos.x, pos.y);
 }
 
 async function run(nCorrect, opts = {}) {
@@ -102,12 +98,29 @@ async function run(nCorrect, opts = {}) {
   await page.click('#btnFinishLearn');
   await page.waitForSelector('#screen-arena.active', { timeout: 10000 });
   await page.waitForTimeout(1200);
+  // pergerakan papan kekunci / butang arah
+  const p0 = await page.evaluate(() => ({ ...window.__kppb.world.arenaPlayer.position }));
+  if (opts.device) {
+    const box = await page.locator('#movePad .pad.up').boundingBox();
+    await page.mouse.move(box.x + 20, box.y + 20); await page.mouse.down(); await page.waitForTimeout(900); await page.mouse.up();
+  } else {
+    await page.keyboard.down('ArrowUp'); await page.waitForTimeout(900); await page.keyboard.up('ArrowUp');
+  }
+  const p1 = await page.evaluate(() => ({ ...window.__kppb.world.arenaPlayer.position }));
+  assert(Math.hypot(p1.x - p0.x, p1.z - p0.z) > 0.2, 'pemain bergerak dengan kawalan');
+  // dekati portal 1 dan masuk dengan E / MASUK
+  await page.evaluate(() => window.__kppb.world.placePlayerNear(0));
+  await page.waitForFunction(() => window.__kppb.world.nearGate === 0, null, { timeout: 10000, polling: 200 });
+  enterFirstWithKey = true;
   if (opts.shots) await page.screenshot({ path: path.join(OUT, `${opts.tag}_arena.png`) });
 
   let rankUps = 0;
   for (let i = 0; i < 10; i++) {
     const choice = i < nCorrect ? KEY[i] : (KEY[i] + 1) % 4;
-    await clickGate(page, i);
+    if (i === 0 && enterFirstWithKey) {
+      if (opts.device) await page.tap('#btnEnterGate'); else await page.keyboard.press('e');
+      await page.waitForFunction(() => document.querySelector('#modal-question').classList.contains('open'), null, { timeout: 30000, polling: 250 });
+    } else await clickGate(page, i);
     assert(await page.isDisabled('#qSubmit'), 'SAHKAN dilumpuhkan sebelum pilihan');
     assert(await page.isHidden('#qFeedback'), 'jawapan tidak didedahkan sebelum memilih');
     await page.click(`#qOptions .opt[data-k="${choice}"]`);

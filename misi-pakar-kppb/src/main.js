@@ -15,7 +15,7 @@ import {
   createIcons, Play, Gamepad2, BookOpen, Music, Volume2, VolumeX, House, ChevronLeft, ChevronRight, Check,
   MousePointerClick, Trophy, ChartColumn, Award, RotateCcw, Shield, FileText, Download, Monitor, Smartphone,
   Layers, Box, Users, Lightbulb, Rotate3d, Clock, Handshake, Target, Plus, LifeBuoy, Split, UserRound, Globe,
-  Wifi, HeartHandshake, X, Sparkles, Swords, NotebookText, ClipboardCheck, Info, Compass, Lock,
+  Wifi, HeartHandshake, X, Sparkles, Swords, NotebookText, ClipboardCheck, Info, Compass, Lock, ChevronUp, ChevronDown, LogIn,
 } from 'lucide';
 
 import { World } from './game.js';
@@ -30,7 +30,7 @@ const ICONS = {
   Play, Gamepad2, BookOpen, Music, Volume2, VolumeX, House, ChevronLeft, ChevronRight, Check, MousePointerClick, Trophy,
   ChartColumn, Award, RotateCcw, Shield, FileText, Download, Monitor, Smartphone, Layers, Box, Users, Lightbulb, Rotate3d,
   Clock, Handshake, Target, Plus, LifeBuoy, Split, UserRound, Globe, Wifi, HeartHandshake, X, Sparkles,
-  Swords, NotebookText, ClipboardCheck, Info, Compass, Lock,
+  Swords, NotebookText, ClipboardCheck, Info, Compass, Lock, ChevronUp, ChevronDown, LogIn,
 };
 const icons = () => createIcons({ icons: ICONS, attrs: { 'aria-hidden': 'true' } });
 const $ = (s) => document.querySelector(s);
@@ -189,6 +189,7 @@ function revealIn(root) {
 }
 
 function openModal(id) {
+  world.setMoveInput?.(0, 0);
   const m = $(id);
   m.classList.add('open');
   const p = m.querySelector('.modal-panel');
@@ -200,7 +201,7 @@ function closeModal(id) {
 $$('[data-close]').forEach((b) => b.addEventListener('click', () => closeModal('#' + b.closest('.modal').id)));
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
-  ['#modal-guide', '#modal-about', '#modal-perf', '#modal-cert', '#modal-nota'].forEach((id) => {
+  ['#modal-guide', '#modal-about', '#modal-perf', '#modal-cert', '#modal-nota', '#modal-reset'].forEach((id) => {
     if ($(id).classList.contains('open')) closeModal(id);
   });
 });
@@ -297,7 +298,7 @@ function buildTitleTiles() {
 function renderHome() {
   const visited = state.learn.visited.filter(Boolean).length;
   const r = computeResult(state.quiz.answers);
-  $('#btnStart').innerHTML = `<i data-lucide="book-open"></i> ${state.learn.completed ? 'ULANG KAJI (BELAJAR SEMULA)' : visited > 0 ? 'SAMBUNG BELAJAR' : 'MULA BELAJAR'}`;
+  $('#btnStart').innerHTML = `<i data-lucide="book-open"></i> ${state.learn.completed ? 'ULANG KAJI' : visited > 0 ? 'SAMBUNG BELAJAR' : 'MULA BELAJAR'}`;
   const mb = $('#btnMission');
   mb.innerHTML = state.learn.completed
     ? `<i data-lucide="swords"></i> ${r.answered > 0 && !r.finished ? 'SAMBUNG MISI' : 'BUAT MISI'}`
@@ -339,6 +340,8 @@ $('#btnMission').addEventListener('click', () => {
   goTo('arena');
 });
 $('#btnHomeNota').addEventListener('click', () => openNota());
+$('#btnReset').addEventListener('click', () => openModal('#modal-reset'));
+$('#btnResetConfirm').addEventListener('click', () => resetEverything());
 $('#btnGuide').addEventListener('click', () => openModal('#modal-guide'));
 $('#btnAbout').addEventListener('click', () => openModal('#modal-about'));
 world.onHomePortal = () => { if (screen === 'home') (state.learn.completed ? $('#btnMission') : $('#btnStart')).click(); };
@@ -626,6 +629,123 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+
+// ---------------------------------------------------------------------------
+// Kawalan pergerakan Arena: papan kekunci (komputer) & butang arah (telefon)
+// ---------------------------------------------------------------------------
+const keysDown = new Set();
+const padDown = new Set();
+const KEYMAP = { w: 'up', arrowup: 'up', s: 'down', arrowdown: 'down', a: 'left', arrowleft: 'left', d: 'right', arrowright: 'right' };
+let movedOnce = false;
+
+function controlsActive() {
+  return screen === 'arena' && !$('.modal.open') && !(document.activeElement && /input|textarea/i.test(document.activeElement.tagName));
+}
+
+function applyMoveInput() {
+  const dirs = new Set([...keysDown, ...padDown]);
+  const x = (dirs.has('right') ? 1 : 0) - (dirs.has('left') ? 1 : 0);
+  const y = (dirs.has('up') ? 1 : 0) - (dirs.has('down') ? 1 : 0);
+  world.setMoveInput(controlsActive() ? x : 0, controlsActive() ? y : 0, keysDown.has('run'));
+  if ((x || y) && !movedOnce && controlsActive()) {
+    movedOnce = true;
+    $('#arenaHint').classList.add('faded');
+  }
+}
+
+function enterNearGate() {
+  if (!controlsActive() || world.busy || world.nearGate < 0) return;
+  world.onPortalSelect?.(world.nearGate);
+}
+
+document.addEventListener('keydown', (e) => {
+  if (!controlsActive()) return;
+  const k = e.key.toLowerCase();
+  if (KEYMAP[k]) { keysDown.add(KEYMAP[k]); e.preventDefault(); }
+  if (k === 'shift') keysDown.add('run');
+  if (k === 'e' || k === 'enter' || k === ' ') { e.preventDefault(); enterNearGate(); }
+  applyMoveInput();
+});
+document.addEventListener('keyup', (e) => {
+  const k = e.key.toLowerCase();
+  if (KEYMAP[k]) keysDown.delete(KEYMAP[k]);
+  if (k === 'shift') keysDown.delete('run');
+  applyMoveInput();
+});
+window.addEventListener('blur', () => { keysDown.clear(); padDown.clear(); applyMoveInput(); });
+
+$$('#movePad [data-dir]').forEach((b) => {
+  const dir = b.dataset.dir;
+  const on = (e) => { e.preventDefault(); b.setPointerCapture?.(e.pointerId); padDown.add(dir); b.classList.add('on'); applyMoveInput(); };
+  const off = () => { padDown.delete(dir); b.classList.remove('on'); applyMoveInput(); };
+  b.addEventListener('pointerdown', on);
+  b.addEventListener('pointerup', off);
+  b.addEventListener('pointercancel', off);
+  b.addEventListener('lostpointercapture', off);
+  b.addEventListener('contextmenu', (e) => e.preventDefault());
+});
+$('#btnEnterGate').addEventListener('click', enterNearGate);
+
+world.onStep = () => sfx('step');
+world.onNearGate = (i) => {
+  const prompt = $('#gatePrompt');
+  const btn = $('#btnEnterGate');
+  if (i < 0) { prompt.classList.add('hidden'); btn.classList.add('dim'); return; }
+  const st = gateStates()[i];
+  const label = { open: 'BELUM DIJAWAB', correct: 'BETUL', wrong: 'SALAH · BOLEH CUBA LAGI', solved: 'DIPERBETULKAN' }[st];
+  prompt.innerHTML = `<b>PORTAL ${String(i + 1).padStart(2, '0')}</b> · ${QUESTIONS[i].tag}<small>${label}</small><span class="kbd-only">TEKAN <kbd>E</kbd> UNTUK MASUK</span><span class="touch-only">TEKAN MASUK</span>`;
+  prompt.classList.remove('hidden');
+  btn.classList.remove('dim');
+  sfx('hover');
+};
+
+// peta mini (pandangan isometrik dari atas)
+const mini = $('#minimap');
+const mctx = mini.getContext('2d');
+let miniTick = 0;
+function drawMinimap() {
+  const W = mini.width;
+  const H = mini.height;
+  const k = W / 108;
+  const tx = (x, z) => [W / 2 + (x - z) * k, H / 2 + (x + z) * k * 0.5];
+  mctx.clearRect(0, 0, W, H);
+  const b = world.bounds;
+  const corners = [[b.x0, b.z0], [b.x1, b.z0], [b.x1, b.z1], [b.x0, b.z1]].map(([x, z]) => tx(x, z));
+  mctx.fillStyle = 'rgba(122,36,66,0.9)';
+  mctx.strokeStyle = '#e9b949';
+  mctx.lineWidth = 2;
+  mctx.beginPath();
+  corners.forEach(([x, y], i) => (i ? mctx.lineTo(x, y) : mctx.moveTo(x, y)));
+  mctx.closePath();
+  mctx.fill();
+  mctx.stroke();
+  const [cx, cy] = tx(0, 0);
+  mctx.fillStyle = '#e9b949';
+  mctx.fillRect(cx - 3, cy - 2, 6, 4);
+  const states = gateStates();
+  world.gates.forEach((g, i) => {
+    const [x, y] = tx(g.x, g.z);
+    mctx.fillStyle = { open: '#ff5c9a', correct: '#3aa364', wrong: '#c8323f', solved: '#e08a1e' }[states[i]];
+    mctx.fillRect(x - 4, y - 4, 8, 8);
+    if (world.nearGate === i) { mctx.strokeStyle = '#ffffff'; mctx.strokeRect(x - 6, y - 6, 12, 12); }
+  });
+  const p = world.arenaPlayer.position;
+  const [px, py] = tx(p.x, p.z);
+  mctx.fillStyle = '#ffe08a';
+  mctx.beginPath();
+  mctx.arc(px, py, 4, 0, Math.PI * 2);
+  mctx.fill();
+  mctx.strokeStyle = '#12060c';
+  mctx.lineWidth = 1.5;
+  mctx.stroke();
+}
+
+const prevOnFrame = world.onFrame;
+world.onFrame = () => {
+  prevOnFrame?.();
+  if (screen === 'arena' && (miniTick++ % 3 === 0)) drawMinimap();
+};
+
 // ---------------------------------------------------------------------------
 // Naik pangkat
 // ---------------------------------------------------------------------------
@@ -864,6 +984,39 @@ $('#certForm').addEventListener('submit', async (e) => {
     icons();
   }
 });
+
+// ---------------------------------------------------------------------------
+// Reset semua (mula dari awal)
+// ---------------------------------------------------------------------------
+function resetEverything() {
+  const fresh = defaultState();
+  state.learn = fresh.learn;
+  state.quiz = fresh.quiz;
+  state.best = fresh.best;
+  state.plays = 0;
+  save();
+  certId = null;
+  pendingRankUp = null;
+  currentQ = -1;
+  retryMode = false;
+  afterRankUp = null;
+  $('#inName').value = '';
+  $('#inKelas').value = '';
+  $('#certStatus').innerHTML = '';
+  $('#btnGenerate').innerHTML = '<i data-lucide="download"></i> MUAT TURUN SIJIL (PDF)';
+  $$('.modal.open').forEach((m) => m.classList.toggle('open', false));
+  badgeViewer.stop();
+  world.resetArena();
+  updateArena();
+  arenaHintShown = false;
+  movedOnce = false;
+  $('#arenaHint').classList.toggle('faded', false);
+  const go = () => { setScreen('home'); renderHome(); animateHome(); };
+  if (screen === 'home') { renderHome(); animateHome(); } else wipe(go);
+  icons();
+  sfx('page');
+  toast('SEMUA MAKLUMAT DIRESET. SELAMAT MEMULAKAN SEMULA!');
+}
 
 // ---------------------------------------------------------------------------
 // Nota Topik 2
