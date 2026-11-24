@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ms">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+    <meta name="theme-color" content="#2a1020" />
+    <meta name="description" content="MISI PAKAR KPPB: Pengembaraan 3E & 3R — permainan pembelajaran 3D voxel tentang Model Pengintegrasian Teknologi dalam PdP." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>MISI PAKAR KPPB: Pengembaraan 3E &amp; 3R</title>
+  </head>
+  <body>
+    <!-- Latar: langit plum, bintang, awan piksel, jalur blok -->
+    <div id="bg" aria-hidden="true">
+      <div class="stars" id="stars"></div>
+      <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="cloud c4"></div>
+      <div class="ground" id="ground"></div>
+    </div>
+
+    <canvas id="world" aria-label="Dunia 3D Misi Pakar KPPB"></canvas>
+    <div id="bubble" class="bubble hidden"><span id="bubbleText"></span></div>
+
+    <!-- Bar atas -->
+    <header id="topbar">
+      <button class="brand" id="btnBrand" title="Halaman utama">
+        <span class="brand-tile">K</span><span class="brand-text">MISI PAKAR KPPB</span>
+      </button>
+      <div class="top-progress" id="topProgress"></div>
+      <div class="top-actions">
+        <button class="icon-btn" id="btnMusic" title="Muzik latar" aria-pressed="true"><i data-lucide="music"></i></button>
+        <button class="icon-btn" id="btnSfx" title="Kesan bunyi" aria-pressed="true"><i data-lucide="volume-2"></i></button>
+        <button class="icon-btn" id="btnHome" title="Halaman utama"><i data-lucide="house"></i></button>
+      </div>
+    </header>
+
+    <main id="ui">
+      <!-- A: HALAMAN UTAMA -->
+      <section id="screen-home" class="screen">
+        <div class="home-wrap">
+          <div class="title-tiles" id="titleTiles" aria-label="MISI PAKAR KPPB"></div>
+          <div class="panel home-panel" id="homePanel">
+            <div class="sec-head"><span class="sec-num">3E</span><span class="sec-label">PENGEMBARAAN 3E &amp; 3R</span><span class="sec-num alt">3R</span></div>
+            <p class="subtitle reveal">Pengembaraan Menguasai Model Pengintegrasian Teknologi dalam PdP.</p>
+            <p class="desc reveal">Selamat datang ke misi pembelajaran KPPB. Kuasai konsep 3E dan 3R melalui bahan pembelajaran interaktif dan cabaran pengetahuan. Kumpulkan mata, naik pangkat dan buktikan penguasaan anda.</p>
+            <div class="home-btns">
+              <button class="btn btn-gold btn-big reveal" id="btnStart"><i data-lucide="play"></i> MULA MISI</button>
+              <button class="btn reveal" id="btnGuide"><i data-lucide="gamepad-2"></i> PANDUAN PERMAINAN</button>
+              <button class="btn btn-blue reveal" id="btnAbout"><i data-lucide="book-open"></i> TENTANG TOPIK</button>
+            </div>
+            <div class="home-status reveal" id="homeStatus"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- B: PUSAT PEMBELAJARAN -->
+      <section id="screen-learn" class="screen">
+        <div class="panel learn-panel">
+          <div class="learn-top">
+            <div class="learn-label"><span class="tag-gold">PUSAT PEMBELAJARAN</span><span class="learn-count" id="learnCount">SLAID 1/8</span></div>
+            <div class="bar"><div class="bar-fill" id="learnBar"></div></div>
+            <div class="dots" id="learnDots"></div>
+          </div>
+          <div class="slide-body" id="slideBody"></div>
+          <div class="learn-nav">
+            <button class="btn btn-sm" id="btnPrev"><i data-lucide="chevron-left"></i> SEBELUM</button>
+            <button class="btn btn-sm btn-gold" id="btnNext">SETERUSNYA <i data-lucide="chevron-right"></i></button>
+            <button class="btn btn-sm btn-green hidden" id="btnFinishLearn"><i data-lucide="check"></i> SELESAI BELAJAR</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- C: ARENA -->
+      <section id="screen-arena" class="screen">
+        <div class="arena-hud">
+          <div class="panel hud-card">
+            <div class="hud-row">
+              <span class="tag-gold">ARENA MISI KPPB</span>
+            </div>
+            <div class="hud-score"><span class="hud-k">MATA</span><span class="hud-v" id="hudScore">0</span><span class="hud-max">/100</span></div>
+            <div class="hud-rank" id="hudRank">PEMULA KPPB</div>
+            <div class="cells" id="hudCells"></div>
+            <div class="hud-k small" id="hudAnswered">0/10 SOALAN DIJAWAB</div>
+          </div>
+        </div>
+        <div class="arena-hint panel" id="arenaHint"><i data-lucide="mouse-pointer-click"></i> <span>Klik / sentuh portal bernombor untuk membuka soalan. Seret untuk melihat sekeliling.</span></div>
+        <button class="btn btn-gold btn-big arena-results hidden" id="btnShowResults"><i data-lucide="trophy"></i> LIHAT KEPUTUSAN</button>
+      </section>
+    </main>
+
+    <!-- Soalan -->
+    <div class="modal" id="modal-question" role="dialog" aria-modal="true" aria-labelledby="qText">
+      <div class="panel modal-panel q-panel">
+        <div class="q-head">
+          <div class="sec-head"><span class="sec-num" id="qNum">01</span><span class="sec-label" id="qTag">PORTAL SOALAN</span></div>
+          <div class="q-meta"><span id="qProgress">0/10</span> · <span id="qScore">0</span> MATA</div>
+        </div>
+        <h2 class="q-text" id="qText"></h2>
+        <div class="options" id="qOptions"></div>
+        <div class="feedback hidden" id="qFeedback">
+          <div class="fb-title" id="fbTitle"></div>
+          <p class="fb-explain" id="fbExplain"></p>
+        </div>
+        <div class="q-actions">
+          <button class="btn btn-sm btn-ghost" id="qBack"><i data-lucide="chevron-left"></i> KE ARENA</button>
+          <button class="btn btn-gold" id="qSubmit" disabled><i data-lucide="check"></i> SAHKAN JAWAPAN</button>
+          <button class="btn btn-green hidden" id="qContinue">TERUSKAN <i data-lucide="chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Naik pangkat -->
+    <div class="modal" id="modal-rankup" role="dialog" aria-modal="true">
+      <div class="rankup-burst" id="rankupBurst"></div>
+      <div class="panel modal-panel rankup-panel">
+        <div class="rankup-title">NAIK PANGKAT!</div>
+        <div class="badge-stage" id="rankupBadge"></div>
+        <div class="rankup-name" id="rankupName"></div>
+        <div class="rankup-badge-name" id="rankupBadgeName"></div>
+        <div class="rankup-count" id="rankupCount"></div>
+        <button class="btn btn-gold" id="rankupOk">TERUSKAN MISI <i data-lucide="chevron-right"></i></button>
+      </div>
+    </div>
+
+    <!-- E: KEPUTUSAN -->
+    <div class="modal" id="modal-results" role="dialog" aria-modal="true">
+      <div class="panel modal-panel results-panel">
+        <div class="sec-head center"><span class="sec-num">10</span><span class="sec-label">KEPUTUSAN AKHIR MISI</span></div>
+        <h2 class="results-msg" id="resultsMsg"></h2>
+        <div class="results-grid">
+          <div class="badge-stage" id="resultsBadge"></div>
+          <div class="stats" id="resultsStats"></div>
+        </div>
+        <div class="results-actions">
+          <button class="btn btn-blue" id="btnPerf"><i data-lucide="chart-column"></i> LIHAT PRESTASI</button>
+          <button class="btn btn-gold" id="btnCert"><i data-lucide="award"></i> DAPATKAN SIJIL</button>
+          <button class="btn" id="btnReplay"><i data-lucide="rotate-ccw"></i> ULANGI PERMAINAN</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prestasi -->
+    <div class="modal" id="modal-perf" role="dialog" aria-modal="true">
+      <div class="panel modal-panel">
+        <div class="sec-head"><span class="sec-num"><i data-lucide="chart-column"></i></span><span class="sec-label">PRESTASI ANDA</span></div>
+        <div class="perf-list" id="perfList"></div>
+        <div class="modal-actions"><button class="btn btn-gold" data-close>KEMBALI</button></div>
+      </div>
+    </div>
+
+    <!-- F: SIJIL -->
+    <div class="modal" id="modal-cert" role="dialog" aria-modal="true">
+      <div class="panel modal-panel cert-panel">
+        <div class="sec-head"><span class="sec-num"><i data-lucide="award"></i></span><span class="sec-label">SIJIL DIGITAL</span></div>
+        <p class="desc">Isi maklumat di bawah untuk menjana Sijil Pengiktirafan Pencapaian (PDF).</p>
+        <form id="certForm" novalidate>
+          <label class="field">
+            <span>NAMA PENUH</span>
+            <input id="inName" name="name" type="text" autocomplete="name" maxlength="80" placeholder="Contoh: Nur Aisyah binti Ahmad" />
+            <small class="err" id="errName"></small>
+          </label>
+          <label class="field">
+            <span>KELAS</span>
+            <input id="inKelas" name="kelas" type="text" maxlength="40" placeholder="Contoh: PISMP Ambilan Jun 2024" />
+            <small class="err" id="errKelas"></small>
+          </label>
+          <div class="cert-summary" id="certSummary"></div>
+          <p class="privacy"><i data-lucide="shield"></i> Nama dan kelas hanya digunakan untuk sijil ini dan rekod pencapaian dalam Google Sheet penganjur.</p>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-ghost btn-sm" data-close>BATAL</button>
+            <button type="submit" class="btn btn-gold" id="btnGenerate"><i data-lucide="file-text"></i> JANA SIJIL</button>
+          </div>
+        </form>
+        <div class="cert-done hidden" id="certDone">
+          <div class="cert-status" id="certStatus"></div>
+          <div class="modal-actions">
+            <button class="btn btn-ghost btn-sm" id="btnCertAgain">UBAH MAKLUMAT</button>
+            <button class="btn btn-green" id="btnDownload"><i data-lucide="download"></i> MUAT TURUN SIJIL</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panduan -->
+    <div class="modal" id="modal-guide" role="dialog" aria-modal="true">
+      <div class="panel modal-panel">
+        <div class="sec-head"><span class="sec-num"><i data-lucide="gamepad-2"></i></span><span class="sec-label">PANDUAN PERMAINAN</span></div>
+        <ol class="guide">
+          <li><span class="chip c-gold">1</span><div><b>Belajar dahulu.</b> Tekan MULA MISI dan baca kesemua 8 slaid di Pusat Pembelajaran (1/8 hingga 8/8). Tekan SELESAI BELAJAR pada slaid terakhir.</div></li>
+          <li><span class="chip c-gold">2</span><div><b>Masuk Arena Misi KPPB.</b> Terdapat 10 portal bernombor 01–10. Klik atau sentuh portal untuk berjalan ke sana dan membuka soalan.</div></li>
+          <li><span class="chip c-gold">3</span><div><b>Jawab soalan.</b> Pilih satu daripada empat jawapan, kemudian tekan SAHKAN JAWAPAN. Jawapan yang dihantar adalah muktamad.</div></li>
+          <li><span class="chip c-gold">4</span><div><b>Kumpul mata.</b> Jawapan betul = 10 mata. Jawapan salah = 0 mata. Markah maksimum 100.</div></li>
+          <li><span class="chip c-gold">5</span><div><b>Naik pangkat.</b> Pemula → Perantis (Gangsa) → Penjelajah (Perak) → Pengamal (Emas) → Strategis (Platinum) → Pakar KPPB (Berlian).</div></li>
+          <li><span class="chip c-gold">6</span><div><b>Dapatkan sijil.</b> Selepas 10 soalan, isi nama penuh dan kelas untuk menjana sijil PDF.</div></li>
+        </ol>
+        <p class="desc small"><i data-lucide="monitor"></i> Komputer: klik &amp; seret, roda tetikus untuk zum. <i data-lucide="smartphone"></i> Telefon/tablet: sentuh, seret dan cubit untuk zum.</p>
+        <div class="modal-actions"><button class="btn btn-gold" data-close>FAHAM!</button></div>
+      </div>
+    </div>
+
+    <!-- Tentang -->
+    <div class="modal" id="modal-about" role="dialog" aria-modal="true">
+      <div class="panel modal-panel">
+        <div class="sec-head"><span class="sec-num">T2</span><span class="sec-label">TENTANG TOPIK</span></div>
+        <h3 class="about-title">Topik 2: Model Pengintegrasian Teknologi dalam Pengajaran dan Pembelajaran (PdP)</h3>
+        <p class="desc">Model pengintegrasian teknologi membantu pendidik merancang penggunaan teknologi secara bermakna dalam proses pengajaran dan pembelajaran. Topik ini memberi tumpuan kepada dua kerangka:</p>
+        <div class="about-cols">
+          <div class="sub-panel"><h4 class="c-pink-t">MODEL 3E</h4><p><span class="chip c-pink">Engagement</span> <span class="chip c-blue">Enhancement</span> <span class="chip c-green">Extension</span></p><p class="desc small">Peranan teknologi dalam meningkatkan pengalaman pembelajaran.</p></div>
+          <div class="sub-panel"><h4 class="c-blue-t">KERANGKA 3R</h4><p><span class="chip c-pink">Rigor</span> <span class="chip c-blue">Relevance</span> <span class="chip c-green">Relationship</span></p><p class="desc small">Tahap pemikiran, aplikasi dunia sebenar dan hubungan bermakna.</p></div>
+        </div>
+        <div class="modal-actions"><button class="btn btn-gold" data-close>TUTUP</button></div>
+      </div>
+    </div>
+
+    <div id="wipe" aria-hidden="true"></div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div id="loading">
+      <div class="load-tiles"><span>M</span><span>P</span><span>K</span><span>P</span><span>P</span><span>B</span></div>
+      <div class="load-text">MEMBINA DUNIA BLOK...</div>
+      <div class="bar load-bar"><div class="bar-fill" id="loadBar"></div></div>
+    </div>
+    <noscript>Permainan ini memerlukan JavaScript.</noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
