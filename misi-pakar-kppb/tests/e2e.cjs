@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const BASE = process.env.BASE_URL || 'http://localhost:4173/';
-const PATTERNS = (process.env.PATTERNS || '0,2,4,6,8,10').split(',').map(Number);
+const PATTERNS = (process.env.PATTERNS ?? '0,2,4,6,8,10').split(',').filter((v) => v !== '').map(Number);
 const OUT = process.env.OUT || path.join(__dirname, '..', 'test-output');
 const KEY = [1, 2, 3, 0, 1, 2, 1, 3, 2, 0]; // B C D A B C B D C A
 const RANK = (n) => (n <= 1 ? ['PEMULA KPPB', 'TIADA'] : n <= 3 ? ['PERANTIS KPPB', 'GANGSA'] : n <= 5 ? ['PENJELAJAH KPPB', 'PERAK'] : n <= 7 ? ['PENGAMAL KPPB', 'EMAS'] : n <= 9 ? ['STRATEGIS KPPB', 'PLATINUM'] : ['PAKAR KPPB', 'BERLIAN']);
@@ -208,8 +208,8 @@ async function run(nCorrect, opts = {}) {
     await page.waitForSelector('#sheetStatus.ok', { timeout: 20000 });
     const id = txt && /No\. Sijil: (KPPB-\d{8}-[A-Z0-9]{4})/.exec(txt);
     assert(!txt || id, 'No. Sijil dalam PDF');
-    const row = sheetEnv.sheets.Rekod_Sijil.rows.find((r) => r[2] === name && r[3] === kelas);
-    assert(row && row[4] === nCorrect * 10 && row[8] === rankName, 'baris Google Sheet tepat');
+    const row = id ? sheetEnv.sheets.Rekod_Sijil.rows.find((r) => r[1] === id[1]) : sheetEnv.sheets.Rekod_Sijil.rows.filter((r) => r[2] === name && r[3] === kelas).pop();
+    assert(row && row[2] === name && row[3] === kelas && row[4] === nCorrect * 10 && row[8] === rankName, 'baris Google Sheet tepat');
     if (id) assert(row[1] === id[1], 'No. Sijil Sheet = No. Sijil PDF');
     for (let k = 0; k < 40 && !String(row[12]).includes('drive.google.com'); k++) await page.waitForTimeout(250);
     assert(String(row[12]).includes('drive.google.com'), 'pautan PDF dalam Google Sheet');
