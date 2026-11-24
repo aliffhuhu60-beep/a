@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node tests/logic.test.mjs",
+    "test": "node tests/logic.test.mjs && node tests/chatbot.test.mjs && node tests/apps-script.test.cjs",
     "test:e2e": "node tests/e2e.cjs"
   },
   "license": "MIT",

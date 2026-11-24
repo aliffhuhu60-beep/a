@@ -18,6 +18,7 @@ Pemain membaca 10 slaid interaktif (dengan nota Topik 2 yang boleh dimuat turun)
 | C. Arena 3D | Peta luas (60×44 blok) untuk diteroka: plaza tengah dengan lencana pangkat 3D, laluan ke 10 portal bernombor 01 hingga 10 (setiap satu berlabel zon subtopik), pokok, lampu jalan dan papan markah terapung. Watak bergerak bebas dengan perlanggaran, kamera mengikut watak, **peta mini** menunjukkan kedudukan dan status portal. Dekati portal untuk melihat petunjuk, kemudian masuk dengan E / MASUK, atau klik portal (watak berjalan sendiri). |
 | Reset | Butang **RESET SEMUA (MULA DARI AWAL)** di Halaman Utama (dengan pengesahan) memadam kemajuan slaid, jawapan, cubaan semula, markah, rekod terbaik dan maklumat borang sijil. |
 | D. Kuiz | 10 soalan (4 pilihan) meliputi semua subtopik Topik 2. Butang SAHKAN JAWAPAN. Jika salah: maklum balas SALAH dengan petunjuk nota (jawapan tidak didedahkan) dan butang **CUBA LAGI** yang menetapkan semula soalan untuk dijawab semula sehingga betul. **Markah rasmi dikira daripada cubaan pertama** (betul = 10, salah = 0); soalan yang diperbetulkan ditandakan oren. |
+| KPPBot | Pembantu sembang (butang robot piksel di kanan bawah, ada pada setiap skrin). Menjawab soalan tentang cara bermain (kawalan, portal, CUBA LAGI, markah, pangkat, sijil, nota, reset) dan kandungan Topik 2 (konsep, TPACK dan 7 komponennya, SAMR, TIM, 3E, 3R, Bloom Digital). Tahu konteks semasa (markah, pangkat, slaid dibaca) dan memberi **petunjuk** bagi soalan yang sedang dibuka, tetapi **tidak pernah memberi jawapan kuiz**. Butang cadangan pantas untuk telefon. Berjalan sepenuhnya dalam pelayar (tiada kunci API). |
 | Nota Topik 2 | Butang NOTA di bar atas (juga dari Halaman Utama dan dalam soalan): nota lengkap 8 bahagian dengan pautan pantas, dan **MUAT TURUN NOTA (PDF)**. |
 | Pemarkahan & pangkat | Betul = 10 mata, salah = 0. Pangkat: 0–1 Pemula, 2–3 Perantis (Gangsa), 4–5 Penjelajah (Perak), 6–7 Pengamal (Emas), 8–9 Strategis (Platinum), 10 Pakar (Berlian). Animasi naik pangkat dengan lencana 3D, partikel dan bunyi. |
 | E. Keputusan | Jumlah soalan, betul, salah, markah, peratus, pangkat tertinggi, lencana. Butang LIHAT PRESTASI, DAPATKAN SIJIL dan ULANGI PERMAINAN. |
@@ -45,11 +46,13 @@ misi-pakar-kppb/
 │   ├── ranking.js       # pangkat, lencana, model lencana 3D
 │   ├── certificate.js   # lukisan sijil (kanvas) → PDF (jsPDF) + sambungan Google Sheet
 │   ├── audio.js         # muzik & kesan bunyi (Web Audio)
+│   ├── chatbot.js       # KPPBot (pembantu sembang)
 │   └── config.js        # URL Google Apps Script, label penganjur
 ├── google-apps-script/
 │   └── Code.gs          # kod untuk Google Sheet (Apps Script Web App)
 ├── tests/
 │   ├── logic.test.mjs        # ujian pemarkahan & pangkat (0–10 betul)
+│   ├── chatbot.test.mjs      # ujian KPPBot (termasuk tidak mendedahkan jawapan)
 │   ├── apps-script.test.cjs  # ujian Code.gs dengan simulasi Google
 │   ├── apps-script-mock.cjs
 │   └── e2e.cjs               # ujian pelayar penuh (Playwright)

@@ -604,3 +604,50 @@ kbd { display: inline-block; font: 8px var(--pix); padding: 3px 4px; margin: 0 1
   .arena-hint { display: none; }
   .enter-btn { bottom: 110px; }
 }
+
+/* ---------------- KPPBot ---------------- */
+#kppbot { position: fixed; right: 14px; bottom: 76px; z-index: 58; font-family: var(--body); }
+.bot-fab { position: relative; display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; background: var(--plum); border: 3px solid var(--ink); box-shadow: inset 0 0 0 2px var(--gold), 4px 4px 0 rgba(0,0,0,.4); cursor: pointer; color: #fff; animation: botbob 2.4s ease-in-out infinite; }
+.bot-fab svg { width: 40px; height: 40px; image-rendering: pixelated; }
+.bot-fab-label { font: 10px var(--pix); color: var(--gold); }
+.bot-fab:hover { filter: brightness(1.15); animation: none; }
+.bot-fab.active { animation: none; background: var(--rose); }
+.bot-ping { position: absolute; top: -6px; right: -6px; width: 14px; height: 14px; background: var(--pink); border: 2px solid var(--ink); animation: twinkle 1.2s steps(2) infinite; }
+@keyframes botbob { 50% { transform: translateY(-4px); } }
+.bot-panel { position: absolute; right: 0; bottom: 64px; width: min(380px, calc(100vw - 28px)); height: min(520px, calc(100vh - 170px)); display: flex; flex-direction: column; background: rgba(36,14,26,.98); border: 4px solid var(--ink); box-shadow: inset 0 0 0 3px var(--maroon), 8px 8px 0 rgba(0,0,0,.4); animation: pop .3s; }
+.bot-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--plum); border-bottom: 3px solid var(--ink); }
+.bot-head b { font: 11px var(--pix); color: var(--gold); display: block; }
+.bot-head small { font: 600 12px var(--body); color: var(--muted); }
+.bot-head div { flex: 1; }
+.bot-ava svg { width: 34px; height: 34px; display: block; image-rendering: pixelated; }
+.bot-ava.sm svg { width: 26px; height: 26px; }
+.bot-x { width: 32px; height: 32px; background: var(--plum-3); border: 2px solid var(--ink); cursor: pointer; font: 14px var(--body); }
+.bot-msgs { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: thin; scrollbar-color: var(--rose) transparent; user-select: text; }
+.bot-msg { display: flex; gap: 8px; align-items: flex-end; max-width: 92%; }
+.bot-msg.me { align-self: flex-end; }
+.bubble-t { padding: 9px 11px; font: 500 13.5px/1.55 var(--body); border: 2px solid var(--ink); }
+.bot-msg.bot .bubble-t { background: #fbf8f4; color: #2a1220; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+.bot-msg.me .bubble-t { background: var(--blue); color: #fff; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+.bubble-t ul, .bubble-t ol { margin: 6px 0 0; padding-left: 18px; }
+.bubble-t li { margin: 3px 0; }
+.bubble-t b { color: #7a2340; }
+.bot-msg.me .bubble-t b { color: #fff; }
+.bubble-t kbd { font-size: 7px; }
+.dots { display: inline-flex; gap: 4px; }
+.dots i { width: 7px; height: 7px; background: var(--rose); animation: twinkle .9s steps(2) infinite; }
+.dots i:nth-child(2) { animation-delay: .3s; } .dots i:nth-child(3) { animation-delay: .6s; }
+.bot-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; border-top: 2px dashed rgba(255,255,255,.08); }
+.bot-chips button { font: 8px/1.4 var(--pix); padding: 7px 8px; background: var(--maroon); color: #fff; border: 2px solid var(--ink); cursor: pointer; }
+.bot-chips button:hover { background: var(--rose); }
+.bot-form { display: flex; gap: 6px; padding: 10px 12px 12px; }
+.bot-form input { flex: 1; min-width: 0; font: 600 14px var(--body); padding: 10px; background: #fbf8f4; color: #2a1220; border: 3px solid var(--ink); outline: none; user-select: text; }
+.bot-form input:focus { box-shadow: 0 0 0 3px var(--pink); }
+.bot-form button { width: 46px; background: var(--gold); color: #3a1626; border: 3px solid var(--ink); font: 16px var(--body); cursor: pointer; }
+.enter-btn { bottom: 150px; }
+@media (max-width: 600px) {
+  #kppbot { right: 10px; bottom: 72px; }
+  .bot-fab-label { display: none; }
+  .bot-fab { padding: 5px; }
+  .bot-fab svg { width: 34px; height: 34px; }
+  .enter-btn { bottom: 140px; }
+}

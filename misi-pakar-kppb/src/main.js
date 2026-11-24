@@ -25,6 +25,7 @@ import { QUESTIONS, TOTAL_QUESTIONS, LETTERS, emptyQuiz, computeResult, submitAn
 import { RANKS, rankIndexFor, BadgeViewer } from './ranking.js';
 import { buildCertificate, buildNotesPdf, drawCertificate, loadCertFonts, validateForm, certFileName, formatTarikh, sendToSheet, sheetConfigured, localCertId, uploadPdfToSheet } from './certificate.js';
 import { STORAGE_KEY } from './config.js';
+import { initChatbot } from './chatbot.js';
 
 const ICONS = {
   Play, Gamepad2, BookOpen, Music, Volume2, VolumeX, House, ChevronLeft, ChevronRight, Check, MousePointerClick, Trophy,
@@ -1137,5 +1138,17 @@ async function boot() {
   }, 250);
 }
 
-window.__kppb = { state, world, computeResult: () => computeResult(state.quiz.answers) };
+const bot = initChatbot({
+  getContext: () => ({
+    screen,
+    currentQ: $('#modal-question').classList.contains('open') ? currentQ : -1,
+    result: computeResult(state.quiz.answers),
+    visited: state.learn.visited.filter(Boolean).length,
+    learnDone: state.learn.completed,
+  }),
+  openNota: () => openNota(),
+  sfx,
+});
+
+window.__kppb = { state, world, bot, computeResult: () => computeResult(state.quiz.answers) };
 boot();
