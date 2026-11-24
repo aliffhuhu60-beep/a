@@ -468,7 +468,8 @@ export class World {
 
     // huruf jubin terapung "KPPB"
     this.homeTiles = [];
-    'KPPB'.split('').forEach((ch, i) => {
+    // (jubin huruf 3D dibuang: tajuk MISI PAKAR KPPB sudah dipaparkan pada panel)
+    [].forEach((ch, i) => {
       const t = pixelTex(64, 64, (c) => {
         c.fillStyle = i % 2 ? '#e8d6bd' : '#f4ece1'; c.fillRect(0, 0, 64, 64);
         c.fillStyle = 'rgba(0,0,0,0.12)'; c.fillRect(0, 58, 64, 6); c.fillRect(58, 0, 6, 64);
@@ -477,8 +478,8 @@ export class World {
       t.magFilter = THREE.LinearFilter;
       const plain = new THREE.MeshLambertMaterial({ color: i % 2 ? 0xe8d6bd : 0xf4ece1 });
       const face = new THREE.MeshLambertMaterial({ map: t });
-      const m = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.8, 1.8), [face, plain, plain, plain, face, plain]);
-      m.position.set(-8.6 + i * 2.15, 9.6 + (i % 2) * 0.9, -9.6);
+      const m = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 1.5), [plain, plain, plain, plain, face, plain]);
+      m.position.set(-9.2 + i * 2.7, 8.6, -9.9);
       m.userData.baseY = m.position.y;
       g.add(m);
       this.homeTiles.push(m);
@@ -1126,8 +1127,8 @@ export class World {
 
       if (this.active === 'home') {
         this.homeTiles.forEach((m, i) => {
-          m.position.y = m.userData.baseY + Math.sin(t * 1.6 + i * 0.9) * 0.25;
-          m.rotation.y = Math.sin(t * 0.8 + i) * 0.12;
+          m.position.y = m.userData.baseY + Math.max(0, Math.sin(t * 2.2 - i * 0.7)) * 0.45;
+          m.rotation.y = 0;
         });
       } else if (this.active === 'learn') {
         this.books.forEach((bk) => {
