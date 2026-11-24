@@ -24,7 +24,9 @@ async function gatePos(page, i) {
     const g = w.gates[i].group;
     const v = g.getWorldPosition(g.position.clone());
     v.y += 2.5;
-    return { ...w.screenPos(v), W: innerWidth, H: innerHeight };
+    const sp = w.screenPos(v);
+    const top = document.elementFromPoint(sp.x, sp.y);
+    return { ...sp, W: innerWidth, H: innerHeight, onCanvas: !!top && top.id === 'world' };
   }, i);
 }
 
@@ -56,7 +58,7 @@ async function clickGateOnce(page, i) {
   // klik pada kedudukan skrin sebenar portal 3D (menguji raycast); jika portal di luar skrin,
   // gunakan pemilihan portal yang sama seperti klik (watak berjalan sendiri ke portal)
   const pos = await gatePos(page, i);
-  if (pos.x < 30 || pos.x > pos.W - 30 || pos.y < 170 || pos.y > pos.H - 150) {
+  if (!pos.onCanvas || pos.x < 30 || pos.x > pos.W - 30 || pos.y < 170 || pos.y > pos.H - 150) {
     await page.evaluate((i) => window.__kppb.world.onPortalSelect(i), i);
   } else {
     await page.mouse.click(pos.x, pos.y);
