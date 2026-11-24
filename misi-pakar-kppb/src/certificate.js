@@ -231,8 +231,8 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
   const k = canvas.width / BW;
   const rank = RANKS[data.rankIdx] || RANKS[0];
   const t = themeFor(themeKey, rank);
-  const name = (data.name || '').trim() || 'Nama Penuh Anda';
-  const kelas = (data.kelas || '').trim() || 'Nama Kelas';
+  const name = (data.name || '').trim() || 'Nama Anda Di Sini';
+  const kelas = (data.kelas || '').trim() || 'Kelas Anda';
   const cx = BW / 2;
   ctx.save();
   ctx.setTransform(k, 0, 0, k, 0, 0);
