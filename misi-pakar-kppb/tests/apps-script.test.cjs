@@ -19,7 +19,7 @@ test('doGet status', () => assert.equal(env.get({}).ok, true));
 
 let rec;
 test('rekod sah disimpan; markah dikira semula di pelayan', () => {
-  rec = env.post({ nama: '  Nur  Aisyah binti Ahmad ', kelas: '4 Bestari', jawapan: 'BABCBCBCAA', markah: 100, betul: 10, tarikh: '24 November 2026' });
+  rec = env.post({ nama: '  Nur  Aisyah binti Ahmad ', kelas: '4 Bestari', jawapan: 'BCDABCBDCB', markah: 100, betul: 10, tarikh: '24 November 2026' });
   assert.equal(rec.ok, true);
   assert.equal(rec.certificateId, `KPPB-${yr}-0001`);
   assert.equal(rec.betul, 9);
@@ -29,17 +29,17 @@ test('rekod sah disimpan; markah dikira semula di pelayan', () => {
   const row = env.sheets.Rekod_Sijil.rows[1];
   assert.equal(row[2], 'Nur Aisyah binti Ahmad');
   assert.equal(row[4], 90);
-  assert.equal(row[11], 'BABCBCBCAA');
+  assert.equal(row[11], 'BCDABCBDCB');
   assert.equal(row[7], 0.9);
 });
 test('No. Sijil bertambah secara berurutan', () => {
-  const r2 = env.post({ nama: 'Ali bin Abu', kelas: '4 Bestari', jawapan: 'BABCBCBCAD' });
+  const r2 = env.post({ nama: 'Ali bin Abu', kelas: '4 Bestari', jawapan: 'BCDABCBDCA' });
   assert.equal(r2.certificateId, `KPPB-${yr}-0002`);
   assert.equal(r2.pangkat, 'PAKAR KPPB');
 });
 test('nama/kelas kosong atau jawapan tidak lengkap ditolak', () => {
-  assert.equal(env.post({ nama: '', kelas: 'X', jawapan: 'BABCBCBCAD' }).ok, false);
-  assert.equal(env.post({ nama: 'Ali bin Abu', kelas: '  ', jawapan: 'BABCBCBCAD' }).ok, false);
+  assert.equal(env.post({ nama: '', kelas: 'X', jawapan: 'BCDABCBDCA' }).ok, false);
+  assert.equal(env.post({ nama: 'Ali bin Abu', kelas: '  ', jawapan: 'BCDABCBDCA' }).ok, false);
   assert.equal(env.post({ nama: 'Ali bin Abu', kelas: 'X', jawapan: 'BAB-BCBCAD' }).ok, false);
   assert.equal(env.sheets.Rekod_Sijil.getLastRow(), 3);
 });
@@ -59,11 +59,11 @@ test('salinan PDF: token salah ditolak, token betul disimpan ke Drive', () => {
   assert.equal(env.sheets.Rekod_Sijil.rows[1][12], ok.url);
 });
 test('No. Sijil daripada PDF pemain diterima jika sah dan unik', () => {
-  const a = env.post({ nama: 'Siti Aminah', kelas: '5 Cemerlang', jawapan: 'BABCBCBCAD', noSijil: 'KPPB-20261124-AB12' });
+  const a = env.post({ nama: 'Siti Aminah', kelas: '5 Cemerlang', jawapan: 'BCDABCBDCA', noSijil: 'KPPB-20261124-AB12' });
   assert.equal(a.certificateId, 'KPPB-20261124-AB12');
-  const b = env.post({ nama: 'Siti Aminah', kelas: '5 Cemerlang', jawapan: 'BABCBCBCAD', noSijil: 'KPPB-20261124-AB12' });
+  const b = env.post({ nama: 'Siti Aminah', kelas: '5 Cemerlang', jawapan: 'BCDABCBDCA', noSijil: 'KPPB-20261124-AB12' });
   assert.notEqual(b.certificateId, 'KPPB-20261124-AB12');
-  const c = env.post({ nama: 'Siti Aminah', kelas: '5 Cemerlang', jawapan: 'BABCBCBCAD', noSijil: '=EVIL()' });
+  const c = env.post({ nama: 'Siti Aminah', kelas: '5 Cemerlang', jawapan: 'BCDABCBDCA', noSijil: '=EVIL()' });
   assert.ok(/^KPPB-\d{4}-\d{4}$/.test(c.certificateId));
 });
 test('semak kesahihan sijil', () => {

@@ -118,6 +118,7 @@ function makeNumberTile(text, state = 'open') {
     open: ['#e9b949', '#3a1626', '#b98a2a'],
     correct: ['#3aa364', '#ffffff', '#21703f'],
     wrong: ['#c8323f', '#ffffff', '#7d1a24'],
+    solved: ['#e08a1e', '#ffffff', '#8a4a12'],
   }[state];
   g.fillStyle = '#1a0710';
   g.fillRect(10, 14, 146, 92);
@@ -525,8 +526,8 @@ export class World {
       b.fill(x - 1, 1, z, x + 1, 1, z, PAL.red, 0.03);
       b.add(x - 1, 0, z, PAL.white); b.add(x + 1, 0, z, PAL.white);
     });
-    // rak buku: 8 slot (satu untuk setiap slaid)
-    for (let z = -8; z <= 7; z++) { b.add(-10, 2, z, PAL.woodDark); b.add(-10, 5, z, PAL.woodDark); }
+    // rak buku: 10 slot (satu untuk setiap slaid)
+    for (let z = -9; z <= 8; z++) { b.add(-10, 2, z, PAL.woodDark); b.add(-10, 5, z, PAL.woodDark); }
     glow.add(-10, 9, -10, PAL.gold, 0);
     glow.add(8, 9, -10, PAL.gold, 0);
     g.add(b.build(this.blockMat));
@@ -540,10 +541,10 @@ export class World {
 
     // buku slaid
     this.books = [];
-    const bookColors = [PAL.red, PAL.blue, 0xe06a9a, 0x5aa0d8, 0x3aa364, PAL.purple, PAL.gold, 0x2f8f6f];
-    for (let i = 0; i < 8; i++) {
-      const m = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.9, 1.5), new THREE.MeshLambertMaterial({ color: bookColors[i], emissive: 0x000000 }));
-      m.position.set(-10, 3.95, -7.2 + i * 2);
+    const bookColors = [PAL.red, PAL.blue, 0xe06a9a, 0x5aa0d8, 0x3aa364, PAL.purple, PAL.gold, 0x2f8f6f, 0xd1793a, 0x8e44ad];
+    for (let i = 0; i < 10; i++) {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.9, 1.3), new THREE.MeshLambertMaterial({ color: bookColors[i], emissive: 0x000000 }));
+      m.position.set(-10, 3.95, -8.1 + i * 1.8);
       m.userData.baseX = m.position.x;
       g.add(m);
       const tag = makeNumberTile(String(i + 1).padStart(2, '0'));
@@ -572,10 +573,10 @@ export class World {
     const t2 = makeNameTag('ANDA', 'PELAJAR'); t2.position.y = 4.75; player.add(t2);
     this.learnPlayer = player;
     this.areas.learn = g;
-    this.setLearnSlide(0, [true], ['PENGENALAN'], 8);
+    this.setLearnSlide(0, [true], ['PENGENALAN'], 10);
   }
 
-  setLearnSlide(i, visited, boardLines, total = 8) {
+  setLearnSlide(i, visited, boardLines, total = 10) {
     this.learnIndex = i;
     this.learnVisited = visited;
     const { g, tex } = this.board;
@@ -752,6 +753,7 @@ export class World {
       open: [0xff4f9a, 0x6a2cc0, 1.0, PAL.purpleDark],
       correct: [0x7cf0a0, 0x1f7a48, 0.95, 0x1f6a3e],
       wrong: [0xff8a8a, 0x8a1a2a, 0.75, 0x6a1622],
+      solved: [0xffd37a, 0xc0661a, 0.95, 0x8a4a12],
     };
     const col = new THREE.Color();
     this.gates.forEach((gt, i) => {
@@ -800,7 +802,7 @@ export class World {
     g.fillText(`PANGKAT: ${r.name}`, 44, 240);
     for (let k = 0; k < 10; k++) {
       const st = states[k];
-      g.fillStyle = st === 'correct' ? '#3aa364' : st === 'wrong' ? '#c8323f' : '#6b2a45';
+      g.fillStyle = st === 'correct' ? '#3aa364' : st === 'wrong' ? '#c8323f' : st === 'solved' ? '#e08a1e' : '#6b2a45';
       g.fillRect(44 + k * 92, 290, 80, 50);
       g.fillStyle = '#ffffff'; g.font = `20px ${PIX}`; g.textAlign = 'center';
       g.fillText(String(k + 1).padStart(2, '0'), 84 + k * 92, 316);

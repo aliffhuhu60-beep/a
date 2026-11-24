@@ -6,6 +6,8 @@ import '@fontsource/montserrat/600.css';
 import '@fontsource/montserrat/700.css';
 import '@fontsource/montserrat/800.css';
 import '@fontsource/great-vibes/400.css';
+import '@fontsource/cinzel/700.css';
+import '@fontsource/playfair-display/400-italic.css';
 import './style.css';
 import gsap from 'gsap';
 import { Vector3 } from 'three';
@@ -13,21 +15,22 @@ import {
   createIcons, Play, Gamepad2, BookOpen, Music, Volume2, VolumeX, House, ChevronLeft, ChevronRight, Check,
   MousePointerClick, Trophy, ChartColumn, Award, RotateCcw, Shield, FileText, Download, Monitor, Smartphone,
   Layers, Box, Users, Lightbulb, Rotate3d, Clock, Handshake, Target, Plus, LifeBuoy, Split, UserRound, Globe,
-  Wifi, HeartHandshake, X, Sparkles,
+  Wifi, HeartHandshake, X, Sparkles, Swords, NotebookText, ClipboardCheck, Info, Compass, Lock,
 } from 'lucide';
 
 import { World } from './game.js';
 import { AudioManager } from './audio.js';
-import { SLIDES, TOTAL_SLIDES, bindSlideInteractions } from './learning.js';
-import { QUESTIONS, TOTAL_QUESTIONS, LETTERS, emptyAnswers, computeResult, submitAnswer, isCorrect, answersToString } from './quiz.js';
+import { SLIDES, TOTAL_SLIDES, NOTES, notesHtml, bindSlideInteractions } from './learning.js';
+import { QUESTIONS, TOTAL_QUESTIONS, LETTERS, emptyQuiz, computeResult, submitAnswer, retryAnswer, canRetry, isCorrect, answersToString } from './quiz.js';
 import { RANKS, rankIndexFor, BadgeViewer } from './ranking.js';
-import { buildCertificate, drawCertificate, loadCertFonts, validateForm, certFileName, formatTarikh, sendToSheet, sheetConfigured, localCertId, uploadPdfToSheet } from './certificate.js';
+import { buildCertificate, buildNotesPdf, drawCertificate, loadCertFonts, validateForm, certFileName, formatTarikh, sendToSheet, sheetConfigured, localCertId, uploadPdfToSheet } from './certificate.js';
 import { STORAGE_KEY } from './config.js';
 
 const ICONS = {
   Play, Gamepad2, BookOpen, Music, Volume2, VolumeX, House, ChevronLeft, ChevronRight, Check, MousePointerClick, Trophy,
   ChartColumn, Award, RotateCcw, Shield, FileText, Download, Monitor, Smartphone, Layers, Box, Users, Lightbulb, Rotate3d,
   Clock, Handshake, Target, Plus, LifeBuoy, Split, UserRound, Globe, Wifi, HeartHandshake, X, Sparkles,
+  Swords, NotebookText, ClipboardCheck, Info, Compass, Lock,
 };
 const icons = () => createIcons({ icons: ICONS, attrs: { 'aria-hidden': 'true' } });
 const $ = (s) => document.querySelector(s);
@@ -39,7 +42,7 @@ const $$ = (s) => [...document.querySelectorAll(s)];
 function defaultState() {
   return {
     learn: { visited: Array(TOTAL_SLIDES).fill(false), completed: false, current: 0 },
-    quiz: { answers: emptyAnswers() },
+    quiz: emptyQuiz(),
     best: { correct: -1, score: 0, rankIdx: 0 },
     settings: { music: true, sfx: true },
     plays: 0,
@@ -56,13 +59,15 @@ function loadState() {
     const answers = Array.isArray(s?.quiz?.answers)
       ? d.quiz.answers.map((_, i) => ([0, 1, 2, 3].includes(s.quiz.answers[i]) ? s.quiz.answers[i] : null))
       : d.quiz.answers;
+    const solved = d.quiz.solved.map((_, i) => answers[i] !== null && !!s?.quiz?.solved?.[i]);
+    const attempts = d.quiz.attempts.map((_, i) => Math.max(0, Number(s?.quiz?.attempts?.[i]) || 0));
     return {
       learn: {
         visited,
         completed: !!s?.learn?.completed && visited.every(Boolean),
         current: Math.max(0, Math.min(TOTAL_SLIDES - 1, Number(s?.learn?.current) || 0)),
       },
-      quiz: { answers },
+      quiz: { answers, solved, attempts },
       best: { ...d.best, ...(s.best || {}) },
       settings: { ...d.settings, ...(s.settings || {}) },
       plays: Number(s.plays) || 0,
@@ -195,7 +200,7 @@ function closeModal(id) {
 $$('[data-close]').forEach((b) => b.addEventListener('click', () => closeModal('#' + b.closest('.modal').id)));
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
-  ['#modal-guide', '#modal-about', '#modal-perf', '#modal-cert'].forEach((id) => {
+  ['#modal-guide', '#modal-about', '#modal-perf', '#modal-cert', '#modal-nota'].forEach((id) => {
     if ($(id).classList.contains('open')) closeModal(id);
   });
 });
@@ -292,8 +297,12 @@ function buildTitleTiles() {
 function renderHome() {
   const visited = state.learn.visited.filter(Boolean).length;
   const r = computeResult(state.quiz.answers);
-  const startBtn = $('#btnStart');
-  startBtn.innerHTML = `<i data-lucide="play"></i> ${state.learn.completed ? 'TERUSKAN MISI' : visited > 0 ? 'SAMBUNG BELAJAR' : 'MULA MISI'}`;
+  $('#btnStart').innerHTML = `<i data-lucide="book-open"></i> ${state.learn.completed ? 'ULANG KAJI (BELAJAR SEMULA)' : visited > 0 ? 'SAMBUNG BELAJAR' : 'MULA BELAJAR'}`;
+  const mb = $('#btnMission');
+  mb.innerHTML = state.learn.completed
+    ? `<i data-lucide="swords"></i> ${r.answered > 0 && !r.finished ? 'SAMBUNG MISI' : 'BUAT MISI'}`
+    : '<i data-lucide="lock"></i> BUAT MISI (BELAJAR DAHULU)';
+  mb.classList.toggle('locked', !state.learn.completed);
   const st = [];
   st.push(`<span class="chip ${state.learn.completed ? 'c-green' : 'c-pink'}">BELAJAR ${visited}/${TOTAL_SLIDES}</span>`);
   if (r.answered > 0) st.push(`<span class="chip c-blue">MISI ${r.answered}/10 · ${r.score} MATA</span>`);
@@ -316,11 +325,23 @@ function animateHome() {
 
 $('#btnStart').addEventListener('click', () => {
   audio.unlock();
-  goTo(state.learn.completed ? 'arena' : 'learn');
+  if (state.learn.completed && screen === 'home') state.learn.current = 0;
+  goTo('learn');
 });
+$('#btnMission').addEventListener('click', () => {
+  audio.unlock();
+  if (!state.learn.completed) {
+    const left = state.learn.visited.filter((v) => !v).length;
+    toast(left ? `BACA ${left} SLAID LAGI SEBELUM MISI` : 'TEKAN SELESAI BELAJAR PADA SLAID TERAKHIR', true);
+    sfx('error');
+    return;
+  }
+  goTo('arena');
+});
+$('#btnHomeNota').addEventListener('click', () => openNota());
 $('#btnGuide').addEventListener('click', () => openModal('#modal-guide'));
 $('#btnAbout').addEventListener('click', () => openModal('#modal-about'));
-world.onHomePortal = () => { if (screen === 'home') $('#btnStart').click(); };
+world.onHomePortal = () => { if (screen === 'home') (state.learn.completed ? $('#btnMission') : $('#btnStart')).click(); };
 
 // ---------------------------------------------------------------------------
 // B: Pusat pembelajaran
@@ -396,10 +417,11 @@ document.addEventListener('keydown', (e) => {
 })();
 
 // ---------------------------------------------------------------------------
-// C & D: Arena + kuiz
+// C & D: Arena + kuiz (dengan CUBA LAGI)
 // ---------------------------------------------------------------------------
 function gateStates() {
-  return state.quiz.answers.map((a, i) => (a === null ? 'open' : isCorrect(i, a) ? 'correct' : 'wrong'));
+  const q = state.quiz;
+  return q.answers.map((a, i) => (a === null ? 'open' : isCorrect(i, a) ? 'correct' : q.solved[i] ? 'solved' : 'wrong'));
 }
 
 function updateArena() {
@@ -421,6 +443,7 @@ function updateArena() {
 let currentQ = -1;
 let selected = null;
 let pendingRankUp = null;
+let retryMode = false;
 
 world.onPortalSelect = async (i) => {
   if (screen !== 'arena' || $('.modal.open')) return;
@@ -429,91 +452,153 @@ world.onPortalSelect = async (i) => {
   if (ok) openQuestion(i);
 };
 
+function renderOptions(i) {
+  const q = QUESTIONS[i];
+  $('#qOptions').innerHTML = q.options.map((o, k) => `<button class="opt" data-k="${k}"><span class="letter">${LETTERS[k]}</span><span>${o}</span></button>`).join('');
+  $$('#qOptions .opt').forEach((b) => b.addEventListener('click', () => selectOption(Number(b.dataset.k))));
+  gsap.fromTo('#qOptions .opt', { x: -20, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.06, duration: 0.3, delay: 0.1 });
+}
+
+function setActions({ submit = false, retry = false, cont = false, back = false }) {
+  $('#qSubmit').classList.toggle('hidden', !submit);
+  $('#qRetry').classList.toggle('hidden', !retry);
+  $('#qContinue').classList.toggle('hidden', !cont);
+  $('#qBack').classList.toggle('hidden', !back);
+}
+
+function updateQMeta() {
+  const r = computeResult(state.quiz.answers);
+  $('#qScore').textContent = r.score;
+  $('#qProgress').textContent = `${r.answered}/10`;
+  $('#qContinue').innerHTML = r.finished ? 'LIHAT KEPUTUSAN <i data-lucide="trophy"></i>' : 'KEMBALI KE ARENA <i data-lucide="chevron-right"></i>';
+  icons();
+}
+
 function openQuestion(i) {
   currentQ = i;
   selected = null;
+  retryMode = false;
   const q = QUESTIONS[i];
-  const locked = state.quiz.answers[i] !== null;
-  const r = computeResult(state.quiz.answers);
   $('#qNum').textContent = String(i + 1).padStart(2, '0');
   $('#qTag').textContent = `PORTAL SOALAN · ${q.tag}`;
-  $('#qProgress').textContent = `${r.answered}/10`;
-  $('#qScore').textContent = r.score;
   $('#qText').textContent = q.q;
-  $('#qOptions').innerHTML = q.options.map((o, k) => `<button class="opt" data-k="${k}"><span class="letter">${LETTERS[k]}</span><span>${o}</span></button>`).join('');
-  $$('#qOptions .opt').forEach((b) => b.addEventListener('click', () => selectOption(Number(b.dataset.k))));
+  renderOptions(i);
   $('#qFeedback').classList.add('hidden');
-  $('#qSubmit').classList.remove('hidden');
   $('#qSubmit').disabled = true;
-  $('#qContinue').classList.add('hidden');
-  $('#qBack').classList.remove('hidden');
+  setActions({ submit: true, back: true });
+  updateQMeta();
   openModal('#modal-question');
-  gsap.fromTo('#qOptions .opt', { x: -20, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.06, duration: 0.3, delay: 0.15 });
-  if (locked) showFeedback(i, state.quiz.answers[i], false);
+  const a = state.quiz.answers[i];
+  if (a === null) return;
+  if (isCorrect(i, a) || state.quiz.solved[i]) showSolved(i, isCorrect(i, a) ? a : q.answer, false, isCorrect(i, a));
+  else showWrong(i, a, false);
 }
 
 function selectOption(k) {
-  if (state.quiz.answers[currentQ] !== null) return;
+  if (currentQ < 0) return;
+  const a = state.quiz.answers[currentQ];
+  if (a !== null && !retryMode) return;
+  const b = $(`#qOptions .opt[data-k="${k}"]`);
+  if (!b || b.disabled) return;
   selected = k;
   sfx('select');
-  $$('#qOptions .opt').forEach((b) => b.classList.toggle('selected', Number(b.dataset.k) === k));
+  $$('#qOptions .opt').forEach((o) => o.classList.toggle('selected', Number(o.dataset.k) === k));
   $('#qSubmit').disabled = false;
 }
 
-function showFeedback(i, choice, fresh) {
-  const q = QUESTIONS[i];
-  const ok = isCorrect(i, choice);
+function lockOptions(fn) {
   $$('#qOptions .opt').forEach((b) => {
-    const k = Number(b.dataset.k);
     b.disabled = true;
-    b.classList.remove('selected');
-    if (k === q.answer) b.classList.add('correct');
-    else if (k === choice) b.classList.add('wrong');
-    else b.classList.add('dim');
+    b.classList.toggle('selected', false);
+    fn(b, Number(b.dataset.k));
   });
+}
+
+function showFeedbackBox(ok) {
   const fb = $('#qFeedback');
-  fb.classList.remove('hidden', 'ok', 'bad');
-  fb.classList.add(ok ? 'ok' : 'bad');
+  fb.className = `feedback ${ok ? 'ok' : 'bad'}`;
+  return fb;
+}
+
+/** Jawapan betul (cubaan pertama atau cubaan semula): tunjuk penerangan. */
+function showSolved(i, choice, fresh, firstTry) {
+  const q = QUESTIONS[i];
+  lockOptions((b, k) => b.classList.add(k === q.answer ? 'correct' : 'dim'));
+  const fb = showFeedbackBox(true);
+  $('#fbTitle').textContent = firstTry ? `BETUL!${fresh ? ' +10 MATA' : ''}` : 'BETUL! SYABAS, ANDA BERJAYA MEMPERBETULKANNYA';
   const r = computeResult(state.quiz.answers);
-  $('#fbTitle').textContent = ok
-    ? `BETUL! ${fresh ? '+10 MATA' : ''}`.trim()
-    : `CUBA LAGI! Jawapan betul: ${LETTERS[q.answer]}`;
-  $('#fbExplain').innerHTML = `${q.explain}<br><small style="opacity:.8">Jumlah mata terkini: <b>${r.score}</b> · Kemajuan: <b>${r.answered}/10</b>${fresh ? '' : ' · (Jawapan telah dihantar dan tidak boleh diubah)'}</small>`;
-  $('#qSubmit').classList.add('hidden');
-  $('#qContinue').classList.remove('hidden');
-  $('#qContinue').innerHTML = r.finished ? 'LIHAT KEPUTUSAN <i data-lucide="trophy"></i>' : 'KEMBALI KE ARENA <i data-lucide="chevron-right"></i>';
-  $('#qBack').classList.add('hidden');
-  $('#qScore').textContent = r.score;
-  $('#qProgress').textContent = `${r.answered}/10`;
-  icons();
+  const note = firstTry ? '' : ' · Markah rasmi dikira daripada cubaan pertama.';
+  $('#fbExplain').innerHTML = `${q.explain}<br><small style="opacity:.8">Jumlah mata: <b>${r.score}</b> · Kemajuan: <b>${r.answered}/10</b>${note}</small>`;
+  setActions({ cont: true });
+  updateQMeta();
   if (fresh) gsap.fromTo(fb, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: 'back.out(2)' });
+}
+
+/** Jawapan salah: jangan dedahkan jawapan betul, beri petunjuk dan butang CUBA LAGI. */
+function showWrong(i, choice, fresh) {
+  const q = QUESTIONS[i];
+  lockOptions((b, k) => b.classList.add(k === choice ? 'wrong' : 'dim'));
+  const fb = showFeedbackBox(false);
+  const tries = state.quiz.attempts[i] || 0;
+  $('#fbTitle').textContent = tries > 0 ? 'MASIH SALAH. JANGAN PUTUS ASA!' : 'SALAH. CUBA LAGI!';
+  const r = computeResult(state.quiz.answers);
+  $('#fbExplain').innerHTML = `Petunjuk: ulang kaji nota <b>${q.tag}</b> (butang <b>NOTA</b> di bar atas), kemudian tekan <b>CUBA LAGI</b> untuk menjawab semula soalan ini.<br><small style="opacity:.8">Jumlah mata: <b>${r.score}</b> · Kemajuan: <b>${r.answered}/10</b> · Markah rasmi dikira daripada cubaan pertama.</small>`;
+  setActions({ retry: true, cont: true });
+  updateQMeta();
+  if (fresh) gsap.fromTo(fb, { x: -10 }, { x: 0, duration: 0.4, ease: 'elastic.out(1, 0.3)' });
 }
 
 $('#qSubmit').addEventListener('click', () => {
   if (selected === null || currentQ < 0) return;
+  const i = currentQ;
+  if (retryMode) {
+    const res = retryAnswer(state.quiz, i, selected);
+    if (!res.ok) return;
+    save();
+    retryMode = false;
+    sfx(res.correct ? 'correct' : 'wrong');
+    if (res.correct) {
+      const p = world.gates[i].group.getWorldPosition(new Vector3());
+      p.y += 4;
+      world.burst(p, [0xf2c14e, 0xffffff, 0xff9a3c], 50, 7);
+      showSolved(i, selected, true, false);
+    } else showWrong(i, selected, true);
+    updateArena();
+    return;
+  }
   const before = computeResult(state.quiz.answers);
-  const res = submitAnswer(state.quiz.answers, currentQ, selected);
+  const res = submitAnswer(state.quiz.answers, i, selected);
   if (!res.ok) return;
   save();
   const after = computeResult(state.quiz.answers);
   sfx(res.correct ? 'correct' : 'wrong');
   if (res.correct) {
-    const g = world.gates[currentQ].group;
-    const p = g.getWorldPosition(new Vector3());
+    const p = world.gates[i].group.getWorldPosition(new Vector3());
     p.y += 4;
     world.burst(p, [0x7cf0a0, 0xf2c14e, 0xffffff], 70, 8);
-  }
-  const rb = rankIndexFor(before.correct);
-  const ra = rankIndexFor(after.correct);
-  if (ra > rb) pendingRankUp = ra;
-  showFeedback(currentQ, selected, true);
+    showSolved(i, selected, true, true);
+  } else showWrong(i, selected, true);
+  if (rankIndexFor(after.correct) > rankIndexFor(before.correct)) pendingRankUp = rankIndexFor(after.correct);
   updateArena();
+});
+
+$('#qRetry').addEventListener('click', () => {
+  if (currentQ < 0 || !canRetry(state.quiz, currentQ)) return;
+  retryMode = true;
+  selected = null;
+  sfx('page');
+  renderOptions(currentQ);
+  $('#qFeedback').classList.add('hidden');
+  $('#qSubmit').disabled = true;
+  setActions({ submit: true, back: true });
+  toast('SOALAN DISET SEMULA. PILIH JAWAPAN ANDA!');
 });
 
 function leaveQuestion() {
   closeModal('#modal-question');
   if (currentQ >= 0) world.exitGate(currentQ);
   currentQ = -1;
+  retryMode = false;
 }
 
 $('#qBack').addEventListener('click', leaveQuestion);
@@ -536,6 +621,7 @@ document.addEventListener('keydown', (e) => {
   if (k !== undefined) selectOption(k);
   if (e.key === 'Enter') {
     if (!$('#qSubmit').classList.contains('hidden') && !$('#qSubmit').disabled) $('#qSubmit').click();
+    else if (!$('#qRetry').classList.contains('hidden')) $('#qRetry').click();
     else if (!$('#qContinue').classList.contains('hidden')) $('#qContinue').click();
   }
 });
@@ -605,6 +691,7 @@ function showResults() {
     stat('JAWAPAN BETUL', r.correct, false, '#8ff0b5'),
     stat('JAWAPAN SALAH', r.wrong, false, '#ffadb5'),
     stat('JUMLAH MARKAH', `${r.score}/${r.max}`),
+    stat('DIPERBETULKAN (CUBA LAGI)', state.quiz.solved.filter(Boolean).length, true, '#ffc77a'),
     stat('PERATUS PENCAPAIAN', `${r.percent}%`, true),
     stat('PANGKAT TERTINGGI', rank.name, true, rank.color),
     stat('LENCANA DIPEROLEH', rank.badgeName.toUpperCase(), true, rank.color),
@@ -621,16 +708,19 @@ $('#btnPerf').addEventListener('click', () => {
   $('#perfList').innerHTML = QUESTIONS.map((q, i) => {
     const a = state.quiz.answers[i];
     const ok = isCorrect(i, a);
-    return `<div class="perf ${ok ? 'ok' : 'bad'}"><span class="pn">${String(i + 1).padStart(2, '0')}</span>
-      <div class="pq">${q.q}<small>JAWAPAN ANDA: ${a === null ? '-' : LETTERS[a]} · JAWAPAN BETUL: ${LETTERS[q.answer]}</small></div>
-      <span class="ps">${ok ? 'BETUL +10' : 'SALAH +0'}</span></div>`;
+    const fixed = !ok && state.quiz.solved[i];
+    const cls = ok ? 'ok' : fixed ? 'fix' : 'bad';
+    const status = ok ? 'BETUL +10' : fixed ? 'DIPERBETULKAN +0' : 'SALAH +0';
+    return `<div class="perf ${cls}"><span class="pn">${String(i + 1).padStart(2, '0')}</span>
+      <div class="pq"><b class="ptag">${q.tag}</b> ${q.q}<small>CUBAAN PERTAMA: ${a === null ? '-' : LETTERS[a]} · JAWAPAN BETUL: ${LETTERS[q.answer]}${fixed ? ` · BERJAYA SELEPAS ${state.quiz.attempts[i]} CUBAAN SEMULA` : ''}</small></div>
+      <span class="ps">${status}</span></div>`;
   }).join('');
   openModal('#modal-perf');
 });
 $('#btnReplay').addEventListener('click', () => {
   closeModal('#modal-results');
   badgeViewer.stop();
-  state.quiz.answers = emptyAnswers();
+  state.quiz = emptyQuiz();
   certId = null;
   state.plays += 1;
   save();
@@ -776,38 +866,121 @@ $('#certForm').addEventListener('submit', async (e) => {
 });
 
 // ---------------------------------------------------------------------------
-// Mula
+// Nota Topik 2
 // ---------------------------------------------------------------------------
+let notaBuilt = false;
+function openNota(sectionId) {
+  if (!notaBuilt) {
+    $('#notaBody').innerHTML = notesHtml();
+    $('#notaToc').innerHTML = NOTES.map((n) => `<button data-go="nota-${n.id}">${n.title.replace(/^\d+\. /, '').split(' (')[0].toUpperCase()}</button>`).join('');
+    $$('#notaToc [data-go]').forEach((b) => b.addEventListener('click', () => {
+      $('#' + b.dataset.go).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      sfx('select');
+    }));
+    notaBuilt = true;
+  }
+  openModal('#modal-nota');
+  const panel = $('#modal-nota .modal-panel');
+  panel.scrollTop = 0;
+  if (sectionId) setTimeout(() => $('#nota-' + sectionId)?.scrollIntoView({ block: 'start' }), 60);
+}
+$('#btnNota').addEventListener('click', () => {
+  const map = { 'KONSEP & PERANAN': 'konsep', TPACK: 'tpack', 'MODEL SAMR': 'samr', TIM: 'tim', 'MODEL 3E': '3e', 'MODEL 3R': '3r', 'BLOOM DIGITAL': 'bloom' };
+  openNota(currentQ >= 0 ? map[QUESTIONS[currentQ].tag] : undefined);
+});
+$('#btnAboutNota').addEventListener('click', () => { closeModal('#modal-about'); openNota(); });
+$('#btnNotaPdf').addEventListener('click', () => {
+  try {
+    buildNotesPdf(NOTES).save('Nota_Topik2_Model_Pengintegrasian_Teknologi.pdf');
+    toast('NOTA DIMUAT TURUN');
+  } catch (err) {
+    console.error(err);
+    toast('RALAT SEMASA MENJANA NOTA', true);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Mula (skrin memuatkan beranimasi)
+// ---------------------------------------------------------------------------
+const TIPS = [
+  'TIP: TPACK = Teknologi + Pedagogi + Kandungan.',
+  'TIP: SAMR bergerak daripada Penggantian hingga Pendefinisian Semula.',
+  'TIP: TIM mempunyai 5 tahap: Kemasukan, Penerimaan, Adaptasi, Infusi, Transformasi.',
+  'TIP: Model 3E = Engagement, Enhancement, Extension.',
+  'TIP: Kerangka 3R = Rigor, Relevance, Relationship.',
+  'TIP: Taksonomi Digital Bloom bermula dengan Mengingat dan berakhir dengan Mencipta.',
+];
+
+function loadingProgress() {
+  const shown = { v: 0 };
+  let target = 0;
+  const bar = $('#loadBar');
+  const runner = $('#loadRunner');
+  const pct = $('#loadPct');
+  let tipIdx = Math.floor(Math.random() * TIPS.length);
+  $('#loadTip').textContent = TIPS[tipIdx];
+  const tipTimer = setInterval(() => {
+    tipIdx = (tipIdx + 1) % TIPS.length;
+    const t = $('#loadTip');
+    t.style.opacity = '0';
+    setTimeout(() => { t.textContent = TIPS[tipIdx]; t.style.opacity = '1'; }, 250);
+  }, 1600);
+  const tick = () => {
+    shown.v += (target - shown.v) * 0.12 + 0.25;
+    if (shown.v > target) shown.v = target;
+    const v = Math.round(shown.v);
+    bar.style.width = `${v}%`;
+    runner.style.left = `${v}%`;
+    pct.textContent = `${v}%`;
+    if (v < 100) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+  return {
+    set(v, msg) { target = Math.max(target, v); if (msg) $('#loadMsg').textContent = msg; },
+    done: () => new Promise((resolve) => {
+      target = 100;
+      const wait = () => (Math.round(shown.v) >= 100 ? (clearInterval(tipTimer), resolve()) : setTimeout(wait, 50));
+      wait();
+    }),
+  };
+}
+
 async function boot() {
+  const t0 = performance.now();
+  const lp = loadingProgress();
+  lp.set(15, 'MEMUATKAN FON PIKSEL...');
   buildBackground();
   buildTitleTiles();
   icons();
   refreshAudioButtons();
-  const bar = $('#loadBar');
-  bar.style.width = '20%';
   try {
     await Promise.race([
       Promise.all([document.fonts.load('20px "Press Start 2P"'), document.fonts.load('600 16px Montserrat')]),
       new Promise((r) => setTimeout(r, 2500)),
     ]);
   } catch { /* teruskan walaupun fon gagal */ }
-  bar.style.width = '55%';
-  await new Promise((r) => requestAnimationFrame(r));
+  lp.set(45, 'MEMBINA DUNIA BLOK...');
+  await new Promise((r) => setTimeout(r, 60));
   try {
     world.init();
   } catch (err) {
     console.error(err);
-    $('.load-text').textContent = 'PELAYAR ANDA TIDAK MENYOKONG WEBGL.';
+    $('#loadMsg').textContent = 'PELAYAR ANDA TIDAK MENYOKONG WEBGL.';
     return;
   }
-  bar.style.width = '100%';
+  lp.set(80, 'MENYUSUN PORTAL SOALAN...');
   setScreen('home');
   renderHome();
   updateArena();
+  // biar animasi memuatkan dilihat seketika (sekurang-kurangnya ~2.2 saat)
+  const left = 2200 - (performance.now() - t0);
+  if (left > 0) await new Promise((r) => setTimeout(r, left));
+  lp.set(100, 'SEDIA!');
+  await lp.done();
   setTimeout(() => {
     $('#loading').classList.add('done');
     animateHome();
-  }, 350);
+  }, 250);
 }
 
 window.__kppb = { state, world, computeResult: () => computeResult(state.quiz.answers) };

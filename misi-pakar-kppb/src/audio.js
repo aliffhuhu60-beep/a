@@ -48,7 +48,7 @@ export class AudioManager {
     if (!this.ctx || this.musicTimer) return;
     const g = this.musicGain.gain;
     g.cancelScheduledValues(this.ctx.currentTime);
-    g.setTargetAtTime(0.16, this.ctx.currentTime, 0.6);
+    g.setTargetAtTime(0.2, this.ctx.currentTime, 0.6);
     this.nextTime = this.ctx.currentTime + 0.1;
     this.musicTimer = setInterval(() => this.scheduleMusic(), 60);
   }
@@ -63,32 +63,69 @@ export class AudioManager {
   }
 
   scheduleMusic() {
-    const spb = 60 / 104 / 2; // lapan not seminit, 104 BPM
-    // Progresi: Dm - Bb - F - C (nada lembut, sesuai untuk belajar)
-    const chords = [
-      [62, 65, 69], [58, 62, 65], [65, 69, 72], [60, 64, 67],
+    // Lagu chiptune ceria 128 BPM, langkah 1/16. 8 bar: C - G - Am - F - F - G - C - G
+    const step = 60 / 128 / 4;
+    const CH = [[60, 64, 67], [55, 59, 62], [57, 60, 64], [53, 57, 60], [53, 57, 60], [55, 59, 62], [60, 64, 67], [55, 59, 62]];
+    const BASS = [36, 43, 45, 41, 41, 43, 36, 43];
+    const MEL = [
+      [76, 79, 84, 79, 76, 79, 81, 79],
+      [74, 79, 83, 79, 74, 79, 81, 83],
+      [84, 83, 81, 76, 81, 83, 84, 88],
+      [81, 0, 77, 81, 84, 0, 81, 79],
+      [77, 81, 84, 81, 77, 81, 84, 86],
+      [86, 83, 79, 83, 86, 0, 83, 84],
+      [88, 86, 84, 79, 76, 79, 84, 88],
+      [86, 0, 83, 0, 79, 81, 83, 86],
     ];
-    const bass = [38, 34, 41, 36];
-    const melody = [
-      74, -1, 72, 69, 72, -1, 74, 77, 74, -1, 72, -1, 70, 69, -1, -1,
-      69, -1, 72, 74, 77, -1, 76, 74, 72, -1, 69, -1, 67, -1, -1, -1,
-    ];
+    const g = this.musicGain;
     while (this.nextTime < this.ctx.currentTime + 0.25) {
       const s = this.step;
-      const bar = Math.floor(s / 8) % 4;
+      const pos = s % 16; // kedudukan dalam bar
+      const bar = Math.floor(s / 16) % 8;
+      const loop = Math.floor(s / 128);
       const t = this.nextTime;
-      const ch = chords[bar];
+      // dram
+      if (pos % 4 === 0) this.kick(t, g);
+      if (pos === 4 || pos === 12) this.snare(t, g);
+      if (pos % 2 === 1) this.noise(t, 0.025, pos === 15 ? 0.05 : 0.03, 8000, g);
+      if (pos === 14 && bar === 7) this.snare(t, g, 0.6);
+      // bass melantun (oktaf)
+      if (pos % 2 === 0) {
+        const n = BASS[bar] + (pos % 4 === 2 ? 12 : 0);
+        this.tone(NOTE(n), t, step * 1.7, 'triangle', 0.2, g);
+      }
       // arpeggio
-      this.tone(NOTE(ch[s % 3] + 12), t, spb * 0.9, 'square', 0.035, this.musicGain);
-      // bass pada setiap ketukan
-      if (s % 2 === 0) this.tone(NOTE(bass[bar]), t, spb * 1.6, 'triangle', 0.16, this.musicGain);
-      const m = melody[s % melody.length];
-      if (m > 0 && Math.floor(s / 32) % 2 === 1) this.tone(NOTE(m), t, spb * 1.4, 'triangle', 0.07, this.musicGain);
-      // hi-hat lembut
-      if (s % 2 === 1) this.noise(t, 0.03, 0.025, 7000, this.musicGain);
-      this.nextTime += spb;
+      const ch = CH[bar];
+      this.tone(NOTE(ch[pos % 3] + 12), t, step * 0.8, 'square', 0.022, g);
+      // melodi utama (lapan not sebar) — berehat sekali-sekala supaya tidak membosankan
+      if (pos % 2 === 0 && !(loop % 3 === 2 && bar < 4)) {
+        const m = MEL[bar][pos / 2];
+        if (m > 0) {
+          this.tone(NOTE(m), t, step * 1.8, 'square', 0.045, g);
+          this.tone(NOTE(m + 12), t, step * 1.2, 'triangle', 0.02, g);
+        }
+      }
+      this.nextTime += step;
       this.step++;
     }
+  }
+
+  kick(t, dest) {
+    const o = this.ctx.createOscillator();
+    const gg = this.ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(150, t);
+    o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+    gg.gain.setValueAtTime(0.5, t);
+    gg.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+    o.connect(gg).connect(dest);
+    o.start(t);
+    o.stop(t + 0.18);
+  }
+
+  snare(t, dest, vol = 1) {
+    this.noise(t, 0.12, 0.16 * vol, 1800, dest);
+    this.tone(190, t, 0.07, 'triangle', 0.08 * vol, dest);
   }
 
   // ---------- Primitif ----------

@@ -8,7 +8,7 @@ const path = require('path');
 const BASE = process.env.BASE_URL || 'http://localhost:4173/';
 const PATTERNS = (process.env.PATTERNS || '0,2,4,6,8,10').split(',').map(Number);
 const OUT = process.env.OUT || path.join(__dirname, '..', 'test-output');
-const KEY = [1, 0, 1, 2, 1, 2, 1, 2, 0, 3]; // B A B C B C B C A D
+const KEY = [1, 2, 3, 0, 1, 2, 1, 3, 2, 0]; // B C D A B C B D C A
 const RANK = (n) => (n <= 1 ? ['PEMULA KPPB', 'TIADA'] : n <= 3 ? ['PERANTIS KPPB', 'GANGSA'] : n <= 5 ? ['PENJELAJAH KPPB', 'PERAK'] : n <= 7 ? ['PENGAMAL KPPB', 'EMAS'] : n <= 9 ? ['STRATEGIS KPPB', 'PLATINUM'] : ['PAKAR KPPB', 'BERLIAN']);
 
 let sheetEnv = null;
@@ -91,14 +91,14 @@ async function run(nCorrect, opts = {}) {
   // Kuiz tidak boleh diakses sebelum belajar: MULA MISI membawa ke pembelajaran
   await page.click('#btnStart');
   await page.waitForSelector('#screen-learn.active');
-  // butang SELESAI BELAJAR hanya muncul di slaid 8 dan perlu semua slaid dibaca
+  // BUAT MISI dikunci sebelum belajar; SELESAI BELAJAR hanya di slaid 10
   assert(await page.isHidden('#btnFinishLearn'), 'SELESAI BELAJAR tersembunyi sebelum slaid 8');
-  for (let s = 2; s <= 8; s++) {
+  for (let s = 2; s <= 10; s++) {
     await page.click('#btnNext');
     const t = await page.textContent('#learnCount');
-    assert(t.includes(`${s}/8`), `penunjuk slaid ${s}/8 (dapat "${t}")`);
+    assert(t.includes(`${s}/10`), `penunjuk slaid ${s}/10 (dapat "${t}")`);
   }
-  assert(await page.isEnabled('#btnFinishLearn'), 'SELESAI BELAJAR aktif selepas 8/8');
+  assert(await page.isEnabled('#btnFinishLearn'), 'SELESAI BELAJAR aktif selepas 10/10');
   await page.click('#btnFinishLearn');
   await page.waitForSelector('#screen-arena.active', { timeout: 10000 });
   await page.waitForTimeout(1200);
@@ -114,12 +114,27 @@ async function run(nCorrect, opts = {}) {
     if (opts.shots && i === 0) await page.screenshot({ path: path.join(OUT, `${opts.tag}_question.png`) });
     await page.click('#qSubmit');
     const fb = await page.textContent('#fbTitle');
-    assert(i < nCorrect ? fb.startsWith('BETUL') : fb.startsWith('CUBA LAGI'), `maklum balas soalan ${i + 1}: ${fb}`);
+    assert(i < nCorrect ? fb.startsWith('BETUL') : fb.startsWith('SALAH'), `maklum balas soalan ${i + 1}: ${fb}`);
+    if (i >= nCorrect) assert(await page.isVisible('#qRetry'), 'butang CUBA LAGI muncul bila salah');
     // jawapan dikunci
     assert(await page.isDisabled(`#qOptions .opt[data-k="${(choice + 1) % 4}"]`), 'pilihan dikunci selepas dihantar');
     if (opts.shots && i === 0) await page.screenshot({ path: path.join(OUT, `${opts.tag}_feedback.png`) });
     const score = await page.evaluate(() => window.__kppb.computeResult().score);
     assert(score === Math.min(i + 1, nCorrect) * 10, `mata selepas soalan ${i + 1} = ${score}`);
+    if (i === nCorrect) {
+      // CUBA LAGI: soalan diset semula, jawab salah sekali lagi, kemudian betul
+      await page.click('#qRetry');
+      assert(await page.isHidden('#qFeedback') && await page.isEnabled(`#qOptions .opt[data-k="${choice}"]`), 'soalan diset semula');
+      await page.click(`#qOptions .opt[data-k="${(KEY[i] + 2) % 4}"]`);
+      await page.click('#qSubmit');
+      assert((await page.textContent('#fbTitle')).startsWith('MASIH SALAH'), 'cubaan semula salah');
+      await page.click('#qRetry');
+      await page.click(`#qOptions .opt[data-k="${KEY[i]}"]`);
+      await page.click('#qSubmit');
+      assert((await page.textContent('#fbTitle')).startsWith('BETUL! SYABAS'), 'cubaan semula betul');
+      const after = await page.evaluate(() => window.__kppb.computeResult().score);
+      assert(after === score, 'markah rasmi tidak berubah selepas CUBA LAGI');
+    }
     await page.click('#qContinue');
     await page.waitForTimeout(300);
     if (await page.isVisible('#modal-rankup')) {

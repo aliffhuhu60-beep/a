@@ -85,6 +85,7 @@ export function localCertId(d = new Date()) {
 // ---------------------------------------------------------------------------
 // Reka bentuk sijil (dilukis pada kanvas: pratonton langsung = PDF)
 // ---------------------------------------------------------------------------
+export const CERT_STATEMENT = 'Telah menyelesaikan 10 soalan penilaian berkaitan Topik 2, Model Pengintegrasian Teknologi dalam Pengajaran dan Pembelajaran, dengan menunjukkan penguasaan terhadap konsep dan peranan model pengintegrasian teknologi, Kerangka TPACK, Model SAMR, Technology Integration Matrix (TIM), Model 3E, Kerangka 3R serta Taksonomi Digital Bloom.';
 const BW = 1754; // A4 landskap, unit asas (150 dpi)
 const BH = 1240;
 
@@ -114,6 +115,10 @@ function shade(hex, amt) {
 function seeded(seed) {
   let s = seed >>> 0;
   return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+
+function spacing(ctx, v) {
+  if ('letterSpacing' in ctx) ctx.letterSpacing = v;
 }
 
 function fitFont(ctx, text, maxW, size, tpl) {
@@ -212,8 +217,10 @@ function seal(ctx, cx, cy, r, color, rank) {
     ctx.fillText(ch, 0, 0);
     ctx.restore();
   });
-  ctx.font = '10px "Press Start 2P", monospace';
+  ctx.font = '800 14px Montserrat, sans-serif';
+  spacing(ctx, '2px');
   ctx.fillText('DISAHKAN', 0, -9);
+  spacing(ctx, '0px');
   const short = rank.name.replace(' KPPB', '');
   let fs = 14;
   ctx.font = `800 ${fs}px Montserrat, sans-serif`;
@@ -276,7 +283,8 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
 
   // cip atas
   const chip = (x, y, text, bg, fg, align = 'left') => {
-    ctx.font = '13px "Press Start 2P", monospace';
+    ctx.font = '700 15px Montserrat, sans-serif';
+    spacing(ctx, '1.5px');
     const w = ctx.measureText(text).width + 28;
     const x0 = align === 'right' ? x - w : x;
     ctx.fillStyle = 'rgba(0,0,0,0.18)';
@@ -285,9 +293,10 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
     ctx.fillRect(x0, y, w, 36);
     ctx.fillStyle = fg;
     ctx.textAlign = 'left';
-    ctx.fillText(text, x0 + 14, y + 25);
+    ctx.fillText(text, x0 + 14, y + 24);
+    spacing(ctx, '0px');
   };
-  chip(190, 86, 'TOPIK 2 · 3E & 3R', t.chip, '#ffffff');
+  chip(190, 86, 'TOPIK 2 · MODEL PENGINTEGRASIAN TEKNOLOGI', t.chip, '#ffffff');
   chip(BW - 190, 86, `NO. ${data.certId || 'KPPB-XXXX'}`, t.accent, '#2a1220', 'right');
 
   pixelBadge(ctx, cx, 150, 8.5, rank, t);
@@ -295,8 +304,10 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
   // tajuk
   ctx.textAlign = 'center';
   ctx.fillStyle = t.frame;
-  fitFont(ctx, 'SIJIL PENGIKTIRAFAN PENCAPAIAN', 1300, 56, (s) => `800 ${s}px Montserrat, sans-serif`);
-  ctx.fillText('SIJIL PENGIKTIRAFAN PENCAPAIAN', cx, 282);
+  spacing(ctx, '3px');
+  fitFont(ctx, 'SIJIL PENGIKTIRAFAN PENCAPAIAN', 1320, 62, (s) => `700 ${s}px Cinzel, "Times New Roman", serif`);
+  ctx.fillText('SIJIL PENGIKTIRAFAN PENCAPAIAN', cx, 284);
+  spacing(ctx, '0px');
   // pembahagi piksel
   ctx.fillStyle = t.accent;
   ctx.fillRect(cx - 330, 300, 660, 5);
@@ -305,7 +316,7 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
   ctx.fillRect(cx - 8, 294, 16, 16);
 
   ctx.fillStyle = '#3a3a48';
-  ctx.font = '500 24px Montserrat, sans-serif';
+  ctx.font = 'italic 27px "Playfair Display", Georgia, serif';
   ctx.fillText('Dengan sukacitanya sijil ini dianugerahkan kepada:', cx, 346);
 
   // nama (skrip)
@@ -318,20 +329,21 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
   ctx.fillRect(cx + 420, 453, 12, 12);
 
   ctx.fillStyle = '#3a3a48';
-  ctx.font = '500 21px Montserrat, sans-serif';
+  ctx.font = 'italic 23px "Playfair Display", Georgia, serif';
   ctx.fillText('Daripada kelas:', cx, 497);
   ctx.fillStyle = t.frame;
   fitFont(ctx, kelas, 1000, 30, (s) => `700 ${s}px Montserrat, sans-serif`);
   ctx.fillText(kelas, cx, 534);
 
   ctx.fillStyle = '#3a3a48';
-  ctx.font = '500 21px Montserrat, sans-serif';
+  ctx.font = 'italic 23px "Playfair Display", Georgia, serif';
   ctx.fillText('Sebagai pengiktirafan atas pencapaian dalam permainan pembelajaran interaktif:', cx, 574);
 
   // cip tajuk permainan
-  ctx.font = '19px "Press Start 2P", monospace';
+  ctx.font = '700 25px Cinzel, "Times New Roman", serif';
+  spacing(ctx, '2px');
   const gt = 'MISI PAKAR KPPB: PENGEMBARAAN 3E & 3R';
-  const gw = ctx.measureText(gt).width + 48;
+  const gw = ctx.measureText(gt).width + 56;
   ctx.fillStyle = 'rgba(0,0,0,0.18)';
   ctx.fillRect(cx - gw / 2 + 6, 596, gw, 48);
   ctx.fillStyle = t.chip;
@@ -339,13 +351,15 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
   ctx.fillStyle = t.accent2;
   ctx.fillRect(cx - gw / 2, 632, gw, 6);
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(gt, cx, 624);
+  ctx.fillText(gt, cx, 623);
+  spacing(ctx, '0px');
 
   // kenyataan
   ctx.fillStyle = '#33333f';
-  ctx.font = '500 19.5px Montserrat, sans-serif';
-  const stmt = 'Telah menyelesaikan 10 soalan penilaian berkaitan Topik 2, Model Pengintegrasian Teknologi dalam Pengajaran dan Pembelajaran, dengan menunjukkan penguasaan terhadap Model 3E (Engagement, Enhancement dan Extension) serta Kerangka 3R (Rigor, Relevance dan Relationship).';
-  wrapLines(ctx, stmt, 1260).forEach((l, i) => ctx.fillText(l, cx, 678 + i * 27));
+  ctx.font = '500 19px Montserrat, sans-serif';
+  const sl = wrapLines(ctx, CERT_STATEMENT, 1300);
+  const lh = sl.length > 3 ? 23 : 26;
+  sl.forEach((l, i) => ctx.fillText(l, cx, 672 + i * lh));
 
   // jubin pencapaian
   const tiles = [
@@ -373,8 +387,10 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
     ctx.fillStyle = t.frame;
     ctx.fillRect(x, y, tw, 28);
     ctx.fillStyle = '#ffffff';
-    ctx.font = '11px "Press Start 2P", monospace';
+    ctx.font = '800 13px Montserrat, sans-serif';
+    spacing(ctx, '2px');
     ctx.fillText(lab, x + tw / 2, y + 19);
+    spacing(ctx, '0px');
     ctx.fillStyle = t.frame;
     fitFont(ctx, val, tw - 20, 26, (s) => `800 ${s}px Montserrat, sans-serif`);
     ctx.fillText(val, x + tw / 2, y + 65);
@@ -385,8 +401,10 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
   const by = 866;
   ctx.textAlign = 'left';
   ctx.fillStyle = t.frame;
-  ctx.font = '12px "Press Start 2P", monospace';
-  ctx.fillText('PENGUASAAN', bx - 168, by + 21);
+  ctx.font = '800 15px Montserrat, sans-serif';
+  spacing(ctx, '2px');
+  ctx.fillText('PENGUASAAN', bx - 172, by + 20);
+  spacing(ctx, '0px');
   for (let i = 0; i < 10; i++) {
     const on = i < data.correct;
     ctx.fillStyle = on ? (i % 2 ? t.accent : t.accent2) : '#e6e1dc';
@@ -395,12 +413,13 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
     ctx.fillRect(bx + i * 80, by, 74, 6);
   }
   ctx.fillStyle = t.frame;
+  ctx.font = '800 18px Montserrat, sans-serif';
   ctx.fillText(`${data.score}%`, bx + 812, by + 21);
   ctx.textAlign = 'center';
 
   // penghargaan
   ctx.fillStyle = '#3a3a48';
-  ctx.font = 'italic 19px Georgia, "Times New Roman", serif';
+  ctx.font = 'italic 21px "Playfair Display", Georgia, serif';
   const apr = 'Semoga pengetahuan dan kemahiran yang diperoleh dapat diaplikasikan dalam merancang pengalaman pengajaran dan pembelajaran yang bermakna, relevan dan berpusatkan murid.';
   wrapLines(ctx, apr, 1180).forEach((l, i) => ctx.fillText(l, cx, 940 + i * 26));
 
@@ -426,7 +445,7 @@ export function drawCertificate(canvas, data, themeKey = 'klasik') {
 
 /** Pastikan fon web dimuatkan sebelum melukis. */
 export async function loadCertFonts() {
-  const fonts = ['92px "Great Vibes"', '800 40px Montserrat', '700 20px Montserrat', '500 20px Montserrat', '20px "Press Start 2P"'];
+  const fonts = ['92px "Great Vibes"', '700 40px Cinzel', 'italic 24px "Playfair Display"', '800 40px Montserrat', '700 20px Montserrat', '500 20px Montserrat'];
   try {
     await Promise.race([Promise.all(fonts.map((f) => document.fonts.load(f, 'AaBb'))), new Promise((r) => setTimeout(r, 3000))]);
   } catch { /* guna fon sandaran */ }
@@ -457,5 +476,92 @@ export async function buildCertificate(data, themeKey = 'klasik') {
   inv('MISI PAKAR KPPB: PENGEMBARAAN 3E & 3R', BW / 2, 624, 9);
   inv(`Markah: ${data.score}/100  Jawapan betul: ${data.correct}/10  Pangkat: ${rank.name}  Lencana: ${rank.badge || 'Tiada'}  Tarikh: ${data.date}`, BW / 2, 800, 8);
   inv(`No. Sijil: ${data.certId}`, BW / 2, 1150, 6);
+  return doc;
+}
+
+/** Nota Topik 2 dalam format PDF A4 (teks, boleh dicetak). */
+export function buildNotesPdf(notes) {
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+  const W = 210;
+  const M = 18;
+  const maxW = W - M * 2;
+  let y = 0;
+  const header = (first) => {
+    doc.setFillColor(61, 24, 40);
+    doc.rect(0, 0, W, first ? 34 : 14, 'F');
+    doc.setFillColor(233, 185, 73);
+    doc.rect(0, first ? 34 : 14, W, 2, 'F');
+    doc.setTextColor(255, 255, 255);
+    if (first) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(233, 185, 73);
+      doc.text('MISI PAKAR KPPB · NOTA', M, 12);
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(17);
+      doc.text('Topik 2: Model Pengintegrasian Teknologi dalam PdP', M, 23);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9.5);
+      doc.text('Konsep & peranan · TPACK · SAMR · TIM · Model 3E · Kerangka 3R · Taksonomi Digital Bloom', M, 30);
+      y = 46;
+    } else {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.text('Nota Topik 2: Model Pengintegrasian Teknologi dalam PdP', M, 9);
+      y = 26;
+    }
+  };
+  const ensure = (h) => { if (y + h > 282) { doc.addPage(); header(false); } };
+  header(true);
+  notes.forEach((n) => {
+    ensure(20);
+    doc.setFillColor(245, 236, 240);
+    doc.rect(M - 3, y - 6, maxW + 6, 9.5, 'F');
+    doc.setFillColor(184, 50, 95);
+    doc.rect(M - 3, y - 6, 2, 9.5, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12.5);
+    doc.setTextColor(61, 24, 40);
+    doc.text(n.title, M + 1, y);
+    y += 9;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10.5);
+    doc.setTextColor(40, 40, 52);
+    doc.splitTextToSize(n.intro, maxW).forEach((l) => { ensure(6); doc.text(l, M, y); y += 5.2; });
+    y += 1.5;
+    n.points.forEach(([k, v]) => {
+      const lines = doc.splitTextToSize(`${k}: ${v}`, maxW - 6);
+      ensure(lines.length * 5.2 + 1);
+      doc.setFillColor(184, 50, 95);
+      doc.rect(M + 0.5, y - 2.6, 2, 2, 'F');
+      lines.forEach((l, j) => {
+        if (j === 0) {
+          const kw = `${k}:`;
+          doc.setFont('helvetica', 'bold');
+          doc.text(kw, M + 5, y);
+          const w = doc.getTextWidth(kw) + 1.6;
+          doc.setFont('helvetica', 'normal');
+          doc.text(l.slice(kw.length + 1), M + 5 + w, y);
+        } else {
+          doc.text(l, M + 5, y);
+        }
+        y += 5.2;
+      });
+      y += 0.8;
+    });
+    if (n.models) {
+      doc.setFont('helvetica', 'italic');
+      doc.splitTextToSize(n.models, maxW).forEach((l) => { ensure(6); doc.text(l, M, y); y += 5.2; });
+    }
+    y += 6;
+  });
+  const pages = doc.getNumberOfPages();
+  for (let i = 1; i <= pages; i++) {
+    doc.setPage(i);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(140, 140, 150);
+    doc.text(`Halaman ${i}/${pages}`, W - M, 292, { align: 'right' });
+  }
   return doc;
 }

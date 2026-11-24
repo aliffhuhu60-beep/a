@@ -26,6 +26,7 @@
       </button>
       <div class="top-progress" id="topProgress"></div>
       <div class="top-actions">
+        <button class="icon-btn nota-btn" id="btnNota" title="Nota Topik 2"><i data-lucide="notebook-text"></i><span>NOTA</span></button>
         <button class="icon-btn" id="btnMusic" title="Muzik latar" aria-pressed="true"><i data-lucide="music"></i></button>
         <button class="icon-btn" id="btnSfx" title="Kesan bunyi" aria-pressed="true"><i data-lucide="volume-2"></i></button>
         <button class="icon-btn" id="btnHome" title="Halaman utama"><i data-lucide="house"></i></button>
@@ -40,11 +41,15 @@
           <div class="panel home-panel" id="homePanel">
             <div class="sec-head"><span class="sec-num">3E</span><span class="sec-label">PENGEMBARAAN 3E &amp; 3R</span><span class="sec-num alt">3R</span></div>
             <p class="subtitle reveal">Pengembaraan Menguasai Model Pengintegrasian Teknologi dalam PdP.</p>
-            <p class="desc reveal">Selamat datang ke misi pembelajaran KPPB. Kuasai konsep 3E dan 3R melalui bahan pembelajaran interaktif dan cabaran pengetahuan. Kumpulkan mata, naik pangkat dan buktikan penguasaan anda.</p>
+            <p class="desc reveal">Selamat datang ke misi pembelajaran KPPB. Kuasai Topik 2: konsep model pengintegrasian teknologi, TPACK, SAMR, TIM, Model 3E, Kerangka 3R dan Taksonomi Digital Bloom melalui bahan pembelajaran interaktif dan cabaran pengetahuan. Kumpulkan mata, naik pangkat dan buktikan penguasaan anda.</p>
             <div class="home-btns">
-              <button class="btn btn-gold btn-big reveal" id="btnStart"><i data-lucide="play"></i> MULA MISI</button>
-              <button class="btn reveal" id="btnGuide"><i data-lucide="gamepad-2"></i> PANDUAN PERMAINAN</button>
-              <button class="btn btn-blue reveal" id="btnAbout"><i data-lucide="book-open"></i> TENTANG TOPIK</button>
+              <button class="btn btn-gold btn-big reveal" id="btnStart"><i data-lucide="book-open"></i> BELAJAR / ULANG KAJI</button>
+              <button class="btn btn-green btn-big reveal" id="btnMission"><i data-lucide="swords"></i> BUAT MISI</button>
+              <div class="home-row">
+                <button class="btn btn-sm reveal" id="btnHomeNota"><i data-lucide="notebook-text"></i> NOTA</button>
+                <button class="btn btn-sm reveal" id="btnGuide"><i data-lucide="gamepad-2"></i> PANDUAN</button>
+                <button class="btn btn-sm btn-blue reveal" id="btnAbout"><i data-lucide="info"></i> TENTANG TOPIK</button>
+              </div>
             </div>
             <div class="home-status reveal" id="homeStatus"></div>
           </div>
@@ -102,6 +107,7 @@
         <div class="q-actions">
           <button class="btn btn-sm btn-ghost" id="qBack"><i data-lucide="chevron-left"></i> KE ARENA</button>
           <button class="btn btn-gold" id="qSubmit" disabled><i data-lucide="check"></i> SAHKAN JAWAPAN</button>
+          <button class="btn btn-blue hidden" id="qRetry"><i data-lucide="rotate-ccw"></i> CUBA LAGI</button>
           <button class="btn btn-green hidden" id="qContinue">TERUSKAN <i data-lucide="chevron-right"></i></button>
         </div>
       </div>
@@ -191,9 +197,9 @@
       <div class="panel modal-panel">
         <div class="sec-head"><span class="sec-num"><i data-lucide="gamepad-2"></i></span><span class="sec-label">PANDUAN PERMAINAN</span></div>
         <ol class="guide">
-          <li><span class="chip c-gold">1</span><div><b>Belajar dahulu.</b> Tekan MULA MISI dan baca kesemua 8 slaid di Pusat Pembelajaran (1/8 hingga 8/8). Tekan SELESAI BELAJAR pada slaid terakhir.</div></li>
-          <li><span class="chip c-gold">2</span><div><b>Masuk Arena Misi KPPB.</b> Terdapat 10 portal bernombor 01–10. Klik atau sentuh portal untuk berjalan ke sana dan membuka soalan.</div></li>
-          <li><span class="chip c-gold">3</span><div><b>Jawab soalan.</b> Pilih satu daripada empat jawapan, kemudian tekan SAHKAN JAWAPAN. Jawapan yang dihantar adalah muktamad.</div></li>
+          <li><span class="chip c-gold">1</span><div><b>Belajar dahulu.</b> Tekan BELAJAR / ULANG KAJI dan baca kesemua 10 slaid Topik 2 di Pusat Pembelajaran (1/10 hingga 10/10). Tekan SELESAI BELAJAR pada slaid terakhir. Butang NOTA boleh dibuka pada bila-bila masa.</div></li>
+          <li><span class="chip c-gold">2</span><div><b>Masuk Arena Misi KPPB</b> melalui butang BUAT MISI. Terdapat 10 portal bernombor 01–10. Klik atau sentuh portal untuk berjalan ke sana dan membuka soalan.</div></li>
+          <li><span class="chip c-gold">3</span><div><b>Jawab soalan.</b> Pilih satu daripada empat jawapan, kemudian tekan SAHKAN JAWAPAN. Jika salah, tekan CUBA LAGI untuk menjawab semula soalan itu. Markah rasmi dikira daripada cubaan pertama.</div></li>
           <li><span class="chip c-gold">4</span><div><b>Kumpul mata.</b> Jawapan betul = 10 mata. Jawapan salah = 0 mata. Markah maksimum 100.</div></li>
           <li><span class="chip c-gold">5</span><div><b>Naik pangkat.</b> Pemula → Perantis (Gangsa) → Penjelajah (Perak) → Pengamal (Emas) → Strategis (Platinum) → Pakar KPPB (Berlian).</div></li>
           <li><span class="chip c-gold">6</span><div><b>Dapatkan sijil.</b> Selepas 10 soalan, isi nama penuh dan kelas untuk menjana sijil PDF.</div></li>
@@ -208,21 +214,43 @@
       <div class="panel modal-panel">
         <div class="sec-head"><span class="sec-num">T2</span><span class="sec-label">TENTANG TOPIK</span></div>
         <h3 class="about-title">Topik 2: Model Pengintegrasian Teknologi dalam Pengajaran dan Pembelajaran (PdP)</h3>
-        <p class="desc">Model pengintegrasian teknologi membantu pendidik merancang penggunaan teknologi secara bermakna dalam proses pengajaran dan pembelajaran. Topik ini memberi tumpuan kepada dua kerangka:</p>
+        <p class="desc">Model pengintegrasian teknologi membantu pendidik merancang, melaksana dan menilai penggunaan teknologi secara bermakna dalam PdP. Kandungan topik ini:</p>
         <div class="about-cols">
-          <div class="sub-panel"><h4 class="c-pink-t">MODEL 3E</h4><p><span class="chip c-pink">Engagement</span> <span class="chip c-blue">Enhancement</span> <span class="chip c-green">Extension</span></p><p class="desc small">Peranan teknologi dalam meningkatkan pengalaman pembelajaran.</p></div>
-          <div class="sub-panel"><h4 class="c-blue-t">KERANGKA 3R</h4><p><span class="chip c-pink">Rigor</span> <span class="chip c-blue">Relevance</span> <span class="chip c-green">Relationship</span></p><p class="desc small">Tahap pemikiran, aplikasi dunia sebenar dan hubungan bermakna.</p></div>
+          <div class="sub-panel"><h4 class="c-pink-t">KONSEP &amp; KERANGKA</h4><p><span class="chip c-gold">Konsep &amp; peranan</span> <span class="chip c-pink">TPACK</span> <span class="chip c-blue">SAMR</span> <span class="chip c-green">TIM</span></p><p class="desc small">Pengetahuan guru, tahap transformasi tugasan dan tahap integrasi teknologi.</p></div>
+          <div class="sub-panel"><h4 class="c-blue-t">MODEL &amp; TAKSONOMI</h4><p><span class="chip c-pink">Model 3E</span> <span class="chip c-blue">Model 3R</span> <span class="chip c-green">Taksonomi Digital Bloom</span></p><p class="desc small">Penglibatan, pemikiran mendalam dan aras kemahiran berfikir dalam aktiviti digital.</p></div>
         </div>
-        <div class="modal-actions"><button class="btn btn-gold" data-close>TUTUP</button></div>
+        <div class="modal-actions"><button class="btn btn-sm" id="btnAboutNota"><i data-lucide="notebook-text"></i> BACA NOTA</button><button class="btn btn-gold" data-close>TUTUP</button></div>
+      </div>
+    </div>
+
+    <!-- Nota Topik 2 -->
+    <div class="modal" id="modal-nota" role="dialog" aria-modal="true" aria-label="Nota Topik 2">
+      <div class="panel modal-panel nota-panel">
+        <div class="sec-head"><span class="sec-num"><i data-lucide="notebook-text"></i></span><span class="sec-label">NOTA TOPIK 2</span></div>
+        <h3 class="about-title">Model Pengintegrasian Teknologi dalam PdP</h3>
+        <div class="nota-toc" id="notaToc"></div>
+        <div class="nota-body" id="notaBody"></div>
+        <div class="modal-actions">
+          <button class="btn btn-blue" id="btnNotaPdf"><i data-lucide="download"></i> MUAT TURUN NOTA (PDF)</button>
+          <button class="btn btn-gold" data-close>TUTUP</button>
+        </div>
       </div>
     </div>
 
     <div id="wipe" aria-hidden="true"></div>
     <div id="toast" role="status" aria-live="polite"></div>
     <div id="loading">
-      <div class="load-tiles"><span>M</span><span>P</span><span>K</span><span>P</span><span>P</span><span>B</span></div>
-      <div class="load-text">MEMBINA DUNIA BLOK...</div>
-      <div class="bar load-bar"><div class="bar-fill" id="loadBar"></div></div>
+      <div class="load-stage" aria-hidden="true">
+        <div class="load-blocks"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="load-portal"></div>
+      </div>
+      <div class="load-tiles"><span>M</span><span>I</span><span>S</span><span>I</span><span class="sp"></span><span class="pk">K</span><span class="pk">P</span><span class="pk">P</span><span class="pk">B</span></div>
+      <div class="load-track">
+        <div class="bar load-bar"><div class="bar-fill" id="loadBar"></div></div>
+        <span class="load-runner" id="loadRunner"><i class="lr-head"></i><i class="lr-body"></i><i class="lr-leg l1"></i><i class="lr-leg l2"></i></span>
+      </div>
+      <div class="load-text"><span id="loadPct">0%</span> · <span id="loadMsg">MEMBINA DUNIA BLOK...</span></div>
+      <div class="load-tip" id="loadTip">TIP: TPACK = Teknologi + Pedagogi + Kandungan</div>
     </div>
     <noscript>Permainan ini memerlukan JavaScript.</noscript>
     <script type="module" src="/src/main.js"></script>

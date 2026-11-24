@@ -11,4 +11,4 @@ export const GOOGLE_SCRIPT_URL =
 export const CERT_ORGANIZER = 'Penganjur Misi Pakar KPPB';
 
 // Kunci LocalStorage.
-export const STORAGE_KEY = 'misi-pakar-kppb.v1';
+export const STORAGE_KEY = 'misi-pakar-kppb.v2';

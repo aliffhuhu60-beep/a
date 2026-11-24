@@ -1,6 +1,6 @@
 // Ujian logik teras: node tests/logic.test.mjs
 import assert from 'node:assert/strict';
-import { QUESTIONS, TOTAL_QUESTIONS, emptyAnswers, computeResult, submitAnswer, answersToString } from '../src/quiz.js';
+import { QUESTIONS, TOTAL_QUESTIONS, emptyAnswers, emptyQuiz, computeResult, submitAnswer, retryAnswer, canRetry, answersToString, ANSWER_KEY } from '../src/quiz.js';
 import { RANKS, rankIndexFor, rankFor } from '../src/ranking.js';
 import { validateForm, certFileName, formatTarikh } from '../src/certificate.js';
 
@@ -12,8 +12,12 @@ test('10 soalan, setiap satu 4 pilihan dan kunci jawapan sah', () => {
   assert.equal(TOTAL_QUESTIONS, 10);
   QUESTIONS.forEach((q) => { assert.equal(q.options.length, 4); assert.ok([0, 1, 2, 3].includes(q.answer)); assert.ok(q.explain.length > 10); });
 });
-test('kunci jawapan mengikut bahan: B A B C B C B C A D', () => {
-  assert.equal(QUESTIONS.map((q) => 'ABCD'[q.answer]).join(''), 'BABCBCBCAD');
+test('kunci jawapan: B C D A B C B D C A', () => {
+  assert.equal(ANSWER_KEY, 'BCDABCBDCA');
+});
+test('soalan meliputi semua subtopik Topik 2', () => {
+  const tags = new Set(QUESTIONS.map((q) => q.tag));
+  ['KONSEP & PERANAN', 'TPACK', 'MODEL SAMR', 'TIM', 'MODEL 3E', 'MODEL 3R', 'BLOOM DIGITAL'].forEach((t) => assert.ok(tags.has(t), t));
 });
 
 // Bina jawapan dengan tepat N betul
@@ -68,7 +72,29 @@ test('keputusan belum tamat jika ada soalan belum dijawab', () => {
   assert.equal(r.finished, false);
   assert.equal(r.answered, 1);
   assert.equal(r.score, 10);
-  assert.equal(answersToString(ans), '---C------');
+  assert.equal(answersToString(ans), '---A------');
+});
+test('CUBA LAGI: soalan salah boleh dijawab semula tanpa mengubah markah rasmi', () => {
+  const q = emptyQuiz();
+  const wrong = (QUESTIONS[0].answer + 1) % 4;
+  submitAnswer(q.answers, 0, wrong);
+  assert.equal(canRetry(q, 0), true);
+  assert.deepEqual(retryAnswer(q, 0, (QUESTIONS[0].answer + 2) % 4), { ok: true, correct: false });
+  assert.equal(canRetry(q, 0), true);
+  assert.deepEqual(retryAnswer(q, 0, QUESTIONS[0].answer), { ok: true, correct: true });
+  assert.equal(q.solved[0], true);
+  assert.equal(q.attempts[0], 2);
+  assert.equal(canRetry(q, 0), false);
+  assert.equal(retryAnswer(q, 0, QUESTIONS[0].answer).ok, false);
+  assert.equal(q.answers[0], wrong, 'jawapan cubaan pertama kekal');
+  assert.equal(computeResult(q.answers).score, 0, 'markah rasmi kekal 0');
+});
+test('CUBA LAGI tidak dibenarkan untuk soalan yang betul atau belum dijawab', () => {
+  const q = emptyQuiz();
+  assert.equal(canRetry(q, 1), false);
+  submitAnswer(q.answers, 1, QUESTIONS[1].answer);
+  assert.equal(canRetry(q, 1), false);
+  assert.equal(retryAnswer(q, 1, 0).ok, false);
 });
 test('rankIndexFor mengehadkan input luar julat', () => {
   assert.equal(rankIndexFor(-3), 0);

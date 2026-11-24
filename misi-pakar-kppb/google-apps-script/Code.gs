@@ -22,7 +22,7 @@ var NAMA_SHEET = 'Rekod_Sijil';
 var NAMA_PAPAN = 'Papan_Pemuka';
 var SIMPAN_PDF_KE_DRIVE = true;               // false = tidak simpan salinan PDF
 var NAMA_FOLDER_DRIVE = 'Sijil Misi Pakar KPPB';
-var KUNCI_JAWAPAN = 'BABCBCBCAD';             // jawapan betul soalan 1-10
+var KUNCI_JAWAPAN = 'BCDABCBDCA';             // jawapan betul soalan 1-10
 var ZON_MASA = 'Asia/Kuala_Lumpur';
 
 var LAJUR = [
