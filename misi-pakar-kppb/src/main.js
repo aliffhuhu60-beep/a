@@ -256,8 +256,9 @@ world.onFrame = () => {
   if (!a || bubble.classList.contains('hidden')) return;
   const p = a.pos();
   const v = world.screenPos(new Vector3(p.x, p.y, p.z));
-  bubble.style.left = `${v.x + 90}px`;
-  bubble.style.top = `${v.y}px`;
+  const bw = bubble.offsetWidth || 200;
+  bubble.style.left = `${Math.max(bw / 2 + 12, Math.min(window.innerWidth - bw / 2 - 12, v.x + 90))}px`;
+  bubble.style.top = `${Math.max(140, v.y)}px`;
 };
 
 function updateTopProgress() {

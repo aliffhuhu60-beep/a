@@ -614,7 +614,7 @@ export class World {
   focusLearn(animate) {
     const i = this.learnIndex || 0;
     const base = AREA_OFFSET.learn;
-    const target = { x: base.x - 2.2 + (i % 2 ? 0.4 : -0.4), y: 3.4, z: base.z - 0.6, h: this.isPortrait() ? 26 : 25 };
+    const target = { x: base.x - 2.2 + (i % 2 ? 0.4 : -0.4), y: 3.4, z: base.z - 0.6, h: this.isPortrait() ? Math.min(60, 21 / this.aspect) : 25 };
     if (animate) gsap.to(this.cam, { ...target, duration: 1.1, ease: 'power2.inOut' });
     else Object.assign(this.cam, target);
   }
@@ -890,7 +890,7 @@ export class World {
     const portrait = this.isPortrait();
     const pp = this.arenaPlayer.position;
     const target = portrait
-      ? { x: base.x + pp.x * 0.55, y: 2.5, z: base.z + pp.z * 0.35, h: 30 }
+      ? { x: base.x + pp.x * 0.55, y: 2.5, z: base.z + pp.z * 0.35, h: 36 }
       : { x: base.x - 0.5, y: 3.6, z: base.z + 0.5, h: 30 };
     if (animate) gsap.to(this.cam, { ...target, duration: 1.0, ease: 'power2.inOut' });
     else Object.assign(this.cam, target);
@@ -978,7 +978,7 @@ export class World {
     const base = AREA_OFFSET[area];
     this.floaters.position.copy(base);
     if (area === 'home') {
-      const target = { x: base.x + 0.5, y: 3.2, z: base.z + 0.5, h: this.isPortrait() ? 34 : 27 };
+      const target = { x: base.x + 0.5, y: 3.2, z: base.z + 0.5, h: this.isPortrait() ? Math.min(62, 25 / this.aspect) : 27 };
       if (instant) Object.assign(this.cam, target, { h: target.h * 1.4 });
       else Object.assign(this.cam, target, { h: target.h * 1.25 });
       gsap.to(this.cam, { h: target.h, duration: 2.2, ease: 'power3.out' });
