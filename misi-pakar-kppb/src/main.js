@@ -441,6 +441,7 @@ function updateArena() {
   $('#btnShowResults').classList.toggle('hidden', !r.finished);
   $('#arenaHint').classList.toggle('hidden', r.finished);
   updateTopProgress();
+  if (typeof renderGatePrompt === 'function' && world.nearGate >= 0) renderGatePrompt(world.nearGate);
 }
 
 let currentQ = -1;
@@ -687,7 +688,8 @@ $$('#movePad [data-dir]').forEach((b) => {
 $('#btnEnterGate').addEventListener('click', enterNearGate);
 
 world.onStep = () => sfx('step');
-world.onNearGate = (i) => {
+world.onNearGate = (i) => { renderGatePrompt(i); if (i >= 0) sfx('hover'); };
+function renderGatePrompt(i) {
   const prompt = $('#gatePrompt');
   const btn = $('#btnEnterGate');
   if (i < 0) { prompt.classList.add('hidden'); btn.classList.add('dim'); return; }
@@ -696,8 +698,7 @@ world.onNearGate = (i) => {
   prompt.innerHTML = `<b>PORTAL ${String(i + 1).padStart(2, '0')}</b> · ${QUESTIONS[i].tag}<small>${label}</small><span class="kbd-only">TEKAN <kbd>E</kbd> UNTUK MASUK</span><span class="touch-only">TEKAN MASUK</span>`;
   prompt.classList.remove('hidden');
   btn.classList.remove('dim');
-  sfx('hover');
-};
+}
 
 // peta mini (pandangan isometrik dari atas)
 const mini = $('#minimap');
